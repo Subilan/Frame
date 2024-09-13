@@ -1,0 +1,29 @@
+$navbarHeight: 64px;
+
+body {
+  margin: 0;
+  font-family: 'Fira Sans', 'PingFang SC', 'Microsoft YaHei UI', sans-serif;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.navbar-offset {
+  margin-top: $navbarHeight;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  margin: 8px 0;
+}
+
+.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ant-btn svg {
+  height: 60%;
+  width: min-content;
+}

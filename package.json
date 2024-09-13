@@ -10,9 +10,19 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@ant-design-vue/nuxt": "^1.4.2",
+    "@jamescoyle/vue-icon": "^0.1.2",
+    "@mdi/js": "^7.4.47",
+    "ali-oss": "^6.21.0",
+    "ant-design-vue": "4.x",
     "nuxt": "^3.13.0",
     "vue": "latest",
     "vue-router": "latest"
   },
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "packageManager": "yarn@4.4.1",
+  "devDependencies": {
+    "sass": "^1.78.0",
+    "unplugin-vue-components": "^0.27.4"
+  }
 }

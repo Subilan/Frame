@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('./subset-FiraSans-Italic.woff2') format('woff2'),
+        url('./subset-FiraSans-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('./subset-FiraSans-Bold.woff2') format('woff2'),
+        url('./subset-FiraSans-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('./subset-FiraSans-BoldItalic.woff2') format('woff2'),
+        url('./subset-FiraSans-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('./subset-FiraSans-Regular.woff2') format('woff2'),
+        url('./subset-FiraSans-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('./subset-FiraSans-SemiBoldItalic.woff2') format('woff2'),
+        url('./subset-FiraSans-SemiBoldItalic.woff') format('woff');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('./subset-FiraSans-SemiBold.woff2') format('woff2'),
+        url('./subset-FiraSans-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
