@@ -33,21 +33,13 @@
   background: white;
   position: relative;
   border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, .1);
+  border: 2px solid rgba(0, 0, 0, .1);
   transition: all .2s ease;
   cursor: pointer;
   overflow: hidden;
-  height: 230px;
-
-  &::after {
-    content: 'Enter collection';
-    position: absolute;
-    bottom: -16px;
-    font-size: 14px;
-  }
 
   &:hover {
-    border: 3px solid black;
+    border-color: black;
     box-shadow: 0 15px 18px rgba(0, 0, 0, .2);
     transform: translateY(-5px);
   }
@@ -69,7 +61,7 @@
   }
 
   .texts {
-    padding: 10px;
+    padding: 14px;
 
     h2 {
       margin: 0;
