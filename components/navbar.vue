@@ -20,7 +20,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   box-sizing: border-box;
   height: global.$navbarHeight;
   background: #2e2e2e;
