@@ -1,0 +1,20 @@
+import ng from "../utils/ng";
+
+export default defineEventHandler(e => {
+    const query = getQuery(e);
+    const tag = suspect(query.tag as string, '');
+    const startIndex = suspect(query.startIndex as number, 0);
+    const limit = suspect(query.limit as number, 20);
+
+    if (limit <= 0 || startIndex < 0) {
+        return ng();
+    }
+
+    const collection = getCollection(tag);
+    if (collection === null) return ng();
+
+    const afterStartIndex = collection.files.slice(startIndex);
+
+    if (afterStartIndex.length <= limit) return afterStartIndex;
+    return afterStartIndex.slice(0, limit);
+})
