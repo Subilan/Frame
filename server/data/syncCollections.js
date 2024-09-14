@@ -27,5 +27,24 @@ while (true) {
     }
 }
 
-const text = JSON.stringify(result.filter(x => isImageFilePath(x.name)).sort((a, b) => getFileDateFromName(b.name)?.getTime() - getFileDateFromName(a.name)?.getTime()));
-await fs.writeFile('./collections.json', text);
+const fileTree = result.filter(x => isImageFilePath(x.name)).sort((a, b) => getFileDateFromName(b.name)?.getTime() - getFileDateFromName(a.name)?.getTime());
+const collections = {};
+
+fileTree.forEach(x => {
+    const collectionIdExec = /\/frame\/([A-Za-z\-_]+)\//.exec(x.url);
+    if (collectionIdExec !== null) {
+        const collectionId = collectionIdExec[1];
+        if (!Object.keys(collections).includes(collectionId)) collections[collectionId] = {
+            files: [],
+            totalSize: -1
+        };
+        collections[collectionId]['files'].push(x);
+        collections[collectionId]['totalSize'] += x.size;
+    }
+})
+
+const text = JSON.stringify({
+    collections,
+    totalSize: fileTree.reduce((a, b) => a + b.size, 0)
+});
+await fs.writeFile('./filetrees.json', text);
