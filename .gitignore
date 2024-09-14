@@ -25,4 +25,9 @@ logs
 
 .yarn
 
+# private files
 server/config.js
+
+# internal data files
+filetrees.json
+exifs.json
