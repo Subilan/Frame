@@ -1,6 +1,6 @@
 <template>
   <div class="collection-container navbar-offset">
-    <div class="collection-outer" v-for="x in 8">
+    <div class="collection-outer" v-for="x in 8" @click="navigateTo('/collection/a-journey-to-xinjiang')">
       <div class="collection">
         <div class="image">
           <img src="@/assets/index.jpg" alt="alt"/>

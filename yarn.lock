@@ -1792,6 +1792,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ali-oss@npm:^6.16.11":
+  version: 6.16.11
+  resolution: "@types/ali-oss@npm:6.16.11"
+  checksum: 10c0/d5da4a0ae17661ddd2fbb9f5ac685309f1ac0301ced7e7b9e31d0d8138ad58b14b84384ceb2fcae2191c588f320afda079103f5aa4c176c9c9c6ec2434442bf6
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:*, @types/estree@npm:1.0.5, @types/estree@npm:^1.0.0":
   version: 1.0.5
   resolution: "@types/estree@npm:1.0.5"
@@ -5828,6 +5835,7 @@ __metadata:
     "@ant-design-vue/nuxt": "npm:^1.4.2"
     "@jamescoyle/vue-icon": "npm:^0.1.2"
     "@mdi/js": "npm:^7.4.47"
+    "@types/ali-oss": "npm:^6.16.11"
     ali-oss: "npm:^6.21.0"
     ant-design-vue: "npm:4.x"
     nuxt: "npm:^3.13.0"
