@@ -1,16 +1,36 @@
-import filetrees from './filetrees.json' assert { type: 'json' };
-import exifs from './exifs.json' assert { type: 'json' };
 import axios from 'axios';
 import fs from "fs/promises";
 
-const allExifs = [];
+let [dataFiletrees, dataExifs] = [undefined, undefined];
 
 function exifAlreadyPresent(name) {
-    return exifs.filter(x => x.name === name).length > 0;
+    if (!dataExifs) return false;
+    return dataExifs.filter(x => x.name === name).length > 0;
 }
 
-for (let k of Object.keys(filetrees.collections)) {
-    const currentCollection = filetrees.collections[k];
+async function exists(file) {
+    try {
+        await fs.access(file, fs.constants.F_OK);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+if (await exists('./filetrees.json')) {
+    const filetreeContent = await  fs.readFile('./filetrees.json');
+    dataFiletrees = JSON.parse(filetreeContent.toString());
+}
+
+if (await exists('./exifs.json')) {
+    const exifsContent = await fs.readFile('./exifs.json');
+    dataExifs = JSON.parse(exifsContent.toString());
+}
+
+const allExifs = [];
+
+for (let k of Object.keys(dataFiletrees.collections)) {
+    const currentCollection = dataFiletrees.collections[k];
     const currentExifs = [];
 
     for (let f of currentCollection.files) {

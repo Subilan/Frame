@@ -47,4 +47,5 @@ const text = JSON.stringify({
     collections,
     totalSize: fileTree.reduce((a, b) => a + b.size, 0)
 });
+
 await fs.writeFile('./filetrees.json', text);
