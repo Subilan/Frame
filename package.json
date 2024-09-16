@@ -13,6 +13,8 @@
     "@ant-design-vue/nuxt": "^1.4.2",
     "@jamescoyle/vue-icon": "^0.1.2",
     "@mdi/js": "^7.4.47",
+    "@nuxt/image": "^1.8.0",
+    "@vueuse/core": "^11.0.3",
     "ali-oss": "^6.21.0",
     "ant-design-vue": "4.x",
     "axios": "^1.7.7",
