@@ -15,18 +15,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design-vue/nuxt@npm:^1.4.2":
-  version: 1.4.2
-  resolution: "@ant-design-vue/nuxt@npm:1.4.2"
-  dependencies:
-    "@ant-design/icons-vue": "npm:^7.0.1"
-    "@nuxt/kit": "npm:^3.12.1"
-  peerDependencies:
-    ant-design-vue: ">=4"
-  checksum: 10c0/a6f19837c94d413ce4929aac3cbf3775af48c9dd3c20f6cb339f3534f075f357f627efb70b9a22e5db533a1e8d74d7b69019966a7ba1af5c086b3310f78ae4cc
-  languageName: node
-  linkType: hard
-
 "@ant-design/colors@npm:^6.0.0":
   version: 6.0.0
   resolution: "@ant-design/colors@npm:6.0.0"
@@ -43,7 +31,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons-vue@npm:^7.0.0, @ant-design/icons-vue@npm:^7.0.1":
+"@ant-design/icons-vue@npm:^7.0.0":
   version: 7.0.1
   resolution: "@ant-design/icons-vue@npm:7.0.1"
   dependencies:
@@ -1268,7 +1256,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@npm:3.13.2, @nuxt/kit@npm:^3.12.1, @nuxt/kit@npm:^3.13.0, @nuxt/kit@npm:^3.13.1":
+"@nuxt/kit@npm:3.13.2, @nuxt/kit@npm:^3.13.0, @nuxt/kit@npm:^3.13.1":
   version: 3.13.2
   resolution: "@nuxt/kit@npm:3.13.2"
   dependencies:
@@ -5674,7 +5662,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^9.0.4, minimatch@npm:^9.0.5":
+"minimatch@npm:^9.0.4":
   version: 9.0.5
   resolution: "minimatch@npm:9.0.5"
   dependencies:
@@ -6190,7 +6178,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt-app@workspace:."
   dependencies:
-    "@ant-design-vue/nuxt": "npm:^1.4.2"
     "@jamescoyle/vue-icon": "npm:^0.1.2"
     "@mdi/js": "npm:^7.4.47"
     "@nuxt/image": "npm:^1.8.0"
@@ -6201,7 +6188,6 @@ __metadata:
     axios: "npm:^1.7.7"
     nuxt: "npm:^3.13.0"
     sass: "npm:^1.78.0"
-    unplugin-vue-components: "npm:^0.27.4"
     vue: "npm:latest"
     vue-router: "npm:latest"
   languageName: unknown
@@ -8336,33 +8322,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin-vue-components@npm:^0.27.4":
-  version: 0.27.4
-  resolution: "unplugin-vue-components@npm:0.27.4"
-  dependencies:
-    "@antfu/utils": "npm:^0.7.10"
-    "@rollup/pluginutils": "npm:^5.1.0"
-    chokidar: "npm:^3.6.0"
-    debug: "npm:^4.3.6"
-    fast-glob: "npm:^3.3.2"
-    local-pkg: "npm:^0.5.0"
-    magic-string: "npm:^0.30.11"
-    minimatch: "npm:^9.0.5"
-    mlly: "npm:^1.7.1"
-    unplugin: "npm:^1.12.1"
-  peerDependencies:
-    "@babel/parser": ^7.15.8
-    "@nuxt/kit": ^3.2.2
-    vue: 2 || 3
-  peerDependenciesMeta:
-    "@babel/parser":
-      optional: true
-    "@nuxt/kit":
-      optional: true
-  checksum: 10c0/433df22086311c53d9539349c1484e2648ad7f9d4b6580ee5dc6cbb15c38d57b75d0e60ff22861575c078f5fadd5ee75d4fdff06fd80b091328cdd1bbc22afab
-  languageName: node
-  linkType: hard
-
 "unplugin-vue-router@npm:^0.10.8":
   version: 0.10.8
   resolution: "unplugin-vue-router@npm:0.10.8"
@@ -8390,7 +8349,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^1.10.0, unplugin@npm:^1.12.1, unplugin@npm:^1.12.2, unplugin@npm:^1.14.1, unplugin@npm:^1.3.1":
+"unplugin@npm:^1.10.0, unplugin@npm:^1.12.2, unplugin@npm:^1.14.1, unplugin@npm:^1.3.1":
   version: 1.14.1
   resolution: "unplugin@npm:1.14.1"
   dependencies:

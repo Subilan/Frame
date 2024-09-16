@@ -10,5 +10,5 @@ export default defineNuxtConfig({
       port: 7070
   },
 
-  modules: ['@ant-design-vue/nuxt'],
+  modules: ['@ant-design-vue/nuxt', '@nuxt/image'],
 })
