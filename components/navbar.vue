@@ -17,13 +17,15 @@
 @use "@/assets/global";
 
 .navbar {
-  position: absolute;
+  z-index: 100;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   box-sizing: border-box;
   height: global.$navbarHeight;
-  background: #2e2e2e;
+  background: global.$primarydd;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .3);
   color: white;
   display: flex;
   align-items: center;

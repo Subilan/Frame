@@ -1,4 +1,8 @@
 $navbarHeight: 64px;
+$primary: #607d8b;
+$primaryd: #263238;
+$primarydd: #1b2328;
+$primaryl: #eceff1;
 
 body {
   margin: 0;
@@ -12,6 +16,23 @@ body {
 .navbar-offset {
   margin-top: $navbarHeight;
 }
+
+a {
+  color: black;
+}
+
+a[target="_blank"] {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+
+  &::after {
+    content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjE1cHgiIGhlaWdodD0iMTVweCIgZmlsbD0iI2FhYSI+PHBhdGggZD0iTTUsMTcuNTlMMTUuNTksN0g5VjVIMTlWMTVIMTdWOC40MUw2LjQxLDE5TDUsMTcuNTlaIiAvPjwvc3ZnPg==");
+    height: 18px;
+  }
+}
+
+
 
 p, h1, h2, h3, h4, h5, h6 {
   margin: 8px 0;

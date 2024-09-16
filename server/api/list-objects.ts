@@ -15,6 +15,12 @@ export default defineEventHandler(e => {
 
     const afterStartIndex = collection.files.slice(startIndex);
 
-    if (afterStartIndex.length <= limit) return afterStartIndex;
-    return afterStartIndex.slice(0, limit);
+    if (afterStartIndex.length <= limit) return ok({
+        hasNext: false,
+        images: afterStartIndex
+    });
+    return ok({
+        hasNext: true,
+        images: afterStartIndex.slice(0, limit)
+    });
 })

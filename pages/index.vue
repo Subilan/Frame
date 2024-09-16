@@ -12,13 +12,8 @@
       </div>
 
       <div class="index-buttons">
-        <a-button type="primary" size="large" @click="navigateTo('/collections')">
-          按合集浏览 <icon :path="mdiArrowRight"/>
-        </a-button>
-
-        <a-button size="large" @click="navigateTo('/about')">
-          了解更多 <icon :path="mdiLaunch"/>
-        </a-button>
+        <btn @click="navigateTo('/collections')">按合集浏览 <icon :path="mdiArrowRight"/></btn>
+        <btn type="border">了解更多 <icon :path="mdiLaunch"/></btn>
       </div>
     </div>
   </div>
