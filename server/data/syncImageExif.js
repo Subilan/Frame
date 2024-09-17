@@ -49,4 +49,8 @@ for (let k of Object.keys(dataFiletrees.collections)) {
     allExifs.push(...currentExifs);
 }
 
+if (Array.isArray(dataExifs)) {
+    allExifs.push(...dataExifs);
+}
+
 await fs.writeFile('./exifs.json', JSON.stringify(allExifs));
