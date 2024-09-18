@@ -18,8 +18,11 @@
     "ant-design-vue": "4.x",
     "axios": "^1.7.7",
     "nuxt": "^3.13.0",
+    "ol": "^10.1.0",
+    "vite-svg-loader": "^5.1.0",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vue3-openlayers": "^11.2.0"
   },
   "version": "0.0.0",
   "packageManager": "yarn@4.4.1",
