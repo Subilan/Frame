@@ -1,6 +1,6 @@
 import axios from "axios";
-import type {Resp} from "~/types";
+import type {FrameResp} from "~/types";
 
 export default async function (url: string) {
-    return await axios.get<Resp>(url);
+    return await axios.get<FrameResp>(url);
 }
