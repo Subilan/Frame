@@ -1,5 +1,5 @@
 <template>
-  <div class="single-collection-container navbar-offset">
+  <div class="single-collection-container navbar-offset" v-if="!notFound && !initialLoading">
     <div class="top">
       <div class="left">
         <h2>A Journey to Xinjiang<small>Feb, 2024</small></h2>
@@ -12,7 +12,7 @@
           consequatur deserunt inventore ipsam laborum qui quos rem repellat rerum sapiente sit voluptas voluptatem
           voluptatum.</p>
         <div class="section external-links">
-          <label>RELATED &raquo;</label>
+          <label>EXTERNAL LINKS &raquo;</label>
           <a target="_blank" href>Read “北疆游记（一）” on subilan.win</a>
           <a target="_blank" href>Read “北疆游记（二）” on subilan.win</a>
         </div>
@@ -23,7 +23,7 @@
     </div>
     <div class="images" v-if="images.length > 0">
       <div class="image" v-for="x in images">
-        <nuxt-img draggable="false" :src="toThumbnail(x.url)" loading="lazy" placeholder placeholder-class="loading" />
+        <nuxt-img draggable="false" :src="toThumbnail(x.url)" loading="lazy" placeholder placeholder-class="loading"/>
         <circle-spinner class="image-loading-indicator"/>
         <div class="layer">
           <p>View now
@@ -43,12 +43,23 @@
       </div>
     </div>
   </div>
+  <div class="not-found-container describe center full navbar-offset" v-else-if="notFound">
+    <icon :path="mdiHelpCircleOutline"/>
+    <h2>FOUR-O-FOUR</h2>
+    <p>Collection “{{ collectionName }}” cannot be found, maybe there's some misspelling?</p>
+    <btn @click="useRouter().go(-1)" class="shadow" type="primary"><icon :path="mdiArrowLeft"/> Go back</btn>
+  </div>
+  <div class="loading-container center full flex-column gap-32 navbar-offset" v-else-if="initialLoading">
+    <circle-spinner/>
+    <em>Loading collection “{{ collectionName }}”...</em>
+  </div>
 </template>
 
 <script setup>
 import {
+  mdiArrowLeft,
   mdiChevronDown,
-  mdiHarddisk,
+  mdiHarddisk, mdiHelpCircleOutline,
   mdiImage,
   mdiLaunch,
   mdiPackage,
@@ -58,6 +69,7 @@ import {
 import indexImage from '@/assets/index.jpg'
 import axios from "axios";
 import {useElementVisibility} from "@vueuse/core";
+import get from "@/utils/get";
 
 const images = ref([]);
 const hasNext = ref(true);
@@ -73,6 +85,9 @@ const longTimeLoadingIndicator = ref(false);
 
 const retrievingObjects = ref(false);
 
+const notFound = ref(false);
+const initialLoading = ref(true);
+
 function toThumbnail(url) {
   return url + '?x-oss-process=image/resize,h_800';
 }
@@ -84,39 +99,67 @@ function startLongTimeDetection() {
 }
 
 watch(bottomIndicatorVisibility, async v => {
-  if (retrievingObjects.value) return;
-  if (v) {
-    retrievingObjects.value = true;
-    startLongTimeDetection();
-    const objects = await getObjects(collectionName, currentIndexCursor.value, limit);
-    retrievingObjects.value = false;
-    longTimeLoadingIndicator.value = false;
-    loadAttempts.value += 1;
-    if (objects.status === 200) {
-      if (objects.data.code === 'ok') {
-        images.value.push(...objects.data.data.images)
-        currentIndexCursor.value += limit;
-        hasNext.value = objects.data.data.hasNext;
-      } else {
-        console.error(objects);
-      }
-    } else {
-      console.error(objects);
-    }
-  }
+  if (v) await update();
 })
 
-async function getObjects(tag, startIndex, limit) {
-  return await axios.get(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
+async function update() {
+  if (retrievingObjects.value) return;
+
+  retrievingObjects.value = true;
+  startLongTimeDetection();
+  const objects = await getObjects(collectionName, currentIndexCursor.value, limit);
+  initialLoading.value = false;
+  retrievingObjects.value = false;
+  longTimeLoadingIndicator.value = false;
+  loadAttempts.value += 1;
+  if (objects.status === 200) {
+    if (objects.data.code === 'ok') {
+      images.value.push(...objects.data.data.images)
+      currentIndexCursor.value += limit;
+      hasNext.value = objects.data.data.hasNext;
+    } else if (objects.data.code === 'ng') {
+      if (objects.data.data === 'nothing') notFound.value = true;
+      console.error(objects);
+    }
+  } else {
+    console.error(objects);
+  }
 }
+
+async function getObjects(tag, startIndex, limit) {
+  return await get(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
+}
+
+onMounted(() => {
+  update().finally();
+})
 </script>
+
+<style lang="scss" scoped>
+.not-found-container {
+  padding: 32px;
+
+  p {
+    max-width: 35%;
+    text-align: center;
+    line-height: 1.8;
+    margin: 16px 0;
+  }
+
+  h2 {
+    font-size: 40px;
+    font-style: italic;
+    margin-top: 16px;
+    margin-bottom: 0;
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 @use 'assets/global';
 
 .image-loading-indicator {
   opacity: 0;
-  transition: all .2s ease;
 }
 
 .loading + .image-loading-indicator {
@@ -129,10 +172,7 @@ async function getObjects(tag, startIndex, limit) {
   gap: 16px;
 
   label {
-    background: global.$primaryd;
-    padding: 4px 8px;
-    color: white;
-    border-radius: 4px;
+    font-style: italic;
   }
 }
 
@@ -207,6 +247,7 @@ async function getObjects(tag, startIndex, limit) {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
     img {
       height: 200px;
     }
