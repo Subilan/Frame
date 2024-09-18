@@ -27,9 +27,9 @@ const props = defineProps({
   color: white;
   padding: 8px 16px;
   font-size: 16px;
-  box-shadow: 0 5px 6px rgba(0, 0, 0, .4);
   cursor: pointer;
   transition: all .2s ease;
+  font-family: global.$fontFamilySet;
 
   svg {
     height: 18px;
@@ -42,6 +42,14 @@ const props = defineProps({
 
   &:active {
     filter: brightness(60%);
+  }
+
+  &.shadow {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, .2);
+  }
+
+  &.shadow-dark {
+    box-shadow: 0 5px 6px rgba(0, 0, 0, .4);
   }
 }
 

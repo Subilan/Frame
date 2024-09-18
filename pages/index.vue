@@ -12,8 +12,8 @@
       </div>
 
       <div class="index-buttons">
-        <btn @click="navigateTo('/collections')">按合集浏览 <icon :path="mdiArrowRight"/></btn>
-        <btn type="border">了解更多 <icon :path="mdiLaunch"/></btn>
+        <btn class="shadow-dark" @click="navigateTo('/collections')">按合集浏览 <icon :path="mdiArrowRight"/></btn>
+        <btn class="shadow-dark" type="border">了解更多 <icon :path="mdiLaunch"/></btn>
       </div>
     </div>
   </div>
