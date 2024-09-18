@@ -1,6 +1,6 @@
 <template>
   <client-only>
-    <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height:400px">
+    <ol-map class="map-container" :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 400px">
       <ol-view :center="center" :rotation="rotation" :zoom="zoom"
                :projection="projection" />
       <ol-tile-layer>
@@ -17,7 +17,7 @@ const zoom = ref(8)
 const rotation = ref(0)
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .ol-attribution li {
   display: flex;
   align-items: baseline;
