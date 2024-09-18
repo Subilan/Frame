@@ -4,9 +4,11 @@ $primaryd: #263238;
 $primarydd: #1b2328;
 $primaryl: #eceff1;
 
+$fontFamilySet: 'Fira Sans', 'PingFang SC', 'Microsoft YaHei UI', sans-serif;
+
 body {
   margin: 0;
-  font-family: 'Fira Sans', 'PingFang SC', 'Microsoft YaHei UI', sans-serif;
+  font-family: $fontFamilySet;
 }
 
 .spacer {
@@ -47,4 +49,41 @@ p, h1, h2, h3, h4, h5, h6 {
 .ant-btn svg {
   height: 60%;
   width: min-content;
+}
+
+.describe {
+  flex-direction: column;
+
+  > svg {
+    height: 100px;
+    width: 100px;
+  }
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+.gap-32 {
+  gap: 32px;
+}
+
+.full {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+
+  &.navbar-offset {
+    height: calc(100vh - $navbarHeight);
+  }
 }
