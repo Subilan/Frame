@@ -7,11 +7,11 @@ export default defineEventHandler(e => {
     const limit = suspect(query.limit as number, 20);
 
     if (limit <= 0 || startIndex < 0) {
-        return ng();
+        return ng('invalid parameter');
     }
 
     const collection = getCollection(tag);
-    if (collection === null) return ng();
+    if (collection === null) return ng('nothing');
 
     const afterStartIndex = collection.files.slice(startIndex);
 
