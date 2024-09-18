@@ -1,5 +1,6 @@
-import resp from "~/server/utils/resp";
+import resp from "@/server/utils/resp";
+import {NGReason} from "@/types";
 
-export default function (data: any = null) {
-    return resp('ng', data)
+export default function (reason: NGReason) {
+    return resp('ng', reason)
 }
