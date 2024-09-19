@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="images" v-if="images.length > 0">
-      <div class="image" v-for="x in images">
+      <div class="image" @click="navigateTo(`/view/${x.name}`)" v-for="x in images">
         <nuxt-img draggable="false" :src="toThumbnail(x.url)" loading="lazy" placeholder placeholder-class="loading"/>
         <circle-spinner class="image-loading-indicator"/>
         <div class="layer">
