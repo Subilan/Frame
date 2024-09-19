@@ -1,5 +1,10 @@
 <template>
   <nav class="navbar">
+    <transition name="x">
+      <button @click="useRouter().go(-1)" class="back-btn" v-if="route.name === 'imageview'">
+        <icon color="white" :path="mdiArrowLeft"/>
+      </button>
+    </transition>
     <div class="site-title" @click="navigateTo('/')">
       <site-title/>
     </div>
@@ -13,8 +18,50 @@
   </nav>
 </template>
 
+<script setup lang="ts">
+import SiteTitle from "@/components/site-title.vue";
+import {mdiArrowLeft} from "@mdi/js";
+
+const route = useRoute();
+</script>
+
 <style lang="scss">
 @use "@/assets/global";
+
+.x-enter-active,
+.x-leave-active {
+  transition: all .3s ease;
+}
+
+.x-enter-from,
+.x-leave-to {
+  transform: scale(.3);
+  opacity: 0;
+}
+
+.back-btn {
+  border-radius: 100%;
+  padding: 8px;
+  width: 45px;
+  height: 45px;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 10px;
+  outline: none;
+  background: transparent;
+  border: none;
+
+  &:active {
+    background: rgba(255, 255, 255, .1);
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, .2);
+  }
+}
 
 .navbar {
   z-index: 100;
@@ -52,6 +99,3 @@
   }
 }
 </style>
-<script setup lang="ts">
-import SiteTitle from "~/components/site-title.vue";
-</script>
