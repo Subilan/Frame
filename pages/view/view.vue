@@ -10,52 +10,88 @@
         <div class="exif">
           <label>Shot at</label>
           <span>{{ formatDate(resolvedExif.date) }}</span>
-          <small>UTC{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset) }}</small>
         </div>
         <div class="exif">
           <label>Shot on</label>
           <div class="apple" v-if="resolvedExif.model.includes('iPhone')">
             <div class="device">Apple {{ resolvedExif.model }}</div>
           </div>
-          <small v-if="resolvedExif.model.includes('iPhone')">{{ resolvedExif.lensModel }}</small>
         </div>
         <div class="exif">
           <label>Resolution</label>
           <span>{{ resolvedExif.x }}px*{{ resolvedExif.y }}px</span>
-          <small>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}MB (compressed) · {{ resolvedExif.format }}</small>
+        </div>
+        <div class="exif">
+          <label>Size</label>
+          <span>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}<small>MB</small></span>
+        </div>
+        <div class="exif">
+          <label>Time Offset</label>
+          <span>{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset)}}</span>
+        </div>
+        <div class="exif">
+          <label>Focal Length</label>
+          <span>{{ resolvedExif.focalLength }}<small>mm</small></span>
+        </div>
+        <div class="exif">
+          <label>Aperature</label>
+          <span><em>f</em>/{{ resolvedExif.aperature }}</span>
+        </div>
+        <div class="exif">
+          <label>Exposure Time</label>
+          <span>{{ resolvedExif.exposureTime }}<small>s</small></span>
         </div>
       </div>
+      <hr/>
       <div class="map-information-container">
         <div class="map-container">
           <client-only>
             <exif-map v-model="imageCoord"/>
           </client-only>
         </div>
-        <div class="lagi-longi-information-container">
-          <div>
-            <label>Lagitude</label>
-            <span>{{ resolvedExif.latitudeN[0] }}° {{ resolvedExif.latitudeN[1] }}' {{
-                resolvedExif.latitudeN[2]
-              }}'' <small>N</small></span>
+        <div class="right">
+          <div class="location-container">
+            <label>Location</label>
+            <div v-if="currentGeo.loading" class="loading-location">
+              <circle-spinner size="15"/> Loading location...
+            </div>
+            <div v-else class="location-contents">
+              <div class="location-primary">{{ currentGeo.data.name }}</div>
+              <div class="location-secondary">{{ getGeoPrefix(currentGeo.data.name, currentGeo.data.ext_path) }}</div>
+            </div>
           </div>
-          <div>
-            <label>Longitude</label>
-            <span>{{ resolvedExif.longitudeE[0] }}° {{ resolvedExif.longitudeE[1] }}' {{ resolvedExif.longitudeE[2] }}'' <small>E</small></span>
+          <div class="lagi-longi-information-container">
+            <div>
+              <label>Lagitude</label>
+              <span>{{ resolvedExif.latitudeN[0] }}° {{ resolvedExif.latitudeN[1] }}' {{
+                  resolvedExif.latitudeN[2]
+                }}'' <small>N</small></span>
+            </div>
+            <div>
+              <label>Longitude</label>
+              <span>{{ resolvedExif.longitudeE[0] }}° {{ resolvedExif.longitudeE[1] }}' {{ resolvedExif.longitudeE[2] }}'' <small>E</small></span>
+            </div>
+            <div>
+              <label>Altitude</label>
+              <span>{{ resolvedExif.altitude.toFixed(2) }} <small>m</small></span>
+            </div>
+            <div>
+              <label>Speed (GPS)</label>
+              <span>{{ resolvedExif.gpsspeed.toFixed(2) }} <small>km/h</small></span>
+            </div>
           </div>
-          <div>
-            <label>Altitude</label>
-            <span>{{ resolvedExif.altitude.toFixed(2) }} <small>m</small></span>
-          </div>
-          <div>
-            <label>Speed (GPS)</label>
-            <span>{{ resolvedExif.gpsspeed.toFixed(2) }} <small>km/h</small></span>
+          <div class="note">
+            <icon :path="mdiInformationOutline"/>
+            <p><u clickable>Click here</u> to learn more about these information.</p>
           </div>
         </div>
       </div>
+      <hr/>
       <div class="external-caption-container">
         <label>Captions</label>
         <div class="caption-content">
-          <p>这张照片是在 2 月 11 日归程的飞机上拍摄的，因此海拔和速度都比较高，GPS 定位到的地点大概在兰州的东北部（白银），下面亮着灯的地方应该就是兰州或者白银了。</p>
+          <p>这张照片是在 2 月 11 日归程的飞机上拍摄的，因此海拔和速度都比较高，GPS
+            定位到的地点大概在兰州的东北部（白银），下面亮着灯的地方应该就是兰州或者白银了。</p>
         </div>
       </div>
     </div>
@@ -63,9 +99,10 @@
 </template>
 
 <script setup lang="ts">
-import type {Delayed, Exif, FrameResp} from "@/types";
+import type {Delayed, Exif, FrameResp, Geo} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
 import formatDate from "../../utils/formatDate";
+import {mdiInformationOutline} from "@mdi/js";
 
 const route = useRoute();
 const remotePath = route.params.remotePath as string;
@@ -77,6 +114,10 @@ const currentExif = reactive<Delayed<Exif>>({
   loading: true,
   data: {}
 });
+const currentGeo = reactive<Delayed<Geo>>({
+  loading: true,
+  data: {}
+})
 const resolvedExif = computed(() => resolveExif(currentExif.data as Exif));
 const imageCoord = ref([0, 0]);
 
@@ -99,7 +140,8 @@ interface ResolvedExif {
   focalLength: number,
   aperature: number,
   gpsspeed: number,
-  gpsspeedref: string
+  gpsspeedref: string,
+  exposureTime: string
 }
 
 function getTimeOffsetName(offset: string) {
@@ -159,7 +201,8 @@ function resolveExif(exif: Exif): ResolvedExif {
     focalLength: Number(`${lensModelExecuted[1]}.${lensModelExecuted[2]}`),
     aperature: Number(`${lensModelExecuted[3]}.${lensModelExecuted[4]}`),
     gpsspeed: eval(exif.GPSSpeed.value),
-    gpsspeedref: exif.GPSSpeedRef.value
+    gpsspeedref: exif.GPSSpeedRef.value,
+    exposureTime: exif.ExposureTime.value
   }
 
   imageCoord.value = toWGS84(result.latitudeN, result.longitudeE);
@@ -191,22 +234,83 @@ async function retrieveCurrentObject() {
   currentObject.loading = false;
 }
 
+async function retrieveGeo(coord: number[]) {
+  const res = await $fetch<FrameResp<Geo>>(`/api/get-geo?x=${coord[0]}&y=${coord[1]}&depth=2`);
+
+  if (res.code === 'ng') {
+    console.error(res);
+    return;
+  }
+
+  console.log(res);
+
+  Object.assign(currentGeo.data, res);
+  currentGeo.loading = false;
+}
+
+function getGeoPrefix(name: string, ext_path: string) {
+  return ext_path.replace(` ${name}`, '');
+}
+
 await retrieveCurrentObject();
 await retrieveCurrentExif();
+
+watch(imageCoord, async x => {
+  if (x[0] !== 0 && x[1] !== 0) {
+    await retrieveGeo(imageCoord.value);
+  }
+})
 </script>
 
 <style lang="scss" scoped>
 @use "assets/global";
 
-.external-caption-container {
-  margin-top: 32px;
+.note {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 
+  svg {
+    height: 18px;
+  }
+}
+
+.location-container, .external-caption-container {
   label {
     font-size: 22.4px;
     font-weight: bold;
     font-style: italic;
   }
+}
 
+.location-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .loading-location {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    margin-top: 16px;
+  }
+
+  .location-contents {
+    display: flex;
+    flex-direction: column;
+
+    .location-primary {
+      font-size: 30px;
+    }
+
+    .location-secondary {
+      font-size: 18px;
+    }
+  }
+}
+
+.external-caption-container {
   .caption-content {
     font-size: 20px;
     line-height: 1.5;
@@ -217,12 +321,18 @@ await retrieveCurrentExif();
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-gap: 32px;
-  margin-top: 32px;
 
-  .lagi-longi-information-container {
+  .right {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 32px;
+  }
+
+  .lagi-longi-information-container {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 32px;
 
     div {
       flex: 1;
@@ -270,7 +380,8 @@ await retrieveCurrentExif();
 
   .exifs {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 32px;
 
     .exif {
       display: flex;
@@ -284,7 +395,7 @@ await retrieveCurrentExif();
         font-style: italic;
       }
 
-      small {
+      > small {
         font-size: 14px;
         color: #aaa;
       }
