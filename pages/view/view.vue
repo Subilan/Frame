@@ -27,7 +27,7 @@
         </div>
         <div class="exif">
           <label>Time Offset</label>
-          <span>{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset)}}</span>
+          <span>{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset) }}</span>
         </div>
         <div class="exif">
           <label>Focal Length</label>
@@ -53,7 +53,8 @@
           <div class="location-container">
             <label>Location</label>
             <div v-if="currentGeo.loading" class="loading-location">
-              <circle-spinner size="15"/> Loading location...
+              <circle-spinner size="15"/>
+              Loading location...
             </div>
             <div v-else class="location-contents">
               <div class="location-primary">{{ currentGeo.data.name }}</div>
@@ -63,13 +64,15 @@
           <div class="lagi-longi-information-container">
             <div>
               <label>Lagitude</label>
-              <span>{{ resolvedExif.latitudeN[0] }}° {{ resolvedExif.latitudeN[1] }}' {{
+              <span>{{ resolvedExif.latitudeN[0] }}°{{ resolvedExif.latitudeN[1] }}'{{
                   resolvedExif.latitudeN[2]
-                }}'' <small>N</small></span>
+                }}" <small>N</small></span>
             </div>
             <div>
               <label>Longitude</label>
-              <span>{{ resolvedExif.longitudeE[0] }}° {{ resolvedExif.longitudeE[1] }}' {{ resolvedExif.longitudeE[2] }}'' <small>E</small></span>
+              <span>{{ resolvedExif.longitudeE[0] }}°{{ resolvedExif.longitudeE[1] }}'{{
+                  resolvedExif.longitudeE[2]
+                }}" <small>E</small></span>
             </div>
             <div>
               <label>Altitude</label>
@@ -82,7 +85,23 @@
           </div>
           <div class="note">
             <icon :path="mdiInformationOutline"/>
-            <p><u clickable>Click here</u> to learn more about these information.</p>
+            <p>
+              <popup class="inline top trigger-hover">
+                <u clickable>Move your cursor here</u>
+                <template #content>
+                  <h2>About GPS Information</h2>
+                  <p>The GPS information shown here comes with the photo and is included in its <em>EXIF</em> (exchangeable image file format) data.</p>
+                  <p>Usually it's collected from the GPS and written into the EXIF section of the photo meta automatically by the camera host.</p>
+                  <h3>Accurate?</h3>
+                  <p>The information is not 100% accurate of course, especially for the <em>GPS Speed</em> field.</p>
+                  <p>On this site, the location correctness is guaranteed (it's rarely incorrect, though) and checked manually.</p>
+                  <h3>Wow, there are photos taken on the plane with GPS info.</h3>
+                  <p>Yes. GPS service might be somehow available even if you're on the plane. So the GPS information can be retrieved successfully as long as you don't turn your phone to the Airplane Mode.</p>
+                  <p>...but this is an inappropriate behaviour in the view of public safety on some planes. Please turn off your phone if you're asked to!</p>
+                </template>
+              </popup>
+              to learn more about these information.
+            </p>
           </div>
         </div>
       </div>
@@ -102,7 +121,8 @@
 import type {Delayed, Exif, FrameResp, Geo} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
 import formatDate from "../../utils/formatDate";
-import {mdiInformationOutline} from "@mdi/js";
+import {mdiCheck, mdiInformationOutline} from "@mdi/js";
+import Popup from "~/components/popup.vue";
 
 const route = useRoute();
 const remotePath = route.params.remotePath as string;
@@ -268,7 +288,8 @@ watch(imageCoord, async x => {
 .note {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  line-height: 1.5;
 
   svg {
     height: 18px;
