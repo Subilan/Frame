@@ -31,3 +31,5 @@ server/config.js
 # internal data files
 filetrees.json
 exifs.json
+map.geojson
+map.json
