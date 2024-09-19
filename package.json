@@ -19,6 +19,8 @@
     "axios": "^1.7.7",
     "nuxt": "^3.13.0",
     "ol": "^10.1.0",
+    "ol-contextmenu": "^5.5.0",
+    "ol-ext": "^4.0.23",
     "vite-svg-loader": "^5.1.0",
     "vue": "latest",
     "vue-router": "latest",

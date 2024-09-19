@@ -6515,6 +6515,8 @@ __metadata:
     axios: "npm:^1.7.7"
     nuxt: "npm:^3.13.0"
     ol: "npm:^10.1.0"
+    ol-contextmenu: "npm:^5.5.0"
+    ol-ext: "npm:^4.0.23"
     sass: "npm:^1.78.0"
     vite-svg-loader: "npm:^5.1.0"
     vue: "npm:latest"
@@ -6654,7 +6656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ol-contextmenu@npm:^5.4.0":
+"ol-contextmenu@npm:^5.4.0, ol-contextmenu@npm:^5.5.0":
   version: 5.5.0
   resolution: "ol-contextmenu@npm:5.5.0"
   dependencies:
@@ -6665,7 +6667,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ol-ext@npm:^4.0.21":
+"ol-ext@npm:^4.0.21, ol-ext@npm:^4.0.23":
   version: 4.0.23
   resolution: "ol-ext@npm:4.0.23"
   peerDependencies:
