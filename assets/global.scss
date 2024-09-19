@@ -17,6 +17,16 @@ body {
   flex: 1;
 }
 
+[clickable] {
+  cursor: pointer;
+}
+
+hr {
+  margin: 32px 0;
+  border-color: rgba(0, 0, 0, .1);
+  border-width: 0.5px;
+}
+
 .navbar-offset {
   margin-top: $navbarHeight;
 }
