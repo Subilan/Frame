@@ -217,3 +217,13 @@ export interface Exif {
         value: string
     }
 }
+
+export interface Geo {
+    id: number,
+    pid: number,
+    deep: number,
+    name: string,
+    ext_path: string,
+    geo: string,
+    polygon: number[][][]
+}
