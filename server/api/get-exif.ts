@@ -1,5 +1,5 @@
 import {getQuery} from "h3";
-import exifs from '@/server/data/exifs.json';
+import exifs from '@/static/data/exifs.json';
 
 export default defineEventHandler(e => {
     const query = getQuery(e);

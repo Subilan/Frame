@@ -1,4 +1,4 @@
-import FileTreeResultJson from '@/server/data/filetrees.json';
+import FileTreeResultJson from '@/static/data/filetrees.json';
 
 export interface CollectionFile {
     name:         string;

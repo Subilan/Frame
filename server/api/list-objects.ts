@@ -1,4 +1,4 @@
-import ng from "../utils/ng";
+import ng from "@/server/utils/ng";
 
 export default defineEventHandler(e => {
     const query = getQuery(e);
