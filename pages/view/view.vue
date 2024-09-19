@@ -9,7 +9,7 @@
       <div class="exifs">
         <div class="exif">
           <label>Shot at</label>
-          <span>{{ resolvedExif.date.toLocaleString() }}</span>
+          <span>{{ formatDate(resolvedExif.date) }}</span>
           <small>UTC{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset) }}</small>
         </div>
         <div class="exif">
@@ -21,13 +21,15 @@
         </div>
         <div class="exif">
           <label>Resolution</label>
-          <span>{{ resolvedExif.y }}*{{ resolvedExif.x }}</span>
+          <span>{{ resolvedExif.x }}px*{{ resolvedExif.y }}px</span>
           <small>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}MB (compressed) · {{ resolvedExif.format }}</small>
         </div>
       </div>
       <div class="map-information-container">
         <div class="map-container">
-          <exif-map v-model="imageCoord"/>
+          <client-only>
+            <exif-map v-model="imageCoord"/>
+          </client-only>
         </div>
         <div class="lagi-longi-information-container">
           <div>
@@ -53,7 +55,7 @@
       <div class="external-caption-container">
         <label>Captions</label>
         <div class="caption-content">
-          <p>这张照片系在 2 月 11 日归程的飞机上拍摄，因此海拔和速度都比较高，GPS 定位到的地点大概在兰州的东北部，所以下面亮着灯的地方应该就是兰州了。</p>
+          <p>这张照片是在 2 月 11 日归程的飞机上拍摄的，因此海拔和速度都比较高，GPS 定位到的地点大概在兰州的东北部（白银），下面亮着灯的地方应该就是兰州或者白银了。</p>
         </div>
       </div>
     </div>
@@ -63,6 +65,7 @@
 <script setup lang="ts">
 import type {Delayed, Exif, FrameResp} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
+import formatDate from "../../utils/formatDate";
 
 const route = useRoute();
 const remotePath = route.params.remotePath as string;
