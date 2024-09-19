@@ -1,20 +1,12 @@
 import axios from 'axios';
 import fs from "fs/promises";
+import {exists} from "@/server/data/utils/exists.js";
 
 let [dataFiletrees, dataExifs] = [undefined, undefined];
 
 function exifAlreadyPresent(name) {
     if (!dataExifs) return false;
     return dataExifs.filter(x => x.name === name).length > 0;
-}
-
-async function exists(file) {
-    try {
-        await fs.access(file, fs.constants.F_OK);
-        return true;
-    } catch (e) {
-        return false;
-    }
 }
 
 if (await exists('./filetrees.json')) {
