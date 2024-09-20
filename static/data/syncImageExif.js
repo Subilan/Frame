@@ -1,6 +1,6 @@
 import axios from 'axios';
 import fs from "fs/promises";
-import {exists} from "@/server/data/utils/exists.js";
+import {exists} from "./utils/exists.js";
 
 let [dataFiletrees, dataExifs] = [undefined, undefined];
 
