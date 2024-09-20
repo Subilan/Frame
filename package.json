@@ -27,7 +27,7 @@
     "vue-router": "latest",
     "vue3-openlayers": "^11.2.0"
   },
-  "version": "0.0.0",
+  "version": "1.22.22",
   "packageManager": "yarn@4.4.1",
   "devDependencies": {
     "@types/ali-oss": "^6.16.11",
