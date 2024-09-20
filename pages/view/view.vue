@@ -57,13 +57,19 @@
               Loading location...
             </div>
             <div v-else class="location-contents">
-              <div class="location-primary">{{ currentGeo.data.name }}</div>
+              <div class="location-primary">{{ currentGeo.data.name }}
+                <popup class="trigger-hover top p8 autowidth">
+                <badge class="light-blue"><icon :path="mdiAirplane"/> IN FLIGHT</badge>
+                <template #content>
+                  <em>This photo is taken on the plane.</em>
+                </template>
+              </popup></div>
               <div class="location-secondary">{{ getGeoPrefix(currentGeo.data.name, currentGeo.data.ext_path) }}</div>
             </div>
           </div>
           <div class="lagi-longi-information-container">
             <div>
-              <label>Lagitude</label>
+              <label>Latitude</label>
               <span>{{ resolvedExif.latitudeN[0] }}°{{ resolvedExif.latitudeN[1] }}'{{
                   resolvedExif.latitudeN[2]
                 }}" <small>N</small></span>
@@ -90,14 +96,16 @@
                 <u clickable>Move your cursor here</u>
                 <template #content>
                   <h2>About GPS Information</h2>
-                  <p>The GPS information shown here comes with the photo and is included in its <em>EXIF</em> (exchangeable image file format) data.</p>
-                  <p>Usually it's collected from the GPS and written into the EXIF section of the photo meta automatically by the camera host.</p>
-                  <h3>Accurate?</h3>
-                  <p>The information is not 100% accurate of course, especially for the <em>GPS Speed</em> field.</p>
-                  <p>On this site, the location correctness is guaranteed (it's rarely incorrect, though) and checked manually.</p>
-                  <h3>Wow, there are photos taken on the plane with GPS info.</h3>
-                  <p>Yes. GPS service might be somehow available even if you're on the plane. So the GPS information can be retrieved successfully as long as you don't turn your phone to the Airplane Mode.</p>
-                  <p>...but this is an inappropriate behaviour in the view of public safety on some planes. Please turn off your phone if you're asked to!</p>
+                  <p>The GPS data displayed here is extracted from the photo and embedded in its <em>EXIF</em> (Exchangeable Image File Format) metadata.</p>
+                  <p>Typically, this information is captured by the camera's host through the GPS and automatically written into the photo's EXIF metadata.</p>
+
+                  <h3>Accuracy</h3>
+                  <p>While generally reliable, the GPS data, especially the <em>GPS Speed</em> field, may not always be 100% accurate.</p>
+                  <p>On this site, the location data is manually verified to ensure accuracy. Errors on location are rare, though.</p>
+
+                  <h3>Wow, there are photos taken on the plane with GPS data.</h3>
+                  <p>Yes, GPS signals can sometimes be received even on a plane. As long as your phone isn't in Airplane Mode, GPS data may still be logged.</p>
+                  <p>However, please note that using electronic devices that transmit signals during a flight can be prohibited for safety reasons. Always follow the crew's instructions and turn off your device if asked!</p>
                 </template>
               </popup>
               to learn more about these information.
@@ -121,7 +129,7 @@
 import type {Delayed, Exif, FrameResp, Geo} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
 import formatDate from "../../utils/formatDate";
-import {mdiCheck, mdiInformationOutline} from "@mdi/js";
+import {mdiAirplane, mdiCheck, mdiInformationOutline} from "@mdi/js";
 import Popup from "~/components/popup.vue";
 
 const route = useRoute();
@@ -320,9 +328,13 @@ watch(imageCoord, async x => {
   .location-contents {
     display: flex;
     flex-direction: column;
+    gap: 8px;
 
     .location-primary {
       font-size: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .location-secondary {
