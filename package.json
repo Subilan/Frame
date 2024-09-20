@@ -28,7 +28,7 @@
     "vue3-openlayers": "^11.2.0"
   },
   "version": "1.22.22",
-  "packageManager": "yarn@4.4.1",
+  "packageManager": "yarn@4.5.0",
   "devDependencies": {
     "@types/ali-oss": "^6.16.11",
     "sass": "^1.78.0"
