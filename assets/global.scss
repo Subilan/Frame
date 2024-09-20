@@ -78,8 +78,17 @@ p, h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+
 .flex-column {
   flex-direction: column;
+}
+
+.gap-8 {
+  gap: 8px;
 }
 
 .gap-16 {

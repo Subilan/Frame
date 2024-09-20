@@ -31,10 +31,15 @@ function onClick() {
     }
   }
 
+  .activator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   &.top {
     .popup {
       bottom: 100%;
-      padding-bottom: 16px;
     }
   }
 
@@ -42,6 +47,14 @@ function onClick() {
     transform: translate(50%, 0);
     opacity: 1;
     pointer-events: all;
+  }
+
+  &.p8 .popup {
+    padding: 8px;
+  }
+
+  &.autowidth .popup {
+    width: max-content;
   }
 
   .popup {
@@ -62,6 +75,7 @@ function onClick() {
     pointer-events: none;
     transition: all .2s ease;
     border: 2px solid global.$primaryd;
+    font-size: 16px;
 
     p {
       line-height: 1.5;
