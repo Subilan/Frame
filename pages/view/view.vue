@@ -9,7 +9,7 @@
       <div class="exifs">
         <div class="exif">
           <label>Shot at</label>
-          <span>{{ formatDate(resolvedExif.date) }}</span>
+          <span>{{ resolvedExif.date }}</span>
         </div>
         <div class="exif">
           <label>Shot on</label>
@@ -174,7 +174,7 @@ function toThumbnail1080p(url: string) {
 }
 
 interface ResolvedExif {
-  date: Date,
+  date: string,
   timeOffset: string,
   model: string,
   altitude: number,
@@ -236,7 +236,7 @@ function resolveExif(exif: Exif): ResolvedExif {
   if (!lensModelExecuted) throw new Error();
 
   const result = {
-    date: date,
+    date: date.format("YYYY-MM-DD HH:mm:ss"),
     timeOffset: exif.OffsetTime.value,
     model: exif.Model.value,
     altitude: exif.GPSAltitude ? eval(exif.GPSAltitude.value) : -1,

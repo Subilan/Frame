@@ -18,6 +18,7 @@
     "ali-oss": "^6.21.0",
     "ant-design-vue": "4.x",
     "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
     "nuxt": "^3.13.0",
     "ol": "^10.1.0",
     "ol-contextmenu": "^5.5.0",
