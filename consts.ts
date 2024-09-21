@@ -1,0 +1,1 @@
+export const OSSEndpoint = "https://fnmdp.oss-cn-beijing.aliyuncs.com"
