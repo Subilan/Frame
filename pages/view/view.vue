@@ -57,7 +57,16 @@
               Loading location...
             </div>
             <div v-else class="location-contents">
-              <div class="location-primary">{{ currentGeo.data.name }}
+              <div class="location-primary" :style="{'align-items': isRoad() ? 'center' : 'baseline'}">
+                <span v-if="getSpotName() && !isRoad()">
+                  {{ getSpotName() }}
+                </span>
+                <span class="center" v-else-if="getSpotName() && isRoad()">
+                  <img alt="svg" style="margin: 8px 0" height="50px" :src="`/road-svg/${getSpotName().toLowerCase()}.svg`" draggable="false"/>
+                </span>
+                <span :style="{'font-size': getSpotName() ? '85%' : ''}">
+                  {{ currentGeo.data.name }}
+                </span>
                 <popup class="trigger-hover top p8 autowidth">
                   <badge class="light-blue" v-if="isInFlight()">
                     <icon :path="mdiAirplane"/>
@@ -144,8 +153,7 @@
 <script setup lang="ts">
 import type {Delayed, Exif, FrameResp, Geo, SpecialSpot} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
-import formatDate from "../../utils/formatDate";
-import {mdiAirplane, mdiCheck, mdiInformationOutline} from "@mdi/js";
+import {mdiAirplane, mdiInformationOutline} from "@mdi/js";
 import Popup from "@/components/popup.vue";
 import translateExifDate from "@/utils/translateExifDate";
 
@@ -236,7 +244,7 @@ function resolveExif(exif: Exif): ResolvedExif {
   if (!lensModelExecuted) throw new Error();
 
   const result = {
-    date: date.format("YYYY-MM-DD HH:mm:ss"),
+    date: date.format("YYYY/MM/DD HH:mm:ss"),
     timeOffset: exif.OffsetTime.value,
     model: exif.Model.value,
     altitude: exif.GPSAltitude ? eval(exif.GPSAltitude.value) : -1,
@@ -316,6 +324,15 @@ function isInFlight() {
   return currentSpecialSpot.value.some(x => x.type === 'flight');
 }
 
+function isRoad() {
+  return currentSpecialSpot.value.some(x => x.type === 'road');
+}
+
+function getSpotName() {
+  if (currentSpecialSpot.value.length > 0) if (currentSpecialSpot.value[0].type !== 'flight') return currentSpecialSpot.value[0].name as string;
+  return '';
+}
+
 await retrieveCurrentObject();
 await retrieveCurrentExif();
 await retrieveSpecialSpotInfo(currentObject.data.name);
@@ -370,7 +387,6 @@ watch(imageCoord, async x => {
     .location-primary {
       font-size: 30px;
       display: inline-flex;
-      align-items: center;
       gap: 10px;
     }
 
