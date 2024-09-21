@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <transition name="x">
-      <button @click="useRouter().go(-1)" class="back-btn" v-if="route.name === 'imageview'">
+      <button @click="useRouter().go(-1)" class="back-btn" v-if="route.name === 'imageview' || route.name === 'collection'">
         <icon color="white" :path="mdiArrowLeft"/>
       </button>
     </transition>
