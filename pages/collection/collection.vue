@@ -2,19 +2,16 @@
   <div class="single-collection-container navbar-offset" v-if="!notFound && !initialLoading">
     <div class="top">
       <div class="left">
-        <h2>A Journey to Xinjiang<small>Feb, 2024</small></h2>
+        <h2>{{ collection.name }}<small>{{ collection.date }}</small></h2>
         <div class="meta">
-          <span><icon :path="mdiImage"/> 1396 photos</span>
-          <span><icon :path="mdiPackageVariant"/> 390 GB</span>
-          <span><badge>jpeg-compressed</badge></span>
+          <span><icon :path="mdiImage"/> {{ collection.totalAmount }} photos</span>
+          <span><icon :path="mdiPackageVariant"/> {{ (collection.totalSize / 1024 / 1024 / 1024).toFixed(2) }} GB</span>
+          <span v-if="collection.mark"><badge>{{ collection.mark }}</badge></span>
         </div>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A alias aliquam, aperiam aspernatur assumenda at
-          consequatur deserunt inventore ipsam laborum qui quos rem repellat rerum sapiente sit voluptas voluptatem
-          voluptatum.</p>
-        <div class="section external-links">
+        <div class="description" v-html="collection.desc"></div>
+        <div class="section external-links" v-if="collection.external">
           <label>EXTERNAL LINKS &raquo;</label>
-          <a target="_blank" href>Read “北疆游记（一）” on subilan.win</a>
-          <a target="_blank" href>Read “北疆游记（二）” on subilan.win</a>
+          <a target="_blank" :href="x.href" v-for="x in collection.external">{{ x.text }}</a>
         </div>
       </div>
       <div class="right">
@@ -62,14 +59,12 @@ import {
   mdiHarddisk, mdiHelpCircleOutline,
   mdiImage,
   mdiLaunch,
-  mdiPackage,
-  mdiPackageVariant,
-  mdiZipBoxOutline
+  mdiPackageVariant
 } from "@mdi/js";
-import indexImage from '@/assets/index.jpg'
-import axios from "axios";
 import {useElementVisibility} from "@vueuse/core";
 import get from "@/utils/get";
+import getCollectionByName from "@/utils/getCollectionByName";
+
 
 const images = ref([]);
 const hasNext = ref(true);
@@ -79,6 +74,7 @@ const loadAttempts = ref(0);
 
 const route = useRoute();
 const collectionName = route.params.collection;
+const collection = getCollectionByName(collectionName);
 const bottomIndicator = ref(null);
 const bottomIndicatorVisibility = useElementVisibility(bottomIndicator)
 const longTimeLoadingIndicator = ref(false);
@@ -152,6 +148,13 @@ onMounted(() => {
     margin-top: 16px;
     margin-bottom: 0;
   }
+}
+</style>
+
+<style lang="scss">
+.top .description p {
+  margin: 16px 0;
+  line-height: 1.5;
 }
 </style>
 
@@ -236,9 +239,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
 
-  p {
-    margin: 16px 0;
-    line-height: 1.5;
+  .description {
     max-width: 80%;
   }
 
