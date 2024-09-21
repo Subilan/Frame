@@ -43,7 +43,7 @@
         </div>
       </div>
       <hr/>
-      <div class="map-information-container">
+      <div class="map-information-container" v-if="resolvedExif.latitudeN && resolvedExif.longitudeE">
         <div class="map-container">
           <client-only>
             <exif-map v-model="imageCoord"/>
@@ -59,11 +59,15 @@
             <div v-else class="location-contents">
               <div class="location-primary">{{ currentGeo.data.name }}
                 <popup class="trigger-hover top p8 autowidth">
-                <badge class="light-blue"><icon :path="mdiAirplane"/> IN FLIGHT</badge>
-                <template #content>
-                  <em>This photo is taken on the plane.</em>
-                </template>
-              </popup></div>
+                  <badge class="light-blue" v-if="isInFlight()">
+                    <icon :path="mdiAirplane"/>
+                    IN FLIGHT
+                  </badge>
+                  <template #content>
+                    <em>This photo is taken on the plane.</em>
+                  </template>
+                </popup>
+              </div>
               <div class="location-secondary">{{ getGeoPrefix(currentGeo.data.name, currentGeo.data.ext_path) }}</div>
             </div>
           </div>
@@ -89,29 +93,41 @@
               <span>{{ resolvedExif.gpsspeed.toFixed(2) }} <small>km/h</small></span>
             </div>
           </div>
-          <div class="note">
-            <icon :path="mdiInformationOutline"/>
-            <p>
-              <popup class="inline top trigger-hover">
-                <u clickable>Move your cursor here</u>
-                <template #content>
-                  <h2>About GPS Information</h2>
-                  <p>The GPS data displayed here is extracted from the photo and embedded in its <em>EXIF</em> (Exchangeable Image File Format) metadata.</p>
-                  <p>Typically, this information is captured by the camera's host through the GPS and automatically written into the photo's EXIF metadata.</p>
+          <client-only>
+            <div class="note">
+              <icon :path="mdiInformationOutline"/>
+              <p>
+                <popup class="inline top trigger-hover">
+                  <u clickable>Move your cursor here</u>
+                  <template #content>
+                    <h2>About GPS Information</h2>
+                    <p>The GPS data displayed here is extracted from the photo and embedded in its <em>EXIF</em>
+                      (Exchangeable Image File Format) metadata.</p>
+                    <p>Typically, this information is captured by the camera's host through the GPS and automatically
+                      written into the photo's EXIF metadata.</p>
 
-                  <h3>Accuracy</h3>
-                  <p>While generally reliable, the GPS data, especially the <em>GPS Speed</em> field, may not always be 100% accurate.</p>
-                  <p>On this site, the location data is manually verified to ensure accuracy. Errors on location are rare, though.</p>
+                    <h3>Accuracy</h3>
+                    <p>While generally reliable, the GPS data, especially the <em>GPS Speed</em> field, may not always
+                      be 100% accurate.</p>
+                    <p>On this site, the location data is manually verified to ensure accuracy. Errors on location are
+                      rare, though.</p>
 
-                  <h3>Wow, there are photos taken on the plane with GPS data.</h3>
-                  <p>Yes, GPS signals can sometimes be received even on a plane. As long as your phone isn't in Airplane Mode, GPS data may still be logged.</p>
-                  <p>However, please note that using electronic devices that transmit signals during a flight can be prohibited for safety reasons. Always follow the crew's instructions and turn off your device if asked!</p>
-                </template>
-              </popup>
-              to learn more about these information.
-            </p>
-          </div>
+                    <h3>Wow, there are photos taken on the plane with GPS data.</h3>
+                    <p>Yes, GPS signals can sometimes be received even on a plane. As long as your phone isn't in
+                      Airplane Mode, GPS data may still be logged.</p>
+                    <p>However, please note that using electronic devices that transmit signals during a flight can be
+                      prohibited for safety reasons. Always follow the crew's instructions and turn off your device if
+                      asked!</p>
+                  </template>
+                </popup>
+                to learn more about these information.
+              </p>
+            </div>
+          </client-only>
         </div>
+      </div>
+      <div class="center full" v-else>
+        <em>This photo has no GPS information attached.</em>
       </div>
       <hr/>
       <div class="external-caption-container">
@@ -126,7 +142,7 @@
 </template>
 
 <script setup lang="ts">
-import type {Delayed, Exif, FrameResp, Geo} from "@/types";
+import type {Delayed, Exif, FrameResp, Geo, SpecialSpot} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
 import formatDate from "../../utils/formatDate";
 import {mdiAirplane, mdiCheck, mdiInformationOutline} from "@mdi/js";
@@ -147,6 +163,9 @@ const currentGeo = reactive<Delayed<Geo>>({
   loading: true,
   data: {}
 })
+const specialSpotLoading = ref(true);
+const currentSpecialSpot = ref<SpecialSpot[]>([]);
+
 const resolvedExif = computed(() => resolveExif(currentExif.data as Exif));
 const imageCoord = ref([0, 0]);
 
@@ -159,8 +178,8 @@ interface ResolvedExif {
   timeOffset: string,
   model: string,
   altitude: number,
-  latitudeN: number[],
-  longitudeE: number[],
+  latitudeN: number[] | null,
+  longitudeE: number[] | null,
   x: number,
   y: number,
   filesize: number,
@@ -206,10 +225,10 @@ function resolveExif(exif: Exif): ResolvedExif {
   if (date === null) throw new Error();
 
   const longiLatiRegex = /(\d+)deg (\d+)' (\d+)\.(\d+)"/;
-  const longiExecuted = longiLatiRegex.exec(exif.GPSLongitude.value);
-  const latiExecuted = longiLatiRegex.exec(exif.GPSLatitude.value);
-
-  if (!longiExecuted || !latiExecuted) throw new Error();
+  let longiExecuted: RegExpExecArray | null = null;
+  let latiExecuted: RegExpExecArray | null = null;
+  if (exif.GPSLongitude) longiExecuted = longiLatiRegex.exec(exif.GPSLongitude.value);
+  if (exif.GPSLatitude) latiExecuted = longiLatiRegex.exec(exif.GPSLatitude.value);
 
   const lensModelRegex = /(\d+)\.(\d+)mm f\/(\d+)\.(\d+)/;
   const lensModelExecuted = lensModelRegex.exec(exif.LensModel.value);
@@ -220,9 +239,9 @@ function resolveExif(exif: Exif): ResolvedExif {
     date: date,
     timeOffset: exif.OffsetTime.value,
     model: exif.Model.value,
-    altitude: eval(exif.GPSAltitude.value),
-    latitudeN: [1, 2, 3, 4].map(x => Number(latiExecuted[x])),
-    longitudeE: [1, 2, 3, 4].map(x => Number(longiExecuted[x])),
+    altitude: exif.GPSAltitude ? eval(exif.GPSAltitude.value) : -1,
+    latitudeN: latiExecuted ? [1, 2, 3, 4].map(x => Number(latiExecuted[x])) : null,
+    longitudeE: longiExecuted ? [1, 2, 3, 4].map(x => Number(longiExecuted[x])) : null,
     x: Number(exif.PixelXDimension.value),
     y: Number(exif.PixelYDimension.value),
     filesize: Number(exif.FileSize.value),
@@ -230,12 +249,12 @@ function resolveExif(exif: Exif): ResolvedExif {
     lensModel: exif.LensModel.value,
     focalLength: Number(`${lensModelExecuted[1]}.${lensModelExecuted[2]}`),
     aperature: Number(`${lensModelExecuted[3]}.${lensModelExecuted[4]}`),
-    gpsspeed: eval(exif.GPSSpeed.value),
-    gpsspeedref: exif.GPSSpeedRef.value,
+    gpsspeed: exif.GPSSpeed ? eval(exif.GPSSpeed.value) : -1,
+    gpsspeedref: exif.GPSSpeedRef ? exif.GPSSpeedRef.value : '',
     exposureTime: exif.ExposureTime.value
   }
 
-  imageCoord.value = toWGS84(result.latitudeN, result.longitudeE);
+  if (result.latitudeN && result.longitudeE) imageCoord.value = toWGS84(result.latitudeN, result.longitudeE);
 
   return result;
 }
@@ -272,18 +291,34 @@ async function retrieveGeo(coord: number[]) {
     return;
   }
 
-  console.log(res);
-
   Object.assign(currentGeo.data, res);
   currentGeo.loading = false;
+}
+
+async function retrieveSpecialSpotInfo(name: string) {
+  const res = await $fetch<FrameResp<SpecialSpot[]>>(`/api/get-special-spot?name=${btoa(name)}`);
+
+  specialSpotLoading.value = false;
+
+  if (res.code === 'ng') {
+    console.error(res);
+    return;
+  }
+
+  currentSpecialSpot.value.push(...res.data);
 }
 
 function getGeoPrefix(name: string, ext_path: string) {
   return ext_path.replace(` ${name}`, '');
 }
 
+function isInFlight() {
+  return currentSpecialSpot.value.some(x => x.type === 'flight');
+}
+
 await retrieveCurrentObject();
 await retrieveCurrentExif();
+await retrieveSpecialSpotInfo(currentObject.data.name);
 
 watch(imageCoord, async x => {
   if (x[0] !== 0 && x[1] !== 0) {
