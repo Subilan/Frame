@@ -46,7 +46,9 @@ a[target="_blank"] {
   }
 }
 
-
+hr + hr {
+  display: none;
+}
 
 p, h1, h2, h3, h4, h5, h6 {
   margin: 8px 0;
