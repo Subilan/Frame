@@ -1,18 +1,24 @@
 <template>
   <div class="collection-container navbar-offset">
-    <div class="collection-outer" v-for="x in 8" @click="navigateTo('/collection/a-journey-to-xinjiang')">
+    <div class="collection-outer" v-for="x in collections" @click="navigateTo(`/collection/${x.ossPrefix}`)">
       <div class="collection">
         <div class="image">
-          <img src="@/assets/index.jpg" alt="alt"/>
+          <img :src="buildObjectPath(x.ossPrefix, x.banner)" alt="alt"/>
         </div>
         <div class="texts">
-          <h2>A Journey to Xinjiang</h2>
-          <p class="basic-info">Feb, 2024 · 1396 photos</p>
+          <h2>{{ x.name }}</h2>
+          <p class="basic-info">{{ x.date }} · {{ x.totalAmount }} photos</p>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import collections from "@/static/data/collections.json";
+import buildObjectPath from "@/utils/buildObjectPath";
+
+</script>
 
 <style lang="scss">
 @use 'assets/global';
@@ -47,9 +53,9 @@
 
   .image {
     width: 100%;
-    max-height: 15vh;
     overflow: hidden;
     display: flex;
+    height: 15vh;
     align-items: center;
     position: relative;
   }
@@ -75,5 +81,3 @@
   }
 }
 </style>
-<script setup lang="ts">
-</script>
