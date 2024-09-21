@@ -227,3 +227,19 @@ export interface Geo {
     geo: string,
     polygon: number[][][]
 }
+
+interface SpecialSpotBase {
+    includes?: string[],
+    timeRange?: string[][]
+}
+
+interface SpecialSpotDefault extends SpecialSpotBase{
+    type: "spot" | "road",
+    name: string
+}
+
+interface SpecialSpotFlight extends SpecialSpotBase {
+    type: "flight"
+}
+
+export type SpecialSpot = SpecialSpotDefault | SpecialSpotFlight;
