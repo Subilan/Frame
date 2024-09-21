@@ -22,7 +22,7 @@
           <span>{{ resolvedExif.x }}px*{{ resolvedExif.y }}px</span>
         </div>
         <div class="exif">
-          <label>Size</label>
+          <label>Size (compressed)</label>
           <span>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}<small>MB</small></span>
         </div>
         <div class="exif">
@@ -130,7 +130,8 @@ import type {Delayed, Exif, FrameResp, Geo} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
 import formatDate from "../../utils/formatDate";
 import {mdiAirplane, mdiCheck, mdiInformationOutline} from "@mdi/js";
-import Popup from "~/components/popup.vue";
+import Popup from "@/components/popup.vue";
+import translateExifDate from "@/utils/translateExifDate";
 
 const route = useRoute();
 const remotePath = route.params.remotePath as string;
@@ -199,9 +200,10 @@ function resolveExif(exif: Exif): ResolvedExif {
   // @ts-ignore
   if (!exif.ApertureValue.value) return null;
 
-  const datetimeExecuted = /(\d+):(\d+):(\d+) (\d+):(\d+):(\d+)/.exec(exif.DateTime.value);
-  if (!datetimeExecuted) throw new Error();
-  const date = new Date(`${datetimeExecuted[1]}-${datetimeExecuted[2]}-${datetimeExecuted[3]}T${datetimeExecuted[4]}:${datetimeExecuted[5]}:${datetimeExecuted[6]}`)
+
+  const date = translateExifDate(exif.DateTime.value);
+
+  if (date === null) throw new Error();
 
   const longiLatiRegex = /(\d+)deg (\d+)' (\d+)\.(\d+)"/;
   const longiExecuted = longiLatiRegex.exec(exif.GPSLongitude.value);

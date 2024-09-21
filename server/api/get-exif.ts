@@ -1,5 +1,5 @@
 import {getQuery} from "h3";
-import exifs from '@/static/data/exifs.json';
+import getExifByName from "@/server/utils/getExifByName";
 
 export default defineEventHandler(e => {
     const query = getQuery(e);
@@ -9,8 +9,8 @@ export default defineEventHandler(e => {
 
     name = atob(name);
 
-    const res = exifs.filter(x => x.name === name);
-    if (res.length === 0) return ng('nothing');
+    const res = getExifByName(name);
+    if (res === null) return ng('nothing');
 
-    return res[0].exif;
+    return res.exif;
 })
