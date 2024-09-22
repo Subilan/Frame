@@ -2,8 +2,39 @@
   <div class="viewer-container navbar-offset" v-if="!currentObject.loading && !currentExif.loading">
     <div class="image-container full navbar-offset">
       <NuxtImg class="main-image" placeholder placeholder-class="loading" loading="lazy" draggable="false"
-               :src="toThumbnail1080p(currentObject.data.url)"/>
+               :src="finalURL"/>
       <circle-spinner stroke="white" class="image-loading-spinner"/>
+      <div class="left-bar">
+        <image-copyright/>
+      </div>
+      <div class="center-bar">
+        <popup class="p8 top inline trigger-hover autowidth">
+          <div @click="scrollToDetails" class="icon-btn">
+            <icon :path="mdiInformationOutline"/>
+          </div>
+          <template #content>
+            View details
+          </template>
+        </popup>
+        <popup class="p8 top inline trigger-hover autowidth">
+          <div class="icon-btn" @click="originalLoaded = !originalLoaded" :class="{active: originalLoaded}">
+            <icon class="active-hidden" :path="mdiImageOutline"/>
+            <icon class="active-only" :path="mdiImage"/>
+          </div>
+          <template #content>
+            Load original
+          </template>
+        </popup>
+
+        <popup class="p8 top inline trigger-hover autowidth">
+          <div @click="downloadPhoto" class="icon-btn">
+            <icon :path="mdiDownload"/>
+          </div>
+          <template #content>
+            Download (Unavailable)
+          </template>
+        </popup>
+      </div>
     </div>
     <div class="exif-message-container" v-if="resolveExif !== null">
       <div class="exifs">
@@ -62,7 +93,8 @@
                   {{ getSpotName() }}
                 </span>
                 <span class="center" v-else-if="getSpotName() && isRoad()">
-                  <img alt="svg" style="margin: 8px 0" height="50px" :src="`/road-svg/${getSpotName().toLowerCase()}.svg`" draggable="false"/>
+                  <img alt="svg" style="margin: 8px 0" height="50px"
+                       :src="`/road-svg/${getSpotName().toLowerCase()}.svg`" draggable="false"/>
                 </span>
                 <span :style="{'font-size': getSpotName() ? '85%' : ''}">
                   {{ currentGeo.data.name }}
@@ -153,9 +185,18 @@
 <script setup lang="ts">
 import type {Delayed, Exif, FrameResp, Geo, SpecialSpot} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
-import {mdiAirplane, mdiInformationOutline} from "@mdi/js";
+import {
+  mdiAirplane,
+  mdiDownload,
+  mdiImage,
+  mdiImageOutline,
+  mdiImagePlus,
+  mdiImageRefresh,
+  mdiInformationOutline
+} from "@mdi/js";
 import Popup from "@/components/popup.vue";
 import translateExifDate from "@/utils/translateExifDate";
+import ImageCopyright from "~/components/image-copyright.vue";
 
 const route = useRoute();
 const remotePath = route.params.remotePath as string;
@@ -176,6 +217,10 @@ const currentSpecialSpot = ref<SpecialSpot[]>([]);
 
 const resolvedExif = computed(() => resolveExif(currentExif.data as Exif));
 const imageCoord = ref([0, 0]);
+
+const originalLoaded = ref(false);
+
+const finalURL = computed(() => originalLoaded.value ? currentObject.data.url : toThumbnail1080p(currentObject.data.url));
 
 function toThumbnail1080p(url: string) {
   return url + '?x-oss-process=image/resize,h_1080';
@@ -205,6 +250,13 @@ function getTimeOffsetName(offset: string) {
     case '+08:00':
       return 'China Standard Time';
   }
+}
+
+function scrollToDetails() {
+  window.scrollTo({
+    top: window.innerHeight,
+    behavior: 'smooth'
+  })
 }
 
 function toWGS84(latitudeArray: number[], longitudeArray: number[]) {
@@ -320,6 +372,10 @@ function getGeoPrefix(name: string, ext_path: string) {
   return ext_path.replace(` ${name}`, '');
 }
 
+function downloadPhoto() {
+  alert('Download is not available at present.');
+}
+
 function isInFlight() {
   return currentSpecialSpot.value.some(x => x.type === 'flight');
 }
@@ -344,8 +400,31 @@ watch(imageCoord, async x => {
 })
 </script>
 
+<style lang="scss">
+.center-bar {
+  .popup-container .popup {
+    border: none;
+    background: rgba(255, 255, 255, .03);
+    backdrop-filter: blur(2px);
+    color: white;
+  }
+}
+</style>
+
 <style lang="scss" scoped>
 @use "assets/global";
+
+.active-only {
+  display: none;
+}
+
+.active .active-only {
+  display: block;
+}
+
+.active .active-hidden {
+  display: none;
+}
 
 .note {
   display: flex;
@@ -446,6 +525,56 @@ watch(imageCoord, async x => {
   align-items: center;
   background: rgba(0, 0, 0, .8);
   overflow: hidden;
+
+  .left-bar, .center-bar {
+    position: absolute;
+    bottom: 0;
+  }
+
+  .left-bar {
+    left: 0;
+  }
+
+  .center-bar {
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    padding: 8px;
+
+    .p8 {
+      line-height: 0.7;
+    }
+
+    .icon-btn {
+      border-radius: 100%;
+      opacity: .5;
+      cursor: pointer;
+      padding: 8px;
+      transition: all .2s ease;
+      height: 32px;
+      width: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+
+      &.active {
+        background: rgba(255, 255, 255, .1) !important;
+        backdrop-filter: blur(3px);
+        opacity: 1;
+      }
+
+      &:hover {
+        background: rgba(0, 0, 0, .2);
+        opacity: 1;
+      }
+
+      svg {
+        color: white;
+      }
+    }
+  }
 
   img {
     height: 100%;
