@@ -10,7 +10,7 @@
     </div>
     <div class="spacer"/>
     <div class="nav-links">
-      <router-link to="/categories">分类</router-link>
+      <router-link to="/collections">合集</router-link>
       <router-link to="/about">关于</router-link>
       <a target="_blank" href="https://subilan.win">博客</a>
       <a target="_blank" href="https://github.com/Subilan">GitHub</a>
