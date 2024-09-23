@@ -1,11 +1,11 @@
 <template>
-  <span>
+  <div>
     the <strong>frame</strong>
-  </span>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-span {
+div {
   font-style: italic;
   line-height: 1;
 }

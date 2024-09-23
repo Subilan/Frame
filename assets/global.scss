@@ -36,13 +36,15 @@ a {
 }
 
 a[target="_blank"] {
-  display: flex;
+  display: inline-flex;
   align-items: flex-end;
   gap: 1px;
 
   &::after {
     content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjE1cHgiIGhlaWdodD0iMTVweCIgZmlsbD0iI2FhYSI+PHBhdGggZD0iTTUsMTcuNTlMMTUuNTksN0g5VjVIMTlWMTVIMTdWOC40MUw2LjQxLDE5TDUsMTcuNTlaIiAvPjwvc3ZnPg==");
     height: 18px;
+    display: flex;
+    align-items: center;
   }
 }
 
