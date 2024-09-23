@@ -1,7 +1,7 @@
 <template>
   <div class="viewer-container navbar-offset" v-if="!currentObject.loading && !currentExif.loading">
     <div class="image-container full navbar-offset">
-      <NuxtImg class="main-image" placeholder placeholder-class="loading" loading="lazy" draggable="false"
+      <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading" loading="lazy" draggable="false"
                :src="finalURL"/>
       <circle-spinner stroke="white" class="image-loading-spinner"/>
       <div class="left-bar">
@@ -32,6 +32,15 @@
           </div>
           <template #content>
             Download (Unavailable)
+          </template>
+        </popup>
+
+        <popup class="p8 top inline trigger-hover autowidth">
+          <div @click="toggle" class="icon-btn">
+            <icon :path="mdiFullscreen"/>
+          </div>
+          <template #content>
+            Enter fullscreen
           </template>
         </popup>
       </div>
@@ -187,16 +196,17 @@ import type {Delayed, Exif, FrameResp, Geo, SpecialSpot} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
 import {
   mdiAirplane,
-  mdiDownload,
+  mdiDownload, mdiFullscreen,
   mdiImage,
   mdiImageOutline,
   mdiImagePlus,
   mdiImageRefresh,
-  mdiInformationOutline
+  mdiInformationOutline, mdiScale
 } from "@mdi/js";
 import Popup from "@/components/popup.vue";
 import translateExifDate from "@/utils/translateExifDate";
-import ImageCopyright from "~/components/image-copyright.vue";
+import ImageCopyright from "@/components/image-copyright.vue";
+import { useFullscreen } from "@vueuse/core";
 
 const route = useRoute();
 const remotePath = route.params.remotePath as string;
@@ -221,6 +231,9 @@ const imageCoord = ref([0, 0]);
 const originalLoaded = ref(false);
 
 const finalURL = computed(() => originalLoaded.value ? currentObject.data.url : toThumbnail1080p(currentObject.data.url));
+
+const mainImage = ref<HTMLElement | null>(null);
+const { isFullscreen, enter, exit, toggle } = useFullscreen(mainImage);
 
 function toThumbnail1080p(url: string) {
   return url + '?x-oss-process=image/resize,h_1080';
