@@ -14,8 +14,8 @@
           <a target="_blank" :href="x.href" v-for="x in collection.external">{{ x.text }}</a>
         </div>
       </div>
-      <div class="right">
-        <img src="@/assets/xinjiang-theme.png"/>
+      <div class="right" v-if="collection.theme">
+        <img alt="theme" :src="`/theme-pics/${collection.theme}`"/>
       </div>
     </div>
     <div class="images" v-if="images.length > 0">
@@ -55,8 +55,7 @@
 <script setup>
 import {
   mdiArrowLeft,
-  mdiChevronDown,
-  mdiHarddisk, mdiHelpCircleOutline,
+  mdiHelpCircleOutline,
   mdiImage,
   mdiLaunch,
   mdiPackageVariant
