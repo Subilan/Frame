@@ -404,9 +404,10 @@ watch(imageCoord, async x => {
 .center-bar {
   .popup-container .popup {
     border: none;
-    background: rgba(255, 255, 255, .03);
+    background: rgba(0, 0, 0, .4);
     backdrop-filter: blur(2px);
     color: white;
+    margin-bottom: 8px;
   }
 }
 </style>
@@ -540,7 +541,8 @@ watch(imageCoord, async x => {
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    padding: 8px;
+    padding-bottom: 16px;
+    gap: 16px;
 
     .p8 {
       line-height: 0.7;
@@ -558,15 +560,16 @@ watch(imageCoord, async x => {
       align-items: center;
       justify-content: center;
       color: white;
+      background: rgba(0, 0, 0, .9);
 
       &.active {
-        background: rgba(255, 255, 255, .1) !important;
+        background: rgba(0, 0, 0, .8) !important;
         backdrop-filter: blur(3px);
         opacity: 1;
       }
 
       &:hover {
-        background: rgba(0, 0, 0, .2);
+        background: rgba(0, 0, 0, .6);
         opacity: 1;
       }
 
