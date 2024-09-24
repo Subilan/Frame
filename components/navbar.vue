@@ -10,9 +10,9 @@
     </div>
     <div class="spacer"/>
     <div class="nav-links">
-      <router-link to="/collections">合集</router-link>
-      <router-link to="/about">关于</router-link>
-      <a target="_blank" href="https://subilan.win">博客</a>
+      <router-link to="/collections">Collections</router-link>
+      <router-link to="/about">About</router-link>
+      <a target="_blank" href="https://subilan.win">Blog</a>
       <a target="_blank" href="https://github.com/Subilan">GitHub</a>
     </div>
   </nav>

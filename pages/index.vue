@@ -5,23 +5,49 @@
     <div class="overlay"/>
     <div class="+overlay">
       <div class="hero-text">
-        <p>Perhaps one did not want to be loved so much as to be understood.</p>
+        <p v-html="quoteDisplay.content" @click.self="getRandomQuote"></p>
         <div class="author-note">
-          <small><icon :path="mdiFormatQuoteOpen"/> — 1984 (1945, Eric Arthur Blair a.k.a. <strong>George Orwell</strong>)</small>
+          <small>
+            <icon :path="mdiFormatQuoteOpen"/>
+            — <span v-html="quoteDisplay.from.f"/></small>
         </div>
       </div>
 
       <div class="index-buttons">
-        <btn class="shadow-dark" @click="navigateTo('/collections')">按合集浏览 <icon :path="mdiArrowRight"/></btn>
-        <btn class="shadow-dark" type="border">了解更多 <icon :path="mdiLaunch"/></btn>
+        <btn class="shadow-dark" @click="navigateTo('/collections')">Collections
+          <icon :path="mdiArrowRight"/>
+        </btn>
+        <btn class="shadow-dark" type="border">Learn more
+          <icon :path="mdiLaunch"/>
+        </btn>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import indexImagePath from '@/assets/index.jpg';
-import {mdiArrowRight, mdiCommentQuote, mdiFormatQuoteOpen, mdiInformationOutline, mdiLaunch} from '@mdi/js';
+import {mdiArrowRight, mdiFormatQuoteOpen, mdiLaunch, mdiRefresh} from '@mdi/js';
+import quotesImport from '@/static/data/quotes.json';
+
+const quotes: {
+  content: string,
+  from: {
+    f: string,
+    zh: string
+  }
+}[] = quotesImport;
+
+const quoteIndex = ref(randArrayIndex(quotes));
+const quoteDisplay = computed(() => quotes[quoteIndex.value])
+
+function randArrayIndex(array: any[]) {
+  return Math.floor(Math.random() * array.length);
+}
+
+function getRandomQuote() {
+  quoteIndex.value = randArrayIndex(quotes);
+}
 </script>
 
 <style lang="scss">
@@ -66,7 +92,7 @@ import {mdiArrowRight, mdiCommentQuote, mdiFormatQuoteOpen, mdiInformationOutlin
 
 .hero-text {
   color: white;
-  max-width: 40%;
+  max-width: 50%;
   font-size: 36px;
   text-shadow: 0 2px 5px rgba(0, 0, 0, .3);
 
@@ -74,9 +100,15 @@ import {mdiArrowRight, mdiCommentQuote, mdiFormatQuoteOpen, mdiInformationOutlin
     text-align: right;
   }
 
+  a[target="_blank"] {
+    color: inherit;
+    &::after {
+      content: none;
+    }
+  }
+
   small {
     font-size: 50%;
-    font-style: italic;
     display: inline-flex;
     align-items: center;
     gap: 2px;
