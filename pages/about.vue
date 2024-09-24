@@ -53,6 +53,10 @@
       <em>Load original</em> button at the bottom of the image section (the unresized photo will be downloaded in the
       meantime). This filter is always applied on page load to lower bandwidth consumption.
     </p>
+    <h2>There's no photo actually taken with a camera. Why?</h2>
+    <p>The photos are mostly shot on iPhone for convenience. It's known that the quality of mobile photos is not comparable to professional cameras.</p>
+    <p>Since this is not a photography exhibition webpage and I'm not a specialized photographer either, it's better to emphasize that the <em>rough</em> look of the photo, not the textural details, is what matters to me <em>currently</em>.</p>
+    <p>However, if my interest and time permit, there can be camera photos in the future.</p>
     <h2>Font</h2>
     <p>The logo (let's consider it a logo for now) of Frame and the whole web page is using <a
         href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> as the primary font.</p>
