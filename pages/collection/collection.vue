@@ -32,7 +32,7 @@
     <div class="no-content" v-else-if="!hasNext">
       There's no content at this time.
     </div>
-    <div class="bottom-indicator" ref="bottomIndicator"></div>
+    <div class="bottom-indicator" ref="bottomIndicator" v-if="hasNext"></div>
     <div class="long-time-loading-indicator-wrapper">
       <div class="long-time-loading-indicator" :class="{active: longTimeLoadingIndicator}">
         <circle-spinner size="16"/>
@@ -84,7 +84,7 @@ const notFound = ref(false);
 const initialLoading = ref(true);
 
 function toThumbnail(url) {
-  return url + '?x-oss-process=image/resize,h_800';
+  return url + '?x-oss-process=image/resize,h_400';
 }
 
 function startLongTimeDetection() {
