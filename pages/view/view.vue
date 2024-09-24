@@ -608,6 +608,7 @@ watch(imageCoord, async x => {
 
 .exif-message-container {
   padding: 32px;
+  overflow: hidden;
 
   .exifs {
     display: grid;
