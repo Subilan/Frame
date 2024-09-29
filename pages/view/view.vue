@@ -292,10 +292,11 @@ function resolveExif(exif: Exif): ResolvedExif {
   // @ts-ignore
   if (!exif.ApertureValue.value) return null;
 
+  console.log(exif);
 
   const date = translateExifDate(exif.DateTime.value);
 
-  if (date === null) throw new Error();
+  if (date === null) throw new Error('cannot translate date');
 
   const longiLatiRegex = /(\d+)deg (\d+)' (\d+)\.(\d+)"/;
   let longiExecuted: RegExpExecArray | null = null;
@@ -303,10 +304,10 @@ function resolveExif(exif: Exif): ResolvedExif {
   if (exif.GPSLongitude) longiExecuted = longiLatiRegex.exec(exif.GPSLongitude.value);
   if (exif.GPSLatitude) latiExecuted = longiLatiRegex.exec(exif.GPSLatitude.value);
 
-  const lensModelRegex = /(\d+)\.(\d+)mm f\/(\d+)\.(\d+)/;
+  const lensModelRegex = /([\d.]+)mm f\/([\d.]+)/;
   const lensModelExecuted = lensModelRegex.exec(exif.LensModel.value);
 
-  if (!lensModelExecuted) throw new Error();
+  if (!lensModelExecuted) throw new Error('cannot translate lens model');
 
   const result = {
     date: date.format("YYYY/MM/DD HH:mm:ss"),
@@ -320,8 +321,8 @@ function resolveExif(exif: Exif): ResolvedExif {
     filesize: Number(exif.FileSize.value),
     format: exif.Format.value,
     lensModel: exif.LensModel.value,
-    focalLength: Number(`${lensModelExecuted[1]}.${lensModelExecuted[2]}`),
-    aperature: Number(`${lensModelExecuted[3]}.${lensModelExecuted[4]}`),
+    focalLength: Number(`${lensModelExecuted[1]}`),
+    aperature: Number(`${lensModelExecuted[2]}`),
     gpsspeed: exif.GPSSpeed ? eval(exif.GPSSpeed.value) : -1,
     gpsspeedref: exif.GPSSpeedRef ? exif.GPSSpeedRef.value : '',
     exposureTime: exif.ExposureTime.value
