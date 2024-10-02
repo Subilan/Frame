@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <transition name="x">
-      <button @click="useRouter().go(-1)" class="back-btn" v-if="route.name === 'imageview' || route.name === 'collection'">
+      <button style="margin-right: 10px;" @click="useRouter().go(-1)" class="icon-btn" v-if="route.name === 'imageview' || route.name === 'collection'">
         <icon color="white" :path="mdiArrowLeft"/>
       </button>
     </transition>
@@ -10,19 +10,23 @@
     </div>
     <div class="spacer"/>
     <div class="nav-links">
-      <router-link to="/collections">Collections</router-link>
-      <router-link to="/about">About</router-link>
-      <a target="_blank" href="https://subilan.win">Blog</a>
-      <a target="_blank" href="https://github.com/Subilan">GitHub</a>
+      <router-link v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text }}</router-link>
+      <a target="_blank" v-for="x in navigations.filter(x => x.external)" :href="x.href">{{ x.text }}</a>
     </div>
+    <button @click="drawerModel = !drawerModel" class="icon-btn drawer-btn">
+      <icon color="white" :path="mdiMenu"/>
+    </button>
   </nav>
+  <drawer v-model="drawerModel"/>
 </template>
 
 <script setup lang="ts">
 import SiteTitle from "@/components/site-title.vue";
-import {mdiArrowLeft} from "@mdi/js";
+import {mdiArrowLeft, mdiMenu} from "@mdi/js";
+import navigations from './navigations.json';
 
 const route = useRoute();
+const drawerModel = ref(false);
 </script>
 
 <style lang="scss">
@@ -39,7 +43,13 @@ const route = useRoute();
   opacity: 0;
 }
 
-.back-btn {
+.drawer-btn {
+  @media (min-width: 1000px) {
+    display: none !important;
+  }
+}
+
+.icon-btn {
   border-radius: 100%;
   padding: 8px;
   width: 45px;
@@ -49,7 +59,6 @@ const route = useRoute();
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-right: 10px;
   outline: none;
   background: transparent;
   border: none;
@@ -78,6 +87,10 @@ const route = useRoute();
   align-items: center;
   padding: 0 32px;
 
+  @media (max-width: 768px) {
+    padding: 0 24px;
+  }
+
   .site-title {
     font-size: 30px;
     cursor: pointer;
@@ -95,6 +108,10 @@ const route = useRoute();
 
     a:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      display: none;
     }
   }
 }

@@ -28,6 +28,12 @@ import buildObjectPath from "@/utils/buildObjectPath";
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 8px;
+    padding: 16px;
+  }
 }
 
 .collection-outer:hover .click-to-open-tip {
@@ -58,6 +64,10 @@ import buildObjectPath from "@/utils/buildObjectPath";
     height: 15vh;
     align-items: center;
     position: relative;
+
+    @media (max-width: 768px) {
+      height: 13vh;
+    }
   }
 
   img {
@@ -69,6 +79,11 @@ import buildObjectPath from "@/utils/buildObjectPath";
 
   .texts {
     padding: 14px;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+      padding: 8px;
+    }
 
     h2 {
       margin: 0;

@@ -1,0 +1,22 @@
+[
+  {
+    "external": false,
+    "to": "/collections",
+    "text": "Collections"
+  },
+  {
+    "external": false,
+    "to": "/about",
+    "text": "About"
+  },
+  {
+    "external": true,
+    "href": "https://subilan.win",
+    "text": "Blog"
+  },
+  {
+    "external": true,
+    "href": "https://github.com/Subilan",
+    "text": "GitHub"
+  }
+]

@@ -139,6 +139,7 @@ onMounted(() => {
     text-align: center;
     line-height: 1.8;
     margin: 16px 0;
+
   }
 
   h2 {
@@ -238,8 +239,16 @@ onMounted(() => {
   display: flex;
   align-items: center;
 
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
+
   .description {
     max-width: 80%;
+
+    @media (max-width: 768px) {
+      max-width: 100%;
+    }
   }
 
   .right {
@@ -247,6 +256,10 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
 
     img {
       height: 200px;
@@ -258,6 +271,14 @@ onMounted(() => {
   display: grid;
   box-sizing: border-box;
   grid-template-columns: repeat(5, 1fr);
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .image {
@@ -315,8 +336,21 @@ onMounted(() => {
   display: flex;
   align-items: center;
 
+  @media (max-width: 768px) {
+    font-size: 12px;
+
+    svg {
+      height: 14px;
+      width: 14px;
+    }
+  }
+
   .badge {
     gap: 4px;
+
+    @media (max-width: 768px) {
+      gap: 0;
+    }
 
     svg {
       height: 16px;
@@ -347,11 +381,23 @@ onMounted(() => {
     font-size: 48px;
     margin-bottom: 10px;
 
+    @media (max-width: 768px) {
+      font-size: 40px;
+    }
+
     small {
       font-size: 70%;
       font-weight: 300;
       margin-left: 16px;
     }
+  }
+}
+
+.section.external-links {
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

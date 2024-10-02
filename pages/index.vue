@@ -96,6 +96,12 @@ function getRandomQuote() {
   font-size: 36px;
   text-shadow: 0 2px 5px rgba(0, 0, 0, .3);
 
+  @media (max-width: 768px) {
+    max-width: 100%;
+    font-size: 24px;
+    padding: 0 32px;
+  }
+
   .author-note {
     text-align: right;
   }
