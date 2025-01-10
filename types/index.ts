@@ -12,7 +12,7 @@ export type NGReason = 'invalid parameter' | 'nothing';
 
 export type FrameResp<T = any> = RespOK<T> | RespNG;
 
-export type Delayed<T = any> = {loading: true, data: {}} | {loading: false, data: T};
+export type Delayed<T = any> = { loading: true, data: {} } | { loading: false, data: T };
 
 export interface Exif {
     ApertureValue: {
@@ -233,7 +233,7 @@ interface SpecialSpotBase {
     timeRange?: string[][]
 }
 
-interface SpecialSpotDefault extends SpecialSpotBase{
+interface SpecialSpotDefault extends SpecialSpotBase {
     type: "spot" | "road",
     name: string
 }
@@ -243,3 +243,5 @@ interface SpecialSpotFlight extends SpecialSpotBase {
 }
 
 export type SpecialSpot = SpecialSpotDefault | SpecialSpotFlight;
+
+export type Captions = { [prop: string]: string[] | string }
