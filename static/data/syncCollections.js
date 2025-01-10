@@ -1,3 +1,9 @@
+/**
+ * Sync Collections
+ *
+ * 从 OSS 获取到当前存在的所有合集数据，并将其中包含的文件信息保存到本地
+ */
+
 import getOSSClient from "./utils/getOSSClient.js";
 import isImageFilePath from "./utils/isImageFilePath.js";
 import getFileDateFromName from "./utils/getFileDateFromName.js";

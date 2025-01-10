@@ -1,3 +1,10 @@
+/**
+ * Sync Image Exifs
+ *
+ * 通过 OSS 的 x-oss-process 查询相关图片的 exif 数据，并保存在本地
+ * 对于已经获取到的图片 exif 数据，不会重复获取
+ */
+
 import axios from 'axios';
 import fs from "fs/promises";
 import {exists} from "./utils/exists.js";
