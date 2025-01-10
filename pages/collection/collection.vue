@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="images" v-if="images.length > 0">
-      <div class="image" @click="newWindow(`/view/${x.name}`)" v-for="x in images">
+      <div class="image" @click="navigateTo(`/view/${x.name}`)" v-for="x in images">
         <nuxt-img draggable="false" :src="toThumbnail(x.url)" loading="lazy" placeholder placeholder-class="loading"/>
         <circle-spinner class="image-loading-indicator"/>
         <div class="layer">
@@ -64,6 +64,7 @@ import {useElementVisibility} from "@vueuse/core";
 import get from "@/utils/get";
 import getCollectionByName from "@/utils/getCollectionByName";
 import newWindow from "@/utils/newWindow";
+import {navigateTo} from "#app";
 
 
 const images = ref([]);
