@@ -1,7 +1,8 @@
 <template>
   <div class="viewer-container navbar-offset" v-if="!currentObject.loading && !currentExif.loading">
     <div class="image-container full navbar-offset">
-      <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading" loading="lazy" draggable="false"
+      <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading" loading="lazy"
+               draggable="false"
                :src="finalURL"/>
       <circle-spinner stroke="white" class="image-loading-spinner"/>
       <div class="left-bar">
@@ -46,6 +47,11 @@
       </div>
     </div>
     <div class="exif-message-container" v-if="resolveExif !== null">
+      <div class="external-caption-container" v-if="captions.length > 0">
+        <label>Captions</label>
+        <div class="caption-content" v-html="captions"/>
+      </div>
+      <hr v-if="captions.length > 0">
       <div class="exifs">
         <div class="exif">
           <label>Shot at</label>
@@ -62,7 +68,7 @@
           <span>{{ resolvedExif.x }}px*{{ resolvedExif.y }}px</span>
         </div>
         <div class="exif">
-          <label>Size (compressed)</label>
+          <label>Compressed Size</label>
           <span>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}<small>MB</small></span>
         </div>
         <div class="exif">
@@ -145,47 +151,45 @@
           </div>
           <client-only>
             <div class="note">
-              <icon :path="mdiInformationOutline"/>
-              <p>
-                <popup class="inline top trigger-hover">
-                  <u clickable>Move your cursor here</u>
-                  <template #content>
-                    <h2>About GPS Information</h2>
-                    <p>The GPS data displayed here is extracted from the photo and embedded in its <em>EXIF</em>
-                      (Exchangeable Image File Format) metadata.</p>
-                    <p>Typically, this information is captured by the camera's host through the GPS and automatically
-                      written into the photo's EXIF metadata.</p>
+              <div class="note-item" v-if="hasHWA()">
+                <icon :path="mdiAlertOutline"/>
+                <span>Hardware acceleration may cause incorrect white block in the map canvas.</span>
+              </div>
+              <div class="note-item">
+                <icon :path="mdiInformationOutline"/>
+                <span>
+                  <popup class="inline top trigger-hover">
+                    <u clickable>Move your cursor here</u>
+                    <template #content>
+                      <h2>About GPS Information</h2>
+                      <p>The GPS data displayed here is extracted from the photo and embedded in its <em>EXIF</em>
+                        (Exchangeable Image File Format) metadata.</p>
+                      <p>Typically, this information is captured by the camera's host through the GPS and automatically
+                        written into the photo's EXIF metadata.</p>
 
-                    <h3>Accuracy</h3>
-                    <p>While generally reliable, the GPS data, especially the <em>GPS Speed</em> field, may not always
-                      be 100% accurate.</p>
-                    <p>On this site, the location data is manually verified to ensure accuracy. Errors on location are
-                      rare, though.</p>
+                      <h3>Accuracy</h3>
+                      <p>While generally reliable, the GPS data, especially the <em>GPS Speed</em> field, may not always
+                        be 100% accurate.</p>
+                      <p>On this site, the location data is manually verified to ensure accuracy. Errors on location are
+                        rare, though.</p>
 
-                    <h3>Wow, there are photos taken on the plane with GPS data.</h3>
-                    <p>Yes, GPS signals can sometimes be received even on a plane. As long as your phone isn't in
-                      Airplane Mode, GPS data may still be logged.</p>
-                    <p>However, please note that using electronic devices that transmit signals during a flight can be
-                      prohibited for safety reasons. Always follow the crew's instructions and turn off your device if
-                      asked!</p>
-                  </template>
-                </popup>
-                to learn more about these information.
-              </p>
+                      <h3>Wow, there are photos taken on the plane with GPS data.</h3>
+                      <p>Yes, GPS signals can sometimes be received even on a plane. As long as your phone isn't in
+                        Airplane Mode, GPS data may still be logged.</p>
+                      <p>However, please note that using electronic devices that transmit signals during a flight can be
+                        prohibited for safety reasons. Always follow the crew's instructions and turn off your device if
+                        asked!</p>
+                    </template>
+                  </popup>
+                  to learn more about these information.
+                </span>
+              </div>
             </div>
           </client-only>
         </div>
       </div>
       <div class="center full" v-else>
         <em>This photo has no GPS information attached.</em>
-      </div>
-      <hr/>
-      <div class="external-caption-container">
-        <label>Captions</label>
-        <div class="caption-content">
-          <p>这张照片是在 2 月 11 日归程的飞机上拍摄的，因此海拔和速度都比较高，GPS
-            定位到的地点大概在兰州的东北部（白银），下面亮着灯的地方应该就是兰州或者白银了。</p>
-        </div>
       </div>
     </div>
   </div>
@@ -195,18 +199,16 @@
 import type {Delayed, Exif, FrameResp, Geo, SpecialSpot} from "@/types";
 import type {CollectionFile} from "@/server/utils/getCollection";
 import {
-  mdiAirplane,
+  mdiAirplane, mdiAlertOutline,
   mdiDownload, mdiFullscreen,
   mdiImage,
   mdiImageOutline,
-  mdiImagePlus,
-  mdiImageRefresh,
-  mdiInformationOutline, mdiScale
+  mdiInformationOutline
 } from "@mdi/js";
 import Popup from "@/components/popup.vue";
 import translateExifDate from "@/utils/translateExifDate";
 import ImageCopyright from "@/components/image-copyright.vue";
-import { useFullscreen } from "@vueuse/core";
+import {useFullscreen} from "@vueuse/core";
 
 const route = useRoute();
 const remotePath = route.params.remotePath as string;
@@ -225,6 +227,8 @@ const currentGeo = reactive<Delayed<Geo>>({
 const specialSpotLoading = ref(true);
 const currentSpecialSpot = ref<SpecialSpot[]>([]);
 
+const captions = ref('');
+
 const resolvedExif = computed(() => resolveExif(currentExif.data as Exif));
 const imageCoord = ref([0, 0]);
 
@@ -233,7 +237,7 @@ const originalLoaded = ref(false);
 const finalURL = computed(() => originalLoaded.value ? currentObject.data.url : toThumbnail1080p(currentObject.data.url));
 
 const mainImage = ref<HTMLElement | null>(null);
-const { isFullscreen, enter, exit, toggle } = useFullscreen(mainImage);
+const {isFullscreen, enter, exit, toggle} = useFullscreen(mainImage);
 
 function toThumbnail1080p(url: string) {
   return url + '?x-oss-process=image/resize,h_1080';
@@ -382,6 +386,17 @@ async function retrieveSpecialSpotInfo(name: string) {
   currentSpecialSpot.value.push(...res.data);
 }
 
+async function retrieveCaptions(name: string) {
+  const res = await $fetch<FrameResp<string>>(`/api/get-captions?name=${btoa(name)}`);
+
+  if (res.code === 'ng') {
+    console.error(res);
+    return;
+  }
+
+  captions.value = res.data;
+}
+
 function getGeoPrefix(name: string, ext_path: string) {
   return ext_path.replace(` ${name}`, '');
 }
@@ -406,6 +421,7 @@ function getSpotName() {
 await retrieveCurrentObject();
 await retrieveCurrentExif();
 await retrieveSpecialSpotInfo(currentObject.data.name);
+await retrieveCaptions(currentObject.data.name);
 
 watch(imageCoord, async x => {
   if (x[0] !== 0 && x[1] !== 0) {
@@ -443,12 +459,17 @@ watch(imageCoord, async x => {
 
 .note {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  line-height: 1.5;
+  flex-direction: column;
 
-  svg {
-    height: 18px;
+  .note-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.5;
+
+    svg {
+      height: 18px;
+    }
   }
 }
 
