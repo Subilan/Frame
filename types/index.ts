@@ -230,7 +230,7 @@ export interface Geo {
 
 interface SpecialSpotBase {
     includes?: string[],
-    timeRange?: string[][]
+    timeRange?: string[][],
 }
 
 interface SpecialSpotDefault extends SpecialSpotBase {
