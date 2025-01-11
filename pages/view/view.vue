@@ -1,7 +1,7 @@
 <template>
   <div class="viewer-container navbar-offset" v-if="!currentObject.loading && !currentExif.loading">
     <div class="image-container full navbar-offset">
-      <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading" loading="lazy"
+      <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading"
                draggable="false"
                :src="finalURL"/>
       <circle-spinner stroke="white" class="image-loading-spinner"/>
@@ -296,8 +296,6 @@ function resolveExif(exif: Exif): ResolvedExif {
   // @ts-ignore
   if (!exif.ApertureValue.value) return null;
 
-  console.log(exif);
-
   const date = translateExifDate(exif.DateTime.value);
 
   if (date === null) throw new Error('cannot translate date');
@@ -450,6 +448,11 @@ watch(imageCoord, async x => {
     width: 100%;
     object-fit: contain;
   }
+
+  &.loading {
+    opacity: 0;
+    position: absolute;
+  }
 }
 
 .active-only {
@@ -486,7 +489,7 @@ label {
   font-style: italic;
 
   @media (max-width: 768px) {
-    font-size: 16px;
+    font-size: 17px;
   }
 }
 
@@ -551,6 +554,7 @@ label {
     div {
       flex: 1;
       font-size: 28px;
+
       display: flex;
       flex-direction: column;
 
@@ -592,6 +596,10 @@ label {
     align-items: center;
     padding-bottom: 16px;
     gap: 16px;
+
+    @media (max-width: 768px) {
+      padding-bottom: 32px;
+    }
 
     .p8 {
       line-height: 0.7;

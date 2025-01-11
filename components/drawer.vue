@@ -3,6 +3,11 @@
     <div class="drawer-layer" @click.self="model = !model" v-if="model">
       <div class="drawer" v-if="model">
         <section class="drawer-links">
+          <a @click="model = false" v-if="route.name === 'home'" class="router-link-exact-active">
+            Home
+            <div class="spacer"/>
+            <span class="active-icon"><icon :path="mdiCheck"/></span>
+          </a>
           <a @click="model = false" v-if="route.name === 'imageview'" class="router-link-exact-active">
             View
             <div class="spacer"/>

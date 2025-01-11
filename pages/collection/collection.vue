@@ -324,6 +324,10 @@ onMounted(() => {
     transform: scale(1.2);
     transition: all .2s ease;
 
+    @media (max-width: 768px) {
+      display: none;
+    }
+
     p {
       font-size: 28px;
       display: flex;
