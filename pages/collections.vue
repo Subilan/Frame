@@ -30,7 +30,7 @@ import buildObjectPath from "@/utils/buildObjectPath";
   grid-gap: 16px;
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     grid-gap: 8px;
     padding: 16px;
   }
@@ -51,7 +51,7 @@ import buildObjectPath from "@/utils/buildObjectPath";
     position: relative;
 
     @media (max-width: 768px) {
-      height: 13vh;
+      height: 17vh;
     }
   }
 

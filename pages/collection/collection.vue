@@ -63,9 +63,7 @@ import {
 import {useElementVisibility} from "@vueuse/core";
 import get from "@/utils/get";
 import getCollectionByName from "@/utils/getCollectionByName";
-import newWindow from "@/utils/newWindow";
 import {navigateTo} from "#app";
-
 
 const images = ref([]);
 const hasNext = ref(true);
@@ -345,7 +343,7 @@ onMounted(() => {
   align-items: center;
 
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 14px;
 
     svg {
       height: 14px;

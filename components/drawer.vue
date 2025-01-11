@@ -1,19 +1,30 @@
 <template>
-  <transition name="fade">
+  <transition name="fadeup">
     <div class="drawer-layer" @click.self="model = !model" v-if="model">
-        <div class="drawer" v-if="model">
-          <section class="drawer-links">
-            <router-link @click="model = false" v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text }}
-              <div class="spacer"/>
-              <span class="non-active-icon"><icon :path="mdiArrowRight"/></span>
-              <span class="active-icon"><icon :path="mdiCheck"/></span>
-            </router-link>
-            <a target="_blank" @click="model = false" v-for="x in navigations.filter(x => x.external)" :href="x.href">{{ x.text }}
-              <div class="spacer"/>
-              <span><icon :path="mdiArrowTopRight"/></span>
-            </a>
-          </section>
-        </div>
+      <div class="drawer" v-if="model">
+        <section class="drawer-links">
+          <a @click="model = false" v-if="route.name === 'imageview'" class="router-link-exact-active">
+            View
+            <div class="spacer"/>
+            <span class="active-icon"><icon :path="mdiCheck"/></span>
+          </a>
+          <a @click="model = false" v-if="route.name === 'collection'" class="router-link-exact-active">
+            Collection
+            <div class="spacer"/>
+            <span class="active-icon"><icon :path="mdiCheck"/></span>
+          </a>
+          <router-link @click="model = false" v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text }}
+            <div class="spacer"/>
+            <span class="non-active-icon"><icon :path="mdiArrowRight"/></span>
+            <span class="active-icon"><icon :path="mdiCheck"/></span>
+          </router-link>
+          <a target="_blank" @click="model = false" v-for="x in navigations.filter(x => x.external)"
+             :href="x.href">Open {{ x.text }}
+            <div class="spacer"/>
+            <span><icon :path="mdiArrowTopRight"/></span>
+          </a>
+        </section>
+      </div>
     </div>
   </transition>
 </template>
@@ -21,7 +32,9 @@
 import navigations from "~/components/navigations.json";
 import {mdiArrowRight, mdiArrowTopRight, mdiCheck} from "@mdi/js";
 
+const route = useRoute();
 const model = defineModel();
+console.log(route)
 </script>
 
 <style lang="scss">
@@ -35,6 +48,17 @@ const model = defineModel();
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.fadeup-enter-active,
+.fadeup-leave-active {
+  transition: all .2s ease;
+}
+
+.fadeup-enter-from,
+.fadeup-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
 }
 
 .drawer-layer {
@@ -69,13 +93,13 @@ section.drawer-links {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 32px;
+  border-radius: 10px;
+  border: 2px solid black;
+  background: white;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, .5);
+  overflow: hidden;
 
   a {
-    border-radius: 10px;
-    border: 2px solid black;
-    background: white;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, .5);
     display: flex;
     align-items: center;
     justify-content: center;

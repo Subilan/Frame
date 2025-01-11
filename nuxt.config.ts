@@ -12,7 +12,7 @@ export default defineNuxtConfig({
         port: 7070
     },
 
-    modules: ['@nuxt/image'],
+    modules: ['@nuxt/image', 'nuxt-route-meta'],
 
     vite: {
         plugins: [

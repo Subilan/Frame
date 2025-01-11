@@ -5,7 +5,7 @@
                draggable="false"
                :src="finalURL"/>
       <circle-spinner stroke="white" class="image-loading-spinner"/>
-      <div class="left-bar">
+      <div class="copyright-bar">
         <image-copyright/>
       </div>
       <div class="center-bar">
@@ -445,6 +445,13 @@ watch(imageCoord, async x => {
 <style lang="scss" scoped>
 @use "assets/global";
 
+.main-image {
+  @media (max-width: 768px) {
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
 .active-only {
   display: none;
 }
@@ -477,6 +484,10 @@ label {
   font-size: 22.4px;
   font-weight: bold;
   font-style: italic;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 }
 
 .location-container {
@@ -521,6 +532,10 @@ label {
   grid-template-columns: 2fr 1fr;
   grid-gap: 32px;
 
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
   .right {
     display: flex;
     flex-direction: column;
@@ -554,13 +569,20 @@ label {
   background: rgba(0, 0, 0, .8);
   overflow: hidden;
 
-  .left-bar, .center-bar {
+  .copyright-bar, .center-bar {
     position: absolute;
     bottom: 0;
   }
 
-  .left-bar {
+  .copyright-bar {
     left: 0;
+
+    @media (max-width: 1100px) {
+      left: unset;
+      bottom: unset;
+      top: 0;
+      right: 0;
+    }
   }
 
   .center-bar {
@@ -629,14 +651,23 @@ label {
     grid-template-columns: repeat(4, 1fr);
     grid-gap: 32px;
 
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 16px;
+    }
+
     .exif {
       display: flex;
       flex-direction: column;
       gap: 10px;
       font-size: 28px;
 
+      @media (max-width: 768px) {
+        font-size: 22px;
+      }
+
       > small {
-        font-size: 14px;
+        font-size: 50%;
         color: #aaa;
       }
 
@@ -650,7 +681,7 @@ label {
           align-items: center;
           gap: 12px;
           font-weight: 500;
-          font-family: 'SF Pro Display', global.$fontFamilySet;
+          font-family: 'SF Pro Display', 'Inter', global.$fontFamilySet;
 
           svg {
             height: 30px;
