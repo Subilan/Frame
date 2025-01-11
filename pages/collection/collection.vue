@@ -2,7 +2,7 @@
   <div class="single-collection-container navbar-offset" v-if="!notFound && !initialLoading">
     <div class="top">
       <div class="left">
-        <h2>{{ collection.name }}<small>{{ collection.date }}</small></h2>
+        <h2>{{ collection.name }} <small>{{ collection.date }}</small></h2>
         <div class="meta">
           <span><icon :path="mdiImage"/> {{ collection.totalAmount }} photos</span>
           <span><icon :path="mdiPackageVariant"/> {{ (collection.totalSize / 1024 / 1024 / 1024).toFixed(2) }} GB</span>
@@ -253,6 +253,12 @@ onMounted(() => {
     }
   }
 
+  .left {
+    small {
+      display: inline-block;
+    }
+  }
+
   .right {
     width: 30%;
     display: flex;
@@ -390,7 +396,6 @@ onMounted(() => {
     small {
       font-size: 70%;
       font-weight: 300;
-      margin-left: 16px;
     }
   }
 }
