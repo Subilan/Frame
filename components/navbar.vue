@@ -43,9 +43,11 @@ const drawerModel = ref(false);
   opacity: 0;
 }
 
-.drawer-btn {
-  @media (min-width: 1000px) {
-    display: none !important;
+.navbar .drawer-btn {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block;
   }
 }
 
