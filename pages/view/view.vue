@@ -32,7 +32,7 @@
             <icon :path="mdiDownload"/>
           </div>
           <template #content>
-            Download (Unavailable)
+            Download
           </template>
         </popup>
 
@@ -68,7 +68,7 @@
           <span>{{ resolvedExif.x }}px*{{ resolvedExif.y }}px</span>
         </div>
         <div class="exif">
-          <label>Compressed Size</label>
+          <label>Size</label>
           <span>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}<small>MB</small></span>
         </div>
         <div class="exif">

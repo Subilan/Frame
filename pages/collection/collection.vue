@@ -4,7 +4,14 @@
       <div class="left">
         <h2>{{ collection.name }} <small>{{ collection.date }}</small></h2>
         <div class="meta">
-          <span><icon :path="mdiImage"/> {{ collection.totalAmount }} photos</span>
+          <span><icon :path="mdiImage"/> {{ collection.pickedAmount }}/{{ collection.totalAmount }} photos
+            <popup class="top p8 autowidth trigger-hover gt-768 font-12">
+              <icon color="#aaa" size="16" :path="mdiHelpCircleOutline"/>
+              <template #content>
+                <em>{{ collection.pickedAmount }} photos are picked out of {{ collection.totalAmount }} in total.</em>
+              </template>
+            </popup>
+          </span>
           <span><icon :path="mdiPackageVariant"/> {{ (collection.totalSize / 1024 / 1024 / 1024).toFixed(2) }} GB</span>
           <span v-if="collection.mark"><badge>{{ collection.mark }}</badge></span>
         </div>
@@ -44,7 +51,10 @@
     <icon :path="mdiHelpCircleOutline"/>
     <h2>FOUR-O-FOUR</h2>
     <p>Collection “{{ collectionName }}” cannot be found, maybe there's some misspelling?</p>
-    <btn @click="useRouter().go(-1)" class="shadow" type="primary"><icon :path="mdiArrowLeft"/> Go back</btn>
+    <btn @click="useRouter().go(-1)" class="shadow" type="primary">
+      <icon :path="mdiArrowLeft"/>
+      Go back
+    </btn>
   </div>
   <div class="loading-container center full flex-column gap-32 navbar-offset" v-else-if="initialLoading">
     <circle-spinner/>
@@ -52,7 +62,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   mdiArrowLeft,
   mdiHelpCircleOutline,
@@ -72,7 +82,7 @@ const limit = 20;
 const loadAttempts = ref(0);
 
 const route = useRoute();
-const collectionName = route.params.collection;
+const collectionName = route.params.collection as string;
 const collection = getCollectionByName(collectionName);
 const bottomIndicator = ref(null);
 const bottomIndicatorVisibility = useElementVisibility(bottomIndicator)
@@ -114,7 +124,6 @@ async function update() {
       hasNext.value = objects.data.data.hasNext;
     } else if (objects.data.code === 'ng') {
       if (objects.data.data === 'nothing') notFound.value = true;
-      console.error(objects);
     }
   } else {
     console.error(objects);
@@ -126,7 +135,11 @@ async function getObjects(tag, startIndex, limit) {
 }
 
 onMounted(() => {
-  update().finally();
+  if (collection === null) {
+    notFound.value = true;
+    return;
+  }
+  update();
 })
 </script>
 
@@ -233,7 +246,7 @@ onMounted(() => {
   position: relative;
 }
 
-.top {
+.single-collection-container > .top  {
   padding: 32px;
   box-sizing: border-box;
   display: flex;
@@ -384,7 +397,7 @@ onMounted(() => {
   }
 }
 
-.top {
+.single-collection-container > .top {
   width: 100%;
 
   h2 {

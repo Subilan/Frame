@@ -228,6 +228,19 @@ export interface Geo {
     polygon: number[][][]
 }
 
+export interface CollectionInfo {
+    name: string,
+    date: string,
+    ossPrefix: string,
+    totalSize: number,
+    totalAmount: number,
+    banner: string,
+    desc: strig,
+    external: { text: string, href: string }[],
+    theme?: string,
+    pickedAmount: number
+}
+
 interface SpecialSpotBase {
     includes?: string[],
     timeRange?: string[][],

@@ -1,24 +1,24 @@
 import FileTreeResultJson from '@/static/data/filetrees.json';
 
 export interface CollectionFile {
-    name:         string;
-    url:          string;
+    name: string;
+    url: string;
     lastModified: string;
-    etag:         string;
-    type:         string;
-    size:         number;
+    etag: string;
+    type: string;
+    size: number;
     storageClass: string;
-    owner:        null;
+    owner: null;
 }
 
-export interface Collection {
+export interface CollectionContent {
     files: CollectionFile[];
     totalSize: number;
 }
 
-export interface CollectionResult {
+interface FileTree {
     collections: {
-        [prop: string]: Collection
+        [prop: string]: CollectionContent
     },
     totalSize: number;
 }
@@ -28,19 +28,20 @@ export interface CollectionResult {
  * @param tag 指定的 tag。如果留空，则获取所有集合的内容，不区分 tag
  */
 export default function (tag: string = '') {
-    const j = FileTreeResultJson as CollectionResult;
+    const j = FileTreeResultJson as FileTree;
+
     if (tag !== '') {
         const filteredKey = Object.keys(j.collections).filter(x => x.toLowerCase() === tag.toLowerCase());
         if (filteredKey.length === 0) return null;
         return j.collections[filteredKey[0]];
     }
 
-    const result: Collection = {
+    const result: CollectionContent = {
         files: [],
         totalSize: 0
     };
 
-    for (let [k, v] of Object.entries(j.collections)) {
+    for (let v of Object.values(j.collections)) {
         result.files.push(...v.files);
         result.totalSize += v.totalSize;
     }
