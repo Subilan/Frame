@@ -7,6 +7,7 @@ $primarydd: #1b2328;
 $primaryl: #eceff1;
 
 $fontFamilySet: 'Fira Sans', 'PingFang SC', 'Microsoft YaHei UI', sans-serif;
+$fontFamilyMonospaceSet: 'Fira Code', 'Consolas', 'Menlo', monospace;
 
 body {
   margin: 0;
@@ -110,5 +111,22 @@ p, h1, h2, h3, h4, h5, h6 {
 
   &.navbar-offset {
     height: calc(100vh - $navbarHeight);
+  }
+}
+
+.card {
+  box-sizing: border-box;
+  background: white;
+  position: relative;
+  border-radius: 10px;
+  border: 2px solid rgba(0, 0, 0, .1);
+  transition: all .2s ease;
+  cursor: pointer;
+  overflow: hidden;
+
+  &:hover {
+    border-color: $primaryd;
+    box-shadow: 0 15px 18px rgba(0, 0, 0, .2);
+    transform: translateY(-5px);
   }
 }

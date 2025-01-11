@@ -1,7 +1,7 @@
 <template>
   <div class="collection-container navbar-offset">
     <div class="collection-outer" v-for="x in collections" @click="navigateTo(`/collection/${x.ossPrefix}`)">
-      <div class="collection">
+      <div class="collection card">
         <div class="image">
           <img :src="buildObjectPath(x.ossPrefix, x.banner)" alt="alt"/>
         </div>
@@ -42,21 +42,6 @@ import buildObjectPath from "@/utils/buildObjectPath";
 }
 
 .collection {
-  box-sizing: border-box;
-  background: white;
-  position: relative;
-  border-radius: 10px;
-  border: 2px solid rgba(0, 0, 0, .1);
-  transition: all .2s ease;
-  cursor: pointer;
-  overflow: hidden;
-
-  &:hover {
-    border-color: global.$primaryd;
-    box-shadow: 0 15px 18px rgba(0, 0, 0, .2);
-    transform: translateY(-5px);
-  }
-
   .image {
     width: 100%;
     overflow: hidden;

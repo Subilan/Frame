@@ -473,12 +473,10 @@ watch(imageCoord, async x => {
   }
 }
 
-.location-container, .external-caption-container {
-  label {
-    font-size: 22.4px;
-    font-weight: bold;
-    font-style: italic;
-  }
+label {
+  font-size: 22.4px;
+  font-weight: bold;
+  font-style: italic;
 }
 
 .location-container {
@@ -540,12 +538,6 @@ watch(imageCoord, async x => {
       font-size: 28px;
       display: flex;
       flex-direction: column;
-
-      label {
-        font-size: 80%;
-        font-weight: bold;
-        font-style: italic;
-      }
 
       span {
         margin-top: 8px;
@@ -642,12 +634,6 @@ watch(imageCoord, async x => {
       flex-direction: column;
       gap: 10px;
       font-size: 28px;
-
-      label {
-        font-weight: bold;
-        font-size: 80%;
-        font-style: italic;
-      }
 
       > small {
         font-size: 14px;
