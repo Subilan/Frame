@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main :lang="lang">
     <NuxtLayout>
       <NuxtPage/>
     </NuxtLayout>
@@ -10,4 +10,6 @@
 import '@/assets/global.scss'
 import '@/assets/fonts/fira-sans/font.css';
 import '@/assets/fonts/fira-code/font.css';
+
+const lang = useLanguage();
 </script>
