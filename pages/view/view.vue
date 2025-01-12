@@ -1,5 +1,5 @@
 <template>
-  <div class="viewer-container navbar-offset" v-if="!currentObject.loading && !currentExif.loading">
+  <div :lang="lang" class="viewer-container navbar-offset" v-if="!currentObject.loading && !currentExif.loading">
     <div class="image-container full navbar-offset">
       <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading"
                draggable="false"
@@ -14,7 +14,7 @@
             <icon :path="mdiInformationOutline"/>
           </div>
           <template #content>
-            {{ t('view.viewDetails')}}
+            {{ t('view.viewDetails') }}
           </template>
         </popup>
         <popup class="p8 top inline trigger-hover autowidth">
@@ -23,7 +23,7 @@
             <icon class="active-only" :path="mdiImage"/>
           </div>
           <template #content>
-            {{ t('view.loadOriginal')}}
+            {{ t('view.loadOriginal') }}
           </template>
         </popup>
 
@@ -32,7 +32,7 @@
             <icon :path="mdiDownload"/>
           </div>
           <template #content>
-            {{ t('view.download')}}
+            {{ t('view.download') }}
           </template>
         </popup>
 
@@ -41,7 +41,7 @@
             <icon :path="mdiFullscreen"/>
           </div>
           <template #content>
-            {{ t('view.enterFullscreen')}}
+            {{ t('view.enterFullscreen') }}
           </template>
         </popup>
       </div>
@@ -54,37 +54,37 @@
       <hr v-if="captions.length > 0">
       <div class="exifs">
         <div class="exif">
-          <label>{{ t('view.details.shotAt')}}</label>
+          <label>{{ t('view.details.shotAt') }}</label>
           <span>{{ resolvedExif.date }}</span>
         </div>
         <div class="exif">
-          <label>{{ t('view.details.shotOn')}}</label>
+          <label>{{ t('view.details.shotOn') }}</label>
           <div class="apple" v-if="resolvedExif.model.includes('iPhone')">
             <div class="device">Apple {{ resolvedExif.model }}</div>
           </div>
         </div>
         <div class="exif">
-          <label>{{ t('view.details.resolution')}}</label>
+          <label>{{ t('view.details.resolution') }}</label>
           <span>{{ resolvedExif.x }}px*{{ resolvedExif.y }}px</span>
         </div>
         <div class="exif">
-          <label>{{ t('view.details.size')}}</label>
+          <label>{{ t('view.details.size') }}</label>
           <span>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}<small>MB</small></span>
         </div>
         <div class="exif">
-          <label>{{ t('view.details.timezone')}}</label>
+          <label>{{ t('view.details.timezone') }}</label>
           <span>UTC{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset) }}</span>
         </div>
         <div class="exif">
-          <label>{{ t('view.details.focalLength')}}</label>
+          <label>{{ t('view.details.focalLength') }}</label>
           <span>{{ resolvedExif.focalLength }}<small>mm</small></span>
         </div>
         <div class="exif">
-          <label>{{ t('view.details.aperature')}}</label>
+          <label>{{ t('view.details.aperature') }}</label>
           <span><em>f</em>/{{ resolvedExif.aperature }}</span>
         </div>
         <div class="exif">
-          <label>{{ t('view.details.exposureTime')}}</label>
+          <label>{{ t('view.details.exposureTime') }}</label>
           <span>{{ resolvedExif.exposureTime }}<small>s</small></span>
         </div>
       </div>
@@ -97,10 +97,10 @@
         </div>
         <div class="right">
           <div class="location-container">
-            <label>Location</label>
+            <label>{{ t('view.details.location') }}</label>
             <div v-if="currentGeo.loading" class="loading-location">
               <circle-spinner size="15"/>
-              {{ t('view.details.loadingLocation')}}
+              {{ t('view.details.loadingLocation') }}
             </div>
             <div v-else class="location-contents">
               <div class="location-primary" :style="{'align-items': isRoad() ? 'center' : 'baseline'}">
@@ -117,10 +117,10 @@
                 <popup class="trigger-hover top p8 autowidth">
                   <badge class="light-blue" v-if="isInFlight()">
                     <icon :path="mdiAirplane"/>
-                    {{ t('view.details.inflight')}}
+                    {{ t('view.details.inflight') }}
                   </badge>
                   <template #content>
-                    <em>{{ t('view.details.inflightNote')}}</em>
+                    <em>{{ t('view.details.inflightNote') }}</em>
                   </template>
                 </popup>
               </div>
@@ -129,23 +129,23 @@
           </div>
           <div class="lagi-longi-information-container">
             <div>
-              <label>{{ t('view.details.latitude')}}</label>
+              <label>{{ t('view.details.latitude') }}</label>
               <span>{{ resolvedExif.latitudeN[0] }}°{{ resolvedExif.latitudeN[1] }}'{{
                   resolvedExif.latitudeN[2]
                 }}" <small>N</small></span>
             </div>
             <div>
-              <label>{{ t('view.details.longitude')}}</label>
+              <label>{{ t('view.details.longitude') }}</label>
               <span>{{ resolvedExif.longitudeE[0] }}°{{ resolvedExif.longitudeE[1] }}'{{
                   resolvedExif.longitudeE[2]
                 }}" <small>E</small></span>
             </div>
             <div>
-              <label>{{ t('view.details.altitude')}}</label>
+              <label>{{ t('view.details.altitude') }}</label>
               <span>{{ resolvedExif.altitude.toFixed(2) }} <small>m</small></span>
             </div>
             <div>
-              <label>{{ t('view.details.speed')}}</label>
+              <label>{{ t('view.details.speed') }}</label>
               <span>{{ resolvedExif.gpsspeed.toFixed(2) }} <small>km/h</small></span>
             </div>
           </div>
@@ -153,32 +153,42 @@
             <div class="note">
               <div class="note-item" v-if="hasHWA()">
                 <icon :path="mdiAlertOutline"/>
-                <span>{{ t('view.hwaWarning')}}</span>
+                <span>{{ t('view.hwaWarning') }}</span>
               </div>
               <div class="note-item">
                 <icon :path="mdiInformationOutline"/>
                 <span>
                   <popup class="inline top trigger-hover">
-                    <u clickable>{{ t('view.moreInformation.moveYourCursorHere')}}</u>
+                    <u clickable>{{ t('view.moreInformation.moveYourCursorHere') }}</u>
                     <template #content>
-                      <h2>About GPS Information</h2>
-                      <p>The GPS data displayed here is extracted from the photo and embedded in its <em>EXIF</em>
-                        (Exchangeable Image File Format) metadata.</p>
-                      <p>Typically, this information is captured by the camera's host through the GPS and automatically
-                        written into the photo's EXIF metadata.</p>
+                      <template v-if="lang === 'en'">
+                        <h2>About GPS Information</h2>
+                        <p>The GPS data displayed here is extracted from the photo and embedded in its <em>EXIF</em>
+                          (Exchangeable Image File Format) metadata.</p>
+                        <p>Typically, this information is captured by the camera's host through the GPS and automatically
+                          written into the photo's EXIF metadata.</p>
 
-                      <h3>Accuracy</h3>
-                      <p>While generally reliable, the GPS data, especially the <em>GPS Speed</em> field, may not always
-                        be 100% accurate.</p>
-                      <p>On this site, the location data is manually verified to ensure accuracy. Errors on location are
-                        rare, though.</p>
+                        <h3>Accuracy</h3>
+                        <p>While generally reliable, the GPS data, especially the <em>GPS Speed</em> field, may not always
+                          be 100% accurate.</p>
 
-                      <h3>Wow, there are photos taken on the plane with GPS data.</h3>
-                      <p>Yes, GPS signals can sometimes be received even on a plane. As long as your phone isn't in
-                        Airplane Mode, GPS data may still be logged.</p>
-                      <p>However, please note that using electronic devices that transmit signals during a flight can be
-                        prohibited for safety reasons. Always follow the crew's instructions and turn off your device if
-                        asked!</p>
+                        <h3>Wow, there are photos taken on the plane with GPS data.</h3>
+                        <p>Yes, GPS signals can sometimes be received even on a plane. As long as your phone isn't in
+                          Airplane Mode, GPS data may still be logged.</p>
+                        <p>However, please note that using electronic devices that transmit signals during a flight can be
+                          prohibited for safety reasons. Always follow the crew's instructions and turn off your device if
+                          asked!</p>
+                      </template>
+                      <template v-if="lang === 'zh'">
+                        <h2>关于 GPS 信息</h2>
+                        <p>此页面展示的 GPS 信息是从照片中自带的 <em>EXIF</em> (Exchangeable Image File Format) 元数据中提取的。</p>
+                        <p>一般情况下，这些定位的信息都是由拍摄设备与全球卫星定位系统（GPS）通讯后，自动写入到图片的 EXIF 中。</p>
+                        <h3>准确性</h3>
+                        <p>一般情况下不会有太大的偏差，但这些数据并非 100% 准确，尤其是 <em>GPS 速度</em> 这一部分的数据。</p>
+                        <h3>在飞机上拍照也能拿到 GPS 数据吗？</h3>
+                        <p>是的，有的时候 GPS 信号确实可以在飞机上获取到。如果你没有乖乖打开飞行模式，GPS 数据同样有概率可正确获取到。</p>
+                        <p>出于安全考虑，在飞行过程中不应使用带有信号传输功能的电子设备，请务必遵从机组人员的指示。</p>
+                      </template>
                     </template>
                   </popup>
                   {{ t('view.moreInformation.other') }}
@@ -209,6 +219,8 @@ import Popup from "@/components/popup.vue";
 import translateExifDate from "@/utils/translateExifDate";
 import ImageCopyright from "@/components/image-copyright.vue";
 import {useFullscreen} from "@vueuse/core";
+
+const lang = useLanguage();
 
 const route = useRoute();
 const remotePath = route.params.remotePath as string;
@@ -483,10 +495,13 @@ watch(imageCoord, async x => {
   }
 }
 
+[lang='en'] label {
+  font-style: italic;
+}
+
 label {
   font-size: 22.4px;
   font-weight: bold;
-  font-style: italic;
 
   @media (max-width: 768px) {
     font-size: 17px;
