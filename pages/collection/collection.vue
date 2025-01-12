@@ -1,26 +1,28 @@
 <template>
-  <div class="single-collection-container navbar-offset" v-if="!notFound && !initialLoading">
+  <div class="single-collection-container navbar-offset" v-if="!notFound && !initialLoading && collection">
     <div class="top">
       <div class="left">
-        <h2>{{ collection.name }} <small>{{ collection.date }}</small></h2>
+        <h2>{{ collection.name[lang] }}&nbsp;&nbsp;<small>{{ collection.date[lang] }}</small></h2>
         <div class="meta">
-          <span><icon :path="mdiImage"/> {{ collection.pickedAmount }}/{{ collection.totalAmount }} photos
+          <span><icon :path="mdiImage"/>{{ t('collection.photoNum', collection.pickedAmount, collection.totalAmount) }}
             <popup class="top p8 autowidth trigger-hover gt-768 font-12">
               <icon color="#aaa" size="16" :path="mdiHelpCircleOutline"/>
               <template #content>
-                <em>{{ collection.pickedAmount }} photos are picked out of {{ collection.totalAmount }} in total.</em>
+                <em>{{ t('collection.photoIsPicked', collection.pickedAmount, collection.totalAmount) }}</em>
               </template>
             </popup>
           </span>
           <span><icon :path="mdiPackageVariant"/> {{ (collection.totalSize / 1024 / 1024 / 1024).toFixed(2) }} GB</span>
-          <span v-if="collection.mark"><badge>{{ collection.mark }}</badge></span>
         </div>
-        <div class="description" v-html="collection.desc"></div>
+        <div class="description" v-html="collection.desc[lang]"/>
         <div class="section external-links" v-if="collection.external">
-          <label>EXTERNAL LINKS &raquo;</label>
-          <a target="_blank" :href="x.href" v-for="x in collection.external">{{ x.text }}</a>
+          <label>{{ t('collection.externalLinks') }} &raquo;</label>
+          <a target="_blank" :href="x.href" v-for="x in collection.external.filter(x => x.type === 'article')">
+            {{ t('collection.readExternal', x.name) }}
+          </a>
         </div>
       </div>
+      <div class="spacer"/>
       <div class="right" v-if="collection.theme">
         <img alt="theme" :src="`/theme-pics/${collection.theme}`"/>
       </div>
@@ -30,35 +32,35 @@
         <nuxt-img draggable="false" :src="toThumbnail(x.url)" loading="lazy" placeholder placeholder-class="loading"/>
         <circle-spinner class="image-loading-indicator"/>
         <div class="layer">
-          <p>View now
+          <p>{{ t('collection.viewNow') }}
             <icon :path="mdiLaunch"/>
           </p>
         </div>
       </div>
     </div>
     <div class="no-content" v-else-if="!hasNext">
-      There's no content at this time.
+      {{ t('collection.noContent') }}
     </div>
     <div class="bottom-indicator" ref="bottomIndicator" v-if="hasNext"></div>
     <div class="long-time-loading-indicator-wrapper">
       <div class="long-time-loading-indicator" :class="{active: longTimeLoadingIndicator}">
         <circle-spinner size="16"/>
-        <span>Loading more photos, just a moment...</span>
+        <span>{{ t('collection.loadingPhotos') }}</span>
       </div>
     </div>
   </div>
   <div class="not-found-container describe center full navbar-offset" v-else-if="notFound">
     <icon :path="mdiHelpCircleOutline"/>
-    <h2>FOUR-O-FOUR</h2>
-    <p>Collection “{{ collectionName }}” cannot be found, maybe there's some misspelling?</p>
+    <h2>{{ t('collection.fourOfour.title') }}</h2>
+    <p>{{ t('collection.fourOfour.text', collectionName) }}</p>
     <btn @click="useRouter().go(-1)" class="shadow" type="primary">
       <icon :path="mdiArrowLeft"/>
-      Go back
+      {{ t('collection.fourOfour.goBack') }}
     </btn>
   </div>
   <div class="loading-container center full flex-column gap-32 navbar-offset" v-else-if="initialLoading">
     <circle-spinner/>
-    <em>Loading collection “{{ collectionName }}”...</em>
+    <em>{{ t('collection.loadingCollection', collectionName) }}</em>
   </div>
 </template>
 
@@ -75,11 +77,13 @@ import get from "@/utils/get";
 import getCollectionByName from "@/utils/getCollectionByName";
 import {navigateTo} from "#app";
 
-const images = ref([]);
+const images = ref<any[]>([]);
 const hasNext = ref(true);
 const currentIndexCursor = ref(0);
 const limit = 20;
 const loadAttempts = ref(0);
+
+const lang = useLanguage();
 
 const route = useRoute();
 const collectionName = route.params.collection as string;
@@ -93,7 +97,7 @@ const retrievingObjects = ref(false);
 const notFound = ref(false);
 const initialLoading = ref(true);
 
-function toThumbnail(url) {
+function toThumbnail(url: string) {
   return url + '?x-oss-process=image/resize,h_400';
 }
 
@@ -130,7 +134,7 @@ async function update() {
   }
 }
 
-async function getObjects(tag, startIndex, limit) {
+async function getObjects(tag: string, startIndex: number, limit: number) {
   return await get(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
 }
 
@@ -152,7 +156,6 @@ onMounted(() => {
     text-align: center;
     line-height: 1.8;
     margin: 16px 0;
-
   }
 
   h2 {
@@ -167,7 +170,7 @@ onMounted(() => {
 <style lang="scss">
 .top .description p {
   margin: 16px 0;
-  line-height: 1.5;
+  line-height: 1.8;
 }
 </style>
 
@@ -246,7 +249,7 @@ onMounted(() => {
   position: relative;
 }
 
-.single-collection-container > .top  {
+.single-collection-container > .top {
   padding: 32px;
   box-sizing: border-box;
   display: flex;
@@ -257,7 +260,7 @@ onMounted(() => {
   }
 
   .description {
-    max-width: 80%;
+    max-width: 60%;
 
     @media (max-width: 768px) {
       max-width: 100%;

@@ -1,0 +1,51 @@
+{
+  "collection": {
+    "photoNum": "$1/$2 photos",
+    "photoIsPicked": "$1 photos are picked out of $2 in total.",
+    "externalLinks": "EXTERNAL LINKS",
+    "viewNow": "View Now",
+    "noContent": "There's no content at this time.",
+    "loadingCollection": "Loading collection “$1”...",
+    "loadingPhotos": "Loading more photos, just a moment...",
+    "fourOfour": {
+      "title": "FOUR-O-FOUR",
+      "text": "Collection “$1” cannot be found, maybe there's some misspelling?",
+      "goBack": "Go back"
+    },
+    "readExternal": "Read “$1” on subilan.win",
+    "watchExternal": "Watch “$1” on bilibili.com"
+  },
+  "collections": {
+    "photoNum": "$1 photos"
+  },
+  "view": {
+    "viewDetails": "View details",
+    "loadOriginal": "Load original",
+    "download": "Download",
+    "enterFullscreen": "Enter fullscreen",
+    "details": {
+      "captions": "About this photo",
+      "shotAt": "Shot At",
+      "shotOn": "Shot On",
+      "resolution": "Resolution",
+      "size": "Size",
+      "timezone": "Timezone",
+      "focalLength": "Focal Length",
+      "aperature": "Aperature",
+      "exposureTime": "Exposure Time",
+      "location": "Location",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "altitude": "Altitude",
+      "speed": "Speed (GPS)",
+      "inflight": "IN FLIGHT",
+      "inflightNote": "This photo is taken on the plane.",
+      "loadingLocation": "Loading location..."
+    },
+    "hwaWarning": "Hardware acceleration may cause incorrect white block in the map canvas.",
+    "moreInformation": {
+      "moveYourCursorHere": "Move your cursor here",
+      "other": "to learn more about these information."
+    }
+  }
+}

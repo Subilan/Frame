@@ -14,7 +14,7 @@
             <icon :path="mdiInformationOutline"/>
           </div>
           <template #content>
-            View details
+            {{ t('view.viewDetails')}}
           </template>
         </popup>
         <popup class="p8 top inline trigger-hover autowidth">
@@ -23,7 +23,7 @@
             <icon class="active-only" :path="mdiImage"/>
           </div>
           <template #content>
-            Load original
+            {{ t('view.loadOriginal')}}
           </template>
         </popup>
 
@@ -32,7 +32,7 @@
             <icon :path="mdiDownload"/>
           </div>
           <template #content>
-            Download
+            {{ t('view.download')}}
           </template>
         </popup>
 
@@ -41,50 +41,50 @@
             <icon :path="mdiFullscreen"/>
           </div>
           <template #content>
-            Enter fullscreen
+            {{ t('view.enterFullscreen')}}
           </template>
         </popup>
       </div>
     </div>
     <div class="exif-message-container" v-if="resolveExif !== null">
       <div class="external-caption-container" v-if="captions.length > 0">
-        <label>Captions</label>
+        <label>{{ t('view.details.captions') }}</label>
         <div class="caption-content" v-html="captions"/>
       </div>
       <hr v-if="captions.length > 0">
       <div class="exifs">
         <div class="exif">
-          <label>Shot at</label>
+          <label>{{ t('view.details.shotAt')}}</label>
           <span>{{ resolvedExif.date }}</span>
         </div>
         <div class="exif">
-          <label>Shot on</label>
+          <label>{{ t('view.details.shotOn')}}</label>
           <div class="apple" v-if="resolvedExif.model.includes('iPhone')">
             <div class="device">Apple {{ resolvedExif.model }}</div>
           </div>
         </div>
         <div class="exif">
-          <label>Resolution</label>
+          <label>{{ t('view.details.resolution')}}</label>
           <span>{{ resolvedExif.x }}px*{{ resolvedExif.y }}px</span>
         </div>
         <div class="exif">
-          <label>Size</label>
+          <label>{{ t('view.details.size')}}</label>
           <span>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}<small>MB</small></span>
         </div>
         <div class="exif">
-          <label>Time Offset</label>
-          <span>{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset) }}</span>
+          <label>{{ t('view.details.timezone')}}</label>
+          <span>UTC{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset) }}</span>
         </div>
         <div class="exif">
-          <label>Focal Length</label>
+          <label>{{ t('view.details.focalLength')}}</label>
           <span>{{ resolvedExif.focalLength }}<small>mm</small></span>
         </div>
         <div class="exif">
-          <label>Aperature</label>
+          <label>{{ t('view.details.aperature')}}</label>
           <span><em>f</em>/{{ resolvedExif.aperature }}</span>
         </div>
         <div class="exif">
-          <label>Exposure Time</label>
+          <label>{{ t('view.details.exposureTime')}}</label>
           <span>{{ resolvedExif.exposureTime }}<small>s</small></span>
         </div>
       </div>
@@ -100,7 +100,7 @@
             <label>Location</label>
             <div v-if="currentGeo.loading" class="loading-location">
               <circle-spinner size="15"/>
-              Loading location...
+              {{ t('view.details.loadingLocation')}}
             </div>
             <div v-else class="location-contents">
               <div class="location-primary" :style="{'align-items': isRoad() ? 'center' : 'baseline'}">
@@ -117,10 +117,10 @@
                 <popup class="trigger-hover top p8 autowidth">
                   <badge class="light-blue" v-if="isInFlight()">
                     <icon :path="mdiAirplane"/>
-                    IN FLIGHT
+                    {{ t('view.details.inflight')}}
                   </badge>
                   <template #content>
-                    <em>This photo is taken on the plane.</em>
+                    <em>{{ t('view.details.inflightNote')}}</em>
                   </template>
                 </popup>
               </div>
@@ -129,23 +129,23 @@
           </div>
           <div class="lagi-longi-information-container">
             <div>
-              <label>Latitude</label>
+              <label>{{ t('view.details.latitude')}}</label>
               <span>{{ resolvedExif.latitudeN[0] }}°{{ resolvedExif.latitudeN[1] }}'{{
                   resolvedExif.latitudeN[2]
                 }}" <small>N</small></span>
             </div>
             <div>
-              <label>Longitude</label>
+              <label>{{ t('view.details.longitude')}}</label>
               <span>{{ resolvedExif.longitudeE[0] }}°{{ resolvedExif.longitudeE[1] }}'{{
                   resolvedExif.longitudeE[2]
                 }}" <small>E</small></span>
             </div>
             <div>
-              <label>Altitude</label>
+              <label>{{ t('view.details.altitude')}}</label>
               <span>{{ resolvedExif.altitude.toFixed(2) }} <small>m</small></span>
             </div>
             <div>
-              <label>Speed (GPS)</label>
+              <label>{{ t('view.details.speed')}}</label>
               <span>{{ resolvedExif.gpsspeed.toFixed(2) }} <small>km/h</small></span>
             </div>
           </div>
@@ -153,13 +153,13 @@
             <div class="note">
               <div class="note-item" v-if="hasHWA()">
                 <icon :path="mdiAlertOutline"/>
-                <span>Hardware acceleration may cause incorrect white block in the map canvas.</span>
+                <span>{{ t('view.hwaWarning')}}</span>
               </div>
               <div class="note-item">
                 <icon :path="mdiInformationOutline"/>
                 <span>
                   <popup class="inline top trigger-hover">
-                    <u clickable>Move your cursor here</u>
+                    <u clickable>{{ t('view.moreInformation.moveYourCursorHere')}}</u>
                     <template #content>
                       <h2>About GPS Information</h2>
                       <p>The GPS data displayed here is extracted from the photo and embedded in its <em>EXIF</em>
@@ -181,7 +181,7 @@
                         asked!</p>
                     </template>
                   </popup>
-                  to learn more about these information.
+                  {{ t('view.moreInformation.other') }}
                 </span>
               </div>
             </div>
@@ -265,7 +265,7 @@ interface ResolvedExif {
 function getTimeOffsetName(offset: string) {
   switch (offset) {
     case '+08:00':
-      return 'China Standard Time';
+      return 'Asia/Beijing';
   }
 }
 

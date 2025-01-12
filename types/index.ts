@@ -14,6 +14,8 @@ export type FrameResp<T = any> = RespOK<T> | RespNG;
 
 export type Delayed<T = any> = { loading: true, data: {} } | { loading: false, data: T };
 
+export type Lang<T> = { zh: T, en: T }
+
 export interface Exif {
     ApertureValue: {
         value: string
@@ -229,14 +231,14 @@ export interface Geo {
 }
 
 export interface CollectionInfo {
-    name: string,
-    date: string,
+    name: Lang<string>,
+    date: Lang<string>,
     ossPrefix: string,
     totalSize: number,
     totalAmount: number,
     banner: string,
-    desc: strig,
-    external: { text: string, href: string }[],
+    desc: Lang<string>,
+    external: { type: 'article' | 'video', name: Lang<string>, href: string }[],
     theme?: string,
     pickedAmount: number
 }
@@ -258,3 +260,62 @@ interface SpecialSpotFlight extends SpecialSpotBase {
 export type SpecialSpot = SpecialSpotDefault | SpecialSpotFlight;
 
 export type Captions = { [prop: string]: string[] | string }
+
+export type I18n = {
+    collection: {
+        photoNum: string,
+        photoIsPicked: string,
+        externalLinks: string,
+        viewNow: string,
+        noContent: string,
+        loadingCollection: string,
+        loadingPhotos: string,
+        fourOfour: {
+            title: string,
+            text: string,
+            goBack: string,
+        },
+        readExternal: string,
+        watchExternal: string
+    }
+    collections: {
+        photoNum: string,
+    }
+    view: {
+        viewDetails: string,
+        loadOriginal: string,
+        download: string,
+        enterFullscreen: string,
+        details: {
+            captions: string,
+            shotAt: string,
+            shotOn: string,
+            resolution: string,
+            size: string,
+            timezone: string,
+            focalLength: string,
+            aperature: string,
+            exposureTime: string,
+            location: string,
+            latitude: string,
+            longitude: string,
+            altitude: string,
+            speed: string,
+            inflight: string,
+            inflightNote: string,
+            loadingLocation: string,
+        }
+        hwaWarning: string,
+        moreInformation: {
+            moveYourCursorHere: string,
+            other: string,
+        }
+    }
+}
+
+type Leaves<T> = T extends object ? {
+    [K in keyof T]:
+    `${Exclude<K, symbol>}${Leaves<T[K]> extends never ? "" : `.${Leaves<T[K]>}`}`
+}[keyof T] : never
+
+export type I18nKeys = Leaves<I18n>;

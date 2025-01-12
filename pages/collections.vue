@@ -6,8 +6,8 @@
           <img :src="buildObjectPath(x.ossPrefix, x.banner)" alt="alt"/>
         </div>
         <div class="texts">
-          <h2>{{ x.name }}</h2>
-          <p class="basic-info">{{ x.date }} · {{ x.totalAmount }} photos</p>
+          <h2 :lang="lang">{{ x.name[lang] }}</h2>
+          <p class="basic-info">{{ x.date[lang] }} · {{ t('collections.photoNum', x.totalAmount)}}</p>
         </div>
       </div>
     </div>
@@ -18,6 +18,7 @@
 import collections from "@/static/data/collections.json";
 import buildObjectPath from "@/utils/buildObjectPath";
 
+const lang = useLanguage();
 </script>
 
 <style lang="scss">
@@ -72,6 +73,9 @@ import buildObjectPath from "@/utils/buildObjectPath";
 
     h2 {
       margin: 0;
+    }
+
+    h2[lang='en'] {
       font-style: italic;
     }
 

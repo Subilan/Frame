@@ -1,0 +1,51 @@
+{
+  "collection": {
+    "photoNum": "$1/$2 张",
+    "photoIsPicked": "合集中展示了从 $2 张图中选出的 $1 张",
+    "externalLinks": "外部链接",
+    "viewNow": "立即查看",
+    "noContent": "暂无更多内容",
+    "loadingCollection": "正在加载合集 “$1”...",
+    "loadingPhotos": "正在加载图片，请稍等...",
+    "fourOfour": {
+      "title": "FOUR-O-FOUR",
+      "text": "无法找到合集 “$1”，请检查是否有拼写错误。",
+      "goBack": "返回"
+    },
+    "readExternal": "在 subilan.win 上阅读“$1”",
+    "watchExternal": "在哔哩哔哩上观看“$1”"
+  },
+  "collections": {
+    "photoNum": "共 $1 张"
+  },
+  "view": {
+    "viewDetails": "详细信息",
+    "loadOriginal": "加载原图",
+    "download": "下载",
+    "enterFullscreen": "全屏",
+    "details": {
+      "captions": "关于这张图片...",
+      "shotAt": "拍摄时间",
+      "shotOn": "拍摄设备",
+      "resolution": "分辨率",
+      "size": "大小",
+      "timezone": "时区",
+      "focalLength": "焦距",
+      "aperature": "光圈",
+      "exposureTime": "曝光时间",
+      "location": "拍摄地点",
+      "latitude": "纬度",
+      "longitude": "经度",
+      "altitude": "海拔",
+      "speed": "GPS 速度",
+      "inflight": "飞行中",
+      "inflightNote": "这张照片是在飞行中拍摄的",
+      "loadingLocation": "加载地点信息中..."
+    },
+    "hwaWarning": "硬件加速可能导致地图中出现不正常的白块区域",
+    "moreInformation": {
+      "moveYourCursorHere": "将鼠标移动至此处",
+      "other": "以了解更多信息"
+    }
+  }
+}
