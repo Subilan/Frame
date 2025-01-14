@@ -53,7 +53,7 @@ const props = defineProps({
   }
 }
 
-.button.type-border {
+.button.border {
   border: 1px solid global.$primaryd;
   color: global.$primaryd;
   background: white;

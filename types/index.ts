@@ -319,3 +319,16 @@ type Leaves<T> = T extends object ? {
 }[keyof T] : never
 
 export type I18nKeys = Leaves<I18n>;
+
+export type HomeBannerItem = {
+    ossPrefix: string
+    image: string
+    name: string
+    meta: {
+        altitude: number
+        date: string
+        device: string
+        region: string
+    }
+    story: string[]
+}

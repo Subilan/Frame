@@ -24,7 +24,7 @@
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </router-link>
           <a target="_blank" @click="model = false" v-for="x in navigations.filter(x => x.external)"
-             :href="x.href">Open {{ x.text }}
+             :href="x.href">{{ x.text }}
             <div class="spacer"/>
             <span><icon :path="mdiArrowTopRight"/></span>
           </a>

@@ -4,50 +4,65 @@
   }">
     <div class="overlay"/>
     <div class="+overlay">
-      <div class="hero-text">
-        <p v-html="quoteDisplay.content" @click.self="getRandomQuote"></p>
-        <div class="author-note">
-          <small>
-            <icon :path="mdiFormatQuoteOpen"/>
-            — <span v-html="quoteDisplay.from.f"/></small>
+      <div class="hero-text" :class="{loaded}">
+        <div class="hero-text-head" :class="{withRoad}">
+          <div class="road" v-if="withRoad">
+            <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`"/>&nbsp;
+          </div>
+          <span class="name" v-else>{{ selected.name }}&nbsp;&nbsp;</span>
+          <span class="region">
+            {{ selected.meta.region }}
+          </span>
         </div>
-      </div>
-
-      <div class="index-buttons">
-        <btn class="shadow-dark" @click="navigateTo('/collections')">Collections
-          <icon :path="mdiArrowRight"/>
-        </btn>
-        <btn class="shadow-dark" type="border">Learn more
-          <icon :path="mdiLaunch"/>
-        </btn>
+        <div class="hero-text-meta">
+          <span class="date"><span class="gt-768">Shot at </span>{{ formatDate(selected.meta.date) }}</span>
+          <span class="device"><span class="gt-768">Shot on </span><span
+              :class="{apple: selected.meta.device.includes('iPhone')}">{{ selected.meta.device }}</span></span>
+          <span class="altitude"><span class="gt-768">Altitude </span>{{
+              selected.meta.altitude.toFixed(0)
+            }}<small>m</small></span>
+        </div>
+        <div class="hero-text-content" v-html="selected.story.join('')"/>
+        <div class="hero-text-actions">
+          <btn class="shadow border" @click="navigateTo(buildViewerPath(selected.ossPrefix, selected.image))">
+            查看图片
+            <icon :path="mdiArrowTopRight"/>
+          </btn>
+          <btn class="shadow" @click="navigateTo('/collections')">
+            全部合集
+            <icon :path="mdiArrowRight"/>
+          </btn>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import indexImagePath from '@/assets/index.jpg';
-import {mdiArrowRight, mdiFormatQuoteOpen, mdiLaunch, mdiRefresh} from '@mdi/js';
-import quotesImport from '@/static/data/quotes.json';
-
-const quotes: {
-  content: string,
-  from: {
-    f: string,
-    zh: string
-  }
-}[] = quotesImport;
-
-const quoteIndex = ref(randArrayIndex(quotes));
-const quoteDisplay = computed(() => quotes[quoteIndex.value])
+import {mdiArrowRight, mdiArrowTopRight} from '@mdi/js';
+import bannersImport from '@/static/data/banners.json';
+import type {HomeBannerItem} from "~/types";
+import buildObjectPath from "~/utils/buildObjectPath";
+import formatDate from '~/utils/formatDate';
+import buildViewerPath from "~/utils/buildViewerPath";
 
 function randArrayIndex(array: any[]) {
   return Math.floor(Math.random() * array.length);
 }
 
-function getRandomQuote() {
-  quoteIndex.value = randArrayIndex(quotes);
-}
+const banners: HomeBannerItem[] = bannersImport;
+
+const indexImagePath = ref('');
+const withRoad = ref(false);
+const loaded = ref(false);
+
+const selected: HomeBannerItem = banners[randArrayIndex(banners)];
+
+onMounted(() => {
+  indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
+  withRoad.value = selected.name.startsWith('road-');
+  loaded.value = true;
+})
 </script>
 
 <style lang="scss">
@@ -78,6 +93,7 @@ function getRandomQuote() {
   background-size: cover;
   background-position: center;
   position: relative;
+  background-color: black;
 
   .overlay {
     height: 100%;
@@ -95,29 +111,95 @@ function getRandomQuote() {
   max-width: 50%;
   font-size: 36px;
   text-shadow: 0 2px 5px rgba(0, 0, 0, .3);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+
+  &.loaded {
+    animation: .4s ease ScaleBottom forwards;
+  }
+
+  @media (max-width: 1200px) {
+    max-width: 80%;
+  }
 
   @media (max-width: 768px) {
     max-width: 100%;
-    font-size: 24px;
+    font-size: 30px;
     padding: 0 32px;
   }
 
-  .author-note {
-    text-align: right;
-  }
+  .hero-text-head {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    flex-wrap: wrap;
 
-  a[target="_blank"] {
-    color: inherit;
-    &::after {
-      content: none;
+    &.withRoad {
+      align-items: end;
+    }
+
+    .road {
+      height: 78px;
+
+      img {
+        height: 100%;
+      }
+    }
+
+    .name {
+      font-size: 130%;
+      font-weight: bold;
+    }
+
+    .region {
+      font-size: 80%;
     }
   }
 
-  small {
-    font-size: 50%;
-    display: inline-flex;
+  .hero-text-meta {
+    display: flex;
     align-items: center;
-    gap: 2px;
+    font-size: 50%;
+
+    > *:not(:last-child)::after {
+      content: '·';
+      margin: 0 12px;
+
+      @media (max-width: 768px) {
+        margin: 0 4px;
+      }
+    }
+
+    .device {
+      .apple {
+        font-family: 'SF Pro Display', 'Inter', global.$fontFamilySet;
+      }
+    }
+  }
+
+  .hero-text-content {
+    font-size: 70%;
+    line-height: 1.6;
+  }
+
+  .hero-text-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
+@keyframes ScaleBottom {
+  from {
+    opacity: 0;
+    transform: translateY(5%) scale(.95);
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
   }
 }
 </style>
