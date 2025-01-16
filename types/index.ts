@@ -315,7 +315,10 @@ export type I18n = {
     index: {
         shotOn: string,
         shotAt: string,
-        altitude: string
+        altitude: string,
+        nextImage: string,
+        viewImage: string,
+        seeCollections: string
     }
 }
 

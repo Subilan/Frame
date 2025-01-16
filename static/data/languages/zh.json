@@ -52,6 +52,9 @@
   "index": {
     "shotAt": "拍摄于",
     "shotOn": "设备",
-    "altitude": "海拔"
+    "altitude": "海拔",
+    "nextImage": "下一张",
+    "viewImage": "查看图片",
+    "seeCollections": "所有合集"
   }
 }

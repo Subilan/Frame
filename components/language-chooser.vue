@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade">
+  <transition name="fadeup">
     <div class="language-chooser-layer" @click.self="model = !model" v-if="model">
       <div class="language-chooser" v-if="model">
         <section>

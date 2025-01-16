@@ -28,11 +28,11 @@
           <div class="hero-text-actions">
             <btn class="shadow border-primary bg-white text-primary"
                  @click="navigateTo(buildViewerPath(selected.ossPrefix, selected.image))">
-              查看图片
+              {{ t('index.viewImage') }}
               <icon :path="mdiArrowTopRight"/>
             </btn>
             <btn class="shadow" @click="navigateTo('/collections')">
-              全部合集
+              {{ t('index.seeCollections') }}
               <icon :path="mdiArrowRight"/>
             </btn>
           </div>
@@ -40,7 +40,8 @@
       </transition>
       <div class="next-image-button-container">
         <btn @click="refreshBackgroundImage"
-             class="next-image-button shadow-dark border-white bg-transparent text-white">下一张
+             class="next-image-button shadow-dark border-white bg-transparent text-white">
+          <span class="text">{{ t('index.nextImage') }}</span>
           <icon :path="mdiArrowRight"/>
         </btn>
       </div>
@@ -120,8 +121,19 @@ function refreshBackgroundImage() {
     transition: all .2s ease;
     transform: scale(0.9);
 
-    &:hover {
-      transform: scale(1.1) translateY(-10px);
+    @media (max-width: 768px) {
+      padding: 12px;
+      border-radius: 100%;
+
+      .text {
+        display: none;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      &:hover {
+        transform: scale(1.1) translateY(-10px);
+      }
     }
   }
 }

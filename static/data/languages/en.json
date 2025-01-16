@@ -52,6 +52,9 @@
   "index": {
     "shotAt": "Shot at",
     "shotOn": "Shot on",
-    "altitude": "Altitude"
+    "altitude": "Altitude",
+    "nextImage": "Next",
+    "viewImage": "View now",
+    "seeCollections": "All collections"
   }
 }
