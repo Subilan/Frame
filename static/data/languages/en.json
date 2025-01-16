@@ -48,5 +48,10 @@
       "moveYourCursorHere": "Move your cursor here",
       "other": "to learn more about these information."
     }
+  },
+  "index": {
+    "shotAt": "Shot at",
+    "shotOn": "Shot on",
+    "altitude": "Altitude"
   }
 }

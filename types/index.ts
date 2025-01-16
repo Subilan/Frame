@@ -311,6 +311,11 @@ export type I18n = {
             moveYourCursorHere: string,
             other: string,
         }
+    },
+    index: {
+        shotOn: string,
+        shotAt: string,
+        altitude: string
     }
 }
 

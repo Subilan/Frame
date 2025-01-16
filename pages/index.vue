@@ -16,10 +16,11 @@
           </span>
           </div>
           <div class="hero-text-meta">
-            <span class="date"><span class="gt-768">Shot at </span>{{ formatDate(selected.meta.date) }}</span>
-            <span class="device"><span class="gt-768">Shot on </span><span
+            <span class="date"><span
+                class="gt-768">{{ t('index.shotAt') }}&nbsp;</span>{{ formatDate(selected.meta.date) }}</span>
+            <span class="device"><span class="gt-768">{{ t('index.shotOn') }}&nbsp;</span><span
                 :class="{apple: selected.meta.device.includes('iPhone')}">{{ selected.meta.device }}</span></span>
-            <span class="altitude"><span class="gt-768">Altitude </span>{{
+            <span class="altitude"><span class="gt-768">{{ t('index.altitude') }}&nbsp;</span>{{
                 selected.meta.altitude.toFixed(0)
               }}<small>m</small></span>
           </div>
@@ -38,7 +39,8 @@
         </div>
       </transition>
       <div class="next-image-button-container">
-        <btn @click="refreshBackgroundImage" class="next-image-button shadow-dark border-white bg-transparent text-white">下一张
+        <btn @click="refreshBackgroundImage"
+             class="next-image-button shadow-dark border-white bg-transparent text-white">下一张
           <icon :path="mdiArrowRight"/>
         </btn>
       </div>
@@ -58,6 +60,10 @@ function randArrayIndex(array: any[]) {
   return Math.floor(Math.random() * array.length);
 }
 
+function loopArrayIndex(i: number, array: any[]) {
+  return (i + 1) % array.length;
+}
+
 const banners: HomeBannerItem[] = bannersImport;
 
 const indexImagePath = ref('');
@@ -65,6 +71,7 @@ const withRoad = ref(false);
 const loaded = ref(false);
 
 let selected: HomeBannerItem;
+let selectedIndex = 0;
 
 const backgroundNotLoad = ref(true);
 
@@ -77,8 +84,10 @@ function backgroundLoaded() {
 }
 
 function refreshBackgroundImage() {
-  selected = banners[randArrayIndex(banners)];
+  selectedIndex = loopArrayIndex(selectedIndex, banners);
+  selected = banners[selectedIndex];
   backgroundNotLoad.value = true;
+  loaded.value = false;
   indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
   backgroundNotLoad.value = false;
   withRoad.value = selected.name.startsWith('road-');
