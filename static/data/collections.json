@@ -29,6 +29,33 @@
         "href": "https://subilan.win/posts/a-journey-to-xinjiang-2"
       }
     ],
-    "theme": "journey-to-xinjiang.png"
+    "theme": "xinjiang-routemap.png"
+  },
+  {
+    "name": {
+      "en": "A Brief Visit of Yunnan",
+      "zh": "浅游云南"
+    },
+    "date": {
+      "en": "Feb, 2024",
+      "zh": "2024 年 2 月"
+    },
+    "ossPrefix": "yunnan",
+    "totalSize": 169602875403,
+    "totalAmount": 1958,
+    "pickedAmount": 81,
+    "banner": "2024.02.16_17.42.31.jpg",
+    "desc": {
+      "zh": "",
+      "en": ""
+    },
+    "external": [
+      {
+        "type": "article",
+        "name": "接着就是春天——云南浅游",
+        "href": "https://subilan.win/posts/a-brief-visit-of-yunnan"
+      }
+    ],
+    "theme": "yunnan-routemap.png"
   }
 ]
