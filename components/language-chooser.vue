@@ -3,13 +3,13 @@
     <div class="language-chooser-layer" @click.self="model = !model" v-if="model">
       <div class="language-chooser" v-if="model">
         <section>
-          <div class="item" @click="lang = 'en'; model = false;" :class="{active: lang === 'en'}">
-            English
+          <div class="item" @click="lang = 'zh'; model = false;" :class="{active: lang === 'zh'}">
+            简体中文
             <div class="spacer"/>
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </div>
-          <div class="item" @click="lang = 'zh'; model = false;" :class="{active: lang === 'zh'}">
-            简体中文
+          <div class="item" @click="lang = 'en'; model = false;" :class="{active: lang === 'en'}">
+            English
             <div class="spacer"/>
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </div>
