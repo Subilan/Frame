@@ -73,7 +73,7 @@
         </div>
         <div class="exif">
           <label>{{ t('view.details.timezone') }}</label>
-          <span>UTC{{ resolvedExif.timeOffset }} {{ getTimeOffsetName(resolvedExif.timeOffset) }}</span>
+          <span>UTC{{ resolvedExif.timeOffset }} <small>{{ getTimeOffsetName(resolvedExif.timeOffset) }}</small></span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.focalLength') }}</label>
@@ -103,15 +103,15 @@
               {{ t('view.details.loadingLocation') }}
             </div>
             <div v-else class="location-contents">
-              <div class="location-primary" :style="{'align-items': isRoad() ? 'center' : 'baseline'}">
-                <span v-if="getSpotName() && !isRoad()">
-                  {{ getSpotName() }}
+              <div class="location-primary">
+                <span class="center" v-if="isRoad()">
+                  <img alt="svg" height="50px"
+                       :src="`/road-svg/${getSpecialSpotName('road').toLowerCase()}.svg`" draggable="false"/>
                 </span>
-                <span class="center" v-else-if="getSpotName() && isRoad()">
-                  <img alt="svg" style="margin: 8px 0" height="50px"
-                       :src="`/road-svg/${getSpotName().toLowerCase()}.svg`" draggable="false"/>
+                <span v-if="isSpot()">
+                  {{ getSpecialSpotName('spot') }}
                 </span>
-                <span :style="{'font-size': getSpotName() ? '85%' : ''}">
+                <span :style="{'font-size': isRoad() || isSpot() ? '85%' : ''}">
                   {{ currentGeo.data.name }}
                 </span>
                 <popup class="trigger-hover top p8 autowidth">
@@ -277,7 +277,7 @@ interface ResolvedExif {
 function getTimeOffsetName(offset: string) {
   switch (offset) {
     case '+08:00':
-      return 'Asia/Beijing';
+      return 'Asia/Shanghai';
   }
 }
 
@@ -423,9 +423,14 @@ function isRoad() {
   return currentSpecialSpot.value.some(x => x.type === 'road');
 }
 
-function getSpotName() {
-  if (currentSpecialSpot.value.length > 0) if (currentSpecialSpot.value[0].type !== 'flight') return currentSpecialSpot.value[0].name as string;
-  return '';
+function isSpot() {
+  return currentSpecialSpot.value.some(x => x.type === 'spot');
+}
+
+function getSpecialSpotName(type: 'spot' | 'road') {
+  const spotInfo = currentSpecialSpot.value.filter(x => x.type === type);
+  if (spotInfo.length === 0) return '';
+  return spotInfo[0].name;
 }
 
 await retrieveCurrentObject();
@@ -530,6 +535,7 @@ label {
       font-size: 30px;
       display: inline-flex;
       gap: 10px;
+      align-items: end;
     }
 
     .location-secondary {
