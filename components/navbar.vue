@@ -13,21 +13,28 @@
       <router-link v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text[lang] }}</router-link>
       <a target="_blank" v-for="x in navigations.filter(x => x.external)" :href="x.to">{{ x.text[lang] }}</a>
     </div>
-    <button @click="drawerModel = !drawerModel" class="icon-btn drawer-btn">
-      <icon color="white" :path="mdiMenu"/>
-    </button>
+    <div class="nav-buttons">
+      <button class="icon-btn lang-btn" @click="languageChooserModel = !languageChooserModel">
+        <icon color="white" :path="mdiTranslate"/>
+      </button>
+      <button @click="drawerModel = !drawerModel" class="icon-btn drawer-btn">
+        <icon color="white" :path="mdiMenu"/>
+      </button>
+    </div>
   </nav>
   <drawer v-model="drawerModel"/>
+  <language-chooser v-model="languageChooserModel"/>
 </template>
 
 <script setup lang="ts">
 import SiteTitle from "@/components/site-title.vue";
-import {mdiArrowLeft, mdiMenu} from "@mdi/js";
+import {mdiArrowLeft, mdiMenu, mdiTranslate} from "@mdi/js";
 import navigationsImport from './navigations.json';
 import type {NavigationItem} from "~/types";
 
 const route = useRoute();
 const drawerModel = ref(false);
+const languageChooserModel = ref(false);
 const lang = useLanguage();
 const navigations = navigationsImport as NavigationItem[];
 </script>
@@ -44,6 +51,11 @@ const navigations = navigationsImport as NavigationItem[];
 .x-leave-to {
   transform: scale(.3);
   opacity: 0;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
 }
 
 .navbar .drawer-btn {
@@ -91,6 +103,7 @@ const navigations = navigationsImport as NavigationItem[];
   display: flex;
   align-items: center;
   padding: 0 32px;
+  gap: 8px;
 
   @media (max-width: 768px) {
     padding: 0 24px;

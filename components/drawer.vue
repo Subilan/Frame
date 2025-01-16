@@ -18,13 +18,13 @@
             <div class="spacer"/>
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </a>
-          <router-link @click="model = false" v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text }}
+          <router-link @click="model = false" v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text[lang] }}
             <div class="spacer"/>
             <span class="non-active-icon"><icon :path="mdiArrowRight"/></span>
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </router-link>
           <a target="_blank" @click="model = false" v-for="x in navigations.filter(x => x.external)"
-             :href="x.href">{{ x.text }}
+             :href="x.to">{{ x.text[lang] }}
             <div class="spacer"/>
             <span><icon :path="mdiArrowTopRight"/></span>
           </a>
@@ -39,7 +39,7 @@ import {mdiArrowRight, mdiArrowTopRight, mdiCheck} from "@mdi/js";
 
 const route = useRoute();
 const model = defineModel();
-console.log(route)
+const lang = useLanguage();
 </script>
 
 <style lang="scss">
