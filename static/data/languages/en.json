@@ -16,7 +16,8 @@
     "watchExternal": "Watch “$1” on bilibili.com"
   },
   "collections": {
-    "photoNum": "$1 photos"
+    "photoShownNum": "$1 shown",
+    "photoTotalNum": "$1 in total"
   },
   "view": {
     "viewDetails": "View details",

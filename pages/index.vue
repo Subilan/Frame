@@ -1,38 +1,46 @@
 <template>
-  <div class="index-background navbar-offset" :style="{
-    'background-image': `url(${indexImagePath})`
-  }">
+  <div class="index-background navbar-offset">
+    <img :src="indexImagePath" @load="backgroundLoaded" :class="{backgroundNotLoad, loaded}" loading="lazy"
+         alt="background" class="index-background-image"/>
     <div class="overlay"/>
     <div class="+overlay">
-      <div class="hero-text" :class="{loaded}">
-        <div class="hero-text-head" :class="{withRoad}">
-          <div class="road" v-if="withRoad">
-            <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`"/>&nbsp;
-          </div>
-          <span class="name" v-else>{{ selected.name }}&nbsp;&nbsp;</span>
-          <span class="region">
+      <transition name="scale-bottom" mode="out-in">
+        <div class="hero-text" v-if="loaded">
+          <div class="hero-text-head" :class="{withRoad}">
+            <div class="road" v-if="withRoad">
+              <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`"/>&nbsp;
+            </div>
+            <span class="name" v-else>{{ selected.name }}&nbsp;&nbsp;</span>
+            <span class="region">
             {{ selected.meta.region }}
           </span>
+          </div>
+          <div class="hero-text-meta">
+            <span class="date"><span class="gt-768">Shot at </span>{{ formatDate(selected.meta.date) }}</span>
+            <span class="device"><span class="gt-768">Shot on </span><span
+                :class="{apple: selected.meta.device.includes('iPhone')}">{{ selected.meta.device }}</span></span>
+            <span class="altitude"><span class="gt-768">Altitude </span>{{
+                selected.meta.altitude.toFixed(0)
+              }}<small>m</small></span>
+          </div>
+          <div class="hero-text-content" v-html="selected.story.join('')"/>
+          <div class="hero-text-actions">
+            <btn class="shadow border-primary bg-white text-primary"
+                 @click="navigateTo(buildViewerPath(selected.ossPrefix, selected.image))">
+              查看图片
+              <icon :path="mdiArrowTopRight"/>
+            </btn>
+            <btn class="shadow" @click="navigateTo('/collections')">
+              全部合集
+              <icon :path="mdiArrowRight"/>
+            </btn>
+          </div>
         </div>
-        <div class="hero-text-meta">
-          <span class="date"><span class="gt-768">Shot at </span>{{ formatDate(selected.meta.date) }}</span>
-          <span class="device"><span class="gt-768">Shot on </span><span
-              :class="{apple: selected.meta.device.includes('iPhone')}">{{ selected.meta.device }}</span></span>
-          <span class="altitude"><span class="gt-768">Altitude </span>{{
-              selected.meta.altitude.toFixed(0)
-            }}<small>m</small></span>
-        </div>
-        <div class="hero-text-content" v-html="selected.story.join('')"/>
-        <div class="hero-text-actions">
-          <btn class="shadow border" @click="navigateTo(buildViewerPath(selected.ossPrefix, selected.image))">
-            查看图片
-            <icon :path="mdiArrowTopRight"/>
-          </btn>
-          <btn class="shadow" @click="navigateTo('/collections')">
-            全部合集
-            <icon :path="mdiArrowRight"/>
-          </btn>
-        </div>
+      </transition>
+      <div class="next-image-button-container">
+        <btn @click="refreshBackgroundImage" class="next-image-button shadow-dark border-white bg-transparent text-white">下一张
+          <icon :path="mdiArrowRight"/>
+        </btn>
       </div>
     </div>
   </div>
@@ -56,17 +64,58 @@ const indexImagePath = ref('');
 const withRoad = ref(false);
 const loaded = ref(false);
 
-const selected: HomeBannerItem = banners[randArrayIndex(banners)];
+let selected: HomeBannerItem;
+
+const backgroundNotLoad = ref(true);
 
 onMounted(() => {
-  indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
-  withRoad.value = selected.name.startsWith('road-');
-  loaded.value = true;
+  refreshBackgroundImage();
 })
+
+function backgroundLoaded() {
+  loaded.value = true;
+}
+
+function refreshBackgroundImage() {
+  selected = banners[randArrayIndex(banners)];
+  backgroundNotLoad.value = true;
+  indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
+  backgroundNotLoad.value = false;
+  withRoad.value = selected.name.startsWith('road-');
+}
 </script>
 
 <style lang="scss">
 @use "assets/global";
+
+.scale-bottom-enter-from,
+.scale-bottom-leave-to {
+  opacity: 0;
+  transform: translateY(5%) scale(.95);
+}
+
+.scale-bottom-enter-active,
+.scale-bottom-leave-active {
+  transition: all .4s ease;
+}
+</style>
+
+<style lang="scss" scoped>
+@use "assets/global";
+
+.next-image-button-container {
+  position: absolute;
+  bottom: 32px;
+
+  .next-image-button {
+    transition: all .2s ease;
+    transform: scale(0.9);
+
+    &:hover {
+      transform: scale(1.1) translateY(-10px);
+    }
+  }
+}
 
 .index-buttons {
   display: flex;
@@ -74,7 +123,6 @@ onMounted(() => {
   gap: 32px;
   margin-top: 64px;
 }
-
 
 .\+overlay {
   z-index: 2;
@@ -95,6 +143,22 @@ onMounted(() => {
   position: relative;
   background-color: black;
 
+  .index-background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    object-fit: cover;
+    transition: all .2s ease;
+    opacity: 0;
+
+    &.loaded {
+      opacity: 1;
+    }
+  }
+
   .overlay {
     height: 100%;
     width: 100%;
@@ -114,11 +178,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  opacity: 0;
-
-  &.loaded {
-    animation: .4s ease ScaleBottom forwards;
-  }
 
   @media (max-width: 1200px) {
     max-width: 80%;
@@ -188,18 +247,6 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 16px;
-  }
-}
-
-@keyframes ScaleBottom {
-  from {
-    opacity: 0;
-    transform: translateY(5%) scale(.95);
-  }
-
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
   }
 }
 </style>

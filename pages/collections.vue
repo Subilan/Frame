@@ -7,7 +7,7 @@
         </div>
         <div class="texts">
           <h2 :lang="lang">{{ x.name[lang] }}</h2>
-          <p class="basic-info">{{ x.date[lang] }} · {{ t('collections.photoNum', x.totalAmount)}}</p>
+          <p class="basic-info">{{ x.date[lang] }} · {{ t('collections.photoShownNum', x.pickedAmount)}} · {{ t('collections.photoTotalNum', x.totalAmount)}}</p>
         </div>
       </div>
     </div>

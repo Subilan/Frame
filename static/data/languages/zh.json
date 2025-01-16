@@ -16,7 +16,8 @@
     "watchExternal": "在哔哩哔哩上观看“$1”"
   },
   "collections": {
-    "photoNum": "共 $1 张"
+    "photoShownNum": "展示 $1 张",
+    "photoTotalNum": "共 $1 张"
   },
   "view": {
     "viewDetails": "详细信息",

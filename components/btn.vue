@@ -1,17 +1,8 @@
 <template>
-  <button class="button" :class="`type-${type}`">
+  <button class="button">
     <slot/>
   </button>
 </template>
-
-<script setup>
-const props = defineProps({
-  type: {
-    type: String
-  }
-});
-
-</script>
 
 <style lang="scss">
 @use 'assets/global';
@@ -22,7 +13,6 @@ const props = defineProps({
   gap: 10px;
   background: global.$primaryd;
   outline: none;
-  border: none;
   border-radius: 10px;
   color: white;
   padding: 8px 16px;
@@ -30,10 +20,12 @@ const props = defineProps({
   cursor: pointer;
   transition: all .2s ease;
   font-family: global.$fontFamilySet;
+  border: 1px solid transparent;
 
   svg {
     height: 18px;
     width: 18px;
+    transition: all .2s ease;
   }
 
   &:hover {
@@ -46,16 +38,42 @@ const props = defineProps({
 
   &.shadow {
     box-shadow: 0 3px 3px rgba(0, 0, 0, .2);
+
+    &:hover {
+      box-shadow: 0 5px 6px rgba(0, 0, 0, .4);
+    }
   }
 
   &.shadow-dark {
     box-shadow: 0 5px 6px rgba(0, 0, 0, .4);
   }
-}
 
-.button.border {
-  border: 1px solid global.$primaryd;
-  color: global.$primaryd;
-  background: white;
+  &.bg-transparent {
+    background: transparent;
+  }
+
+  &.bg-white {
+    background: white;
+
+    &:hover {
+      background: #ddd;
+    }
+  }
+
+  &.border-white {
+    border-color: white;
+  }
+
+  &.border-primary {
+    border-color: global.$primaryd;
+  }
+
+  &.text-primary {
+    color: global.$primaryd;
+  }
+
+  &.text-white {
+    color: white;
+  }
 }
 </style>

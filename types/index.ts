@@ -279,7 +279,8 @@ export type I18n = {
         watchExternal: string
     }
     collections: {
-        photoNum: string,
+        photoShownNum: string,
+        photoTotalNum: string
     }
     view: {
         viewDetails: string,
