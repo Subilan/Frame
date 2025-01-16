@@ -2,21 +2,33 @@
   {
     "external": false,
     "to": "/collections",
-    "text": "Collections"
+    "text": {
+      "en": "Collections",
+      "zh": "合集"
+    }
   },
   {
     "external": false,
     "to": "/about",
-    "text": "About"
+    "text": {
+      "en": "About",
+      "zh": "关于"
+    }
   },
   {
     "external": true,
-    "href": "https://subilan.win",
-    "text": "Blog"
+    "to": "https://subilan.win",
+    "text": {
+      "en": "Blog",
+      "zh": "博客"
+    }
   },
   {
     "external": true,
-    "href": "https://github.com/Subilan",
-    "text": "GitHub"
+    "to": "https://github.com/Subilan",
+    "text": {
+      "en": "GitHub",
+      "zh": "GitHub"
+    }
   }
 ]

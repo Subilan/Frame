@@ -10,8 +10,8 @@
     </div>
     <div class="spacer"/>
     <div class="nav-links">
-      <router-link v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text }}</router-link>
-      <a target="_blank" v-for="x in navigations.filter(x => x.external)" :href="x.href">{{ x.text }}</a>
+      <router-link v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text[lang] }}</router-link>
+      <a target="_blank" v-for="x in navigations.filter(x => x.external)" :href="x.to">{{ x.text[lang] }}</a>
     </div>
     <button @click="drawerModel = !drawerModel" class="icon-btn drawer-btn">
       <icon color="white" :path="mdiMenu"/>
@@ -23,10 +23,13 @@
 <script setup lang="ts">
 import SiteTitle from "@/components/site-title.vue";
 import {mdiArrowLeft, mdiMenu} from "@mdi/js";
-import navigations from './navigations.json';
+import navigationsImport from './navigations.json';
+import type {NavigationItem} from "~/types";
 
 const route = useRoute();
 const drawerModel = ref(false);
+const lang = useLanguage();
+const navigations = navigationsImport as NavigationItem[];
 </script>
 
 <style lang="scss">

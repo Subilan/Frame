@@ -333,3 +333,9 @@ export type HomeBannerItem = {
     }
     story: string[]
 }
+
+export type NavigationItem = {
+    external: boolean,
+    to: string,
+    text: Lang<string>
+}
