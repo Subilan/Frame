@@ -1,11 +1,11 @@
 <template>
   <div class="index-background navbar-offset">
-    <img :src="indexImagePath" @load="backgroundLoaded" :class="{backgroundNotLoad, loaded}" loading="lazy"
+    <img :src="indexImagePath" @load="backgroundLoaded" :class="{backgroundNotLoad, loaded:imageLoaded}" loading="lazy"
          alt="background" class="index-background-image"/>
     <div class="overlay"/>
     <div class="+overlay">
       <transition name="scale-bottom" mode="out-in">
-        <div class="hero-text" v-if="loaded">
+        <div class="hero-text" v-if="textLoaded">
           <div class="hero-text-head" :class="{withRoad}">
             <div class="road" v-if="withRoad">
               <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`"/>&nbsp;
@@ -69,7 +69,8 @@ const banners: HomeBannerItem[] = bannersImport;
 
 const indexImagePath = ref('');
 const withRoad = ref(false);
-const loaded = ref(false);
+const imageLoaded = ref(false);
+const textLoaded = ref(false);
 
 let selected: HomeBannerItem;
 let selectedIndex = 0;
@@ -81,14 +82,16 @@ onMounted(() => {
 })
 
 function backgroundLoaded() {
-  loaded.value = true;
+  imageLoaded.value = true;
+  setTimeout(() => textLoaded.value = true, 150);
 }
 
 function refreshBackgroundImage() {
   selectedIndex = loopArrayIndex(selectedIndex, banners);
   selected = banners[selectedIndex];
   backgroundNotLoad.value = true;
-  loaded.value = false;
+  imageLoaded.value = false;
+  textLoaded.value = false;
   indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
   backgroundNotLoad.value = false;
   withRoad.value = selected.name.startsWith('road-');
@@ -172,8 +175,8 @@ function refreshBackgroundImage() {
     height: 100%;
     z-index: 0;
     object-fit: cover;
-    transition: all .2s ease;
     opacity: 0;
+    transition: all .3s ease;
 
     &.loaded {
       opacity: 1;
