@@ -1,17 +1,25 @@
 <template>
   <div class="about-container navbar-offset">
-    <h1>About</h1>
-    <p>Frame (stylizedly displayed as <em>the <strong>frame</strong></em>) is a simple web application built with Nuxt 3
-      to showcase the photos <em>I took</em> during my travels to different places. The initial motive for creating this
-      is my belief of the significance of recording my life, the desire to share the wonderful scenery and the
-      underlying stories & experiences that impressed me.</p>
-    <h2>What travels bring</h2>
-    <p>To me, a travel to different places can be quite exciting and refreshing, especially when it involves nature.</p>
+    <template v-if="lang === 'zh'">
+      <h1 class="about-title">关于</h1>
+      <p>Frame（风格化拼写：<em>the <strong>frame</strong></em>）是一个基于 Nuxt 3 的网站程序，用于展示我在旅行中的不同地点拍摄的照片。</p>
+      <p>做出这一网站，是因为我希望能够通过它来记录自己过往的生活与走过的地方，并保留这些照片背后的故事和当时的想法。</p>
+    </template>
+    <template v-if="lang === 'en'">
+      <h1 class="about-title" lang="en">About</h1>
+      <p>Frame (stylizedly spelled and displayed as <em>the <strong>frame</strong></em>) is a simple web application built with Nuxt
+        3
+        to showcase the photos <em>I took</em> during my travels to different places. The initial motive for creating
+        this
+        is my belief of the significance of recording my life, the desire to share the wonderful scenery and the
+        underlying stories & experiences that impressed me.</p>
+    </template>
     <div class="about-galleries">
       <transition name="fade" mode="out-in" v-for="i in [0, 1, 2]">
         <div class="about-gallery" :class="`set${i+1}`" v-show="aboutGalleryControl[i]">
           <div class="img" v-for="x in imageSets[i]">
-            <NuxtImg :src="to840P(buildObjectPath('about', x))" loading="lazy" placeholder placeholder-class="loading"/>
+            <NuxtImg :src="to840P(buildObjectPath('about', x))" loading="lazy" placeholder
+                     placeholder-class="loading"/>
             <div class="loading-block"></div>
           </div>
         </div>
@@ -20,69 +28,132 @@
         <icon :path="mdiArrowRight"/>
       </div>
     </div>
-    <p>The travel per se is a brand new experience as the world is so big and there's so many surprises and never-mets
-      for us to find. In fact, for me a travel also provides a valuable opportunity to document one's perspective on
-      life, or
-      more specifically, the way you meet and recognize people and things.</p>
-    <p>And taking photos is a way of recording all of these things. The photos themselves are storytellers. You can
-      reconnect with the moments through the them.</p>
-    <hr/>
-    <h2>Photo viewer design</h2>
-    <p>Focusing on the intuitiveness, the photo viewer in Frame is built to be simple, clear, and
-      fully functional.</p>
-    <ul>
-      <li>Each photo has two versions of quality available: original and compressed (1080px in height).</li>
-      <li>GPS details are present whenever available. Along with the longitude & latitude numbers, there's an
-        interactive map
-        built with <a target="_blank" href="https://openlayers.org/">OpenLayers</a>.
-      </li>
-      <li>With the long. & lat. data, names of the places and the related scenic spots where the photos were taken are
-        automatically retrieved from locally built Geojson data, which originally comes from <a
-            href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov" target="_blank">xiangyuecn/AreaCity-JsSpider-StatsGov</a>.
-      </li>
-      <li>The signs of the road code (of national highways, GXX and GXXX) are also included.</li>
-    </ul>
-    <h2>Cloud service & photo quality</h2>
-    <p>The photos are mildly JPEG compressed using <a href="https://imagemagick.org/index.php" target="_blank">ImageMagick</a>
-      before uploaded in order to partially save the cost of storage and bandwidth without excessively affect the photo
-      viewing perception. Aliyun OSS is the current cloud service.</p>
-    <p>When loading a photo in photo viewer, a resizing filter limiting the photo to a maximum height of 1080px
-      (refering to common 1920x1080 resolution) is applied. You can disable this filter and view in original quality by
-      clicking the
-      <icon :path="mdiImage" style="vertical-align: middle; margin-right: 4px"/>
-      <em>Load original</em> button at the bottom of the image section (the unresized photo will be downloaded in the
-      meantime). This filter is always applied on page load to lower bandwidth consumption.
-    </p>
-    <h2>There's no photo actually taken with a camera. Why?</h2>
-    <p>The photos are mostly shot on iPhone for convenience. It's known that the quality of mobile photos is not comparable to professional cameras.</p>
-    <p>Since this is not a photography exhibition webpage and I'm not a specialized photographer either, it's better to emphasize that the <em>rough</em> look of the photo, not the textural details, is what matters to me <em>currently</em>.</p>
-    <p>However, if my interest and time permit, there can be camera photos in the future.</p>
-    <h2>Font</h2>
-    <p>The logo (let's consider it a logo for now) of Frame and the whole web page is using <a
-        href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> as the primary font.</p>
-    <h2>Copyright</h2>
-    <p>Photos on this site is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1"
-                                                target="_blank" rel="license noopener noreferrer">CC BY-SA 4.0</a>.</p>
-    <p><a href="https://github.com/Subilan/Frame" target="_blank">Code of this project</a> is licensed under MIT.</p>
-    <p>The national highway road signs are collected from WikiMedia Commons, and they are from various authors.
-      According to their copyright claims:
-    </p>
-    <blockquote>
-      <p>This image of road traffic sign is from the mandatory National Standard of the People's Republic of China GB
-        5768, Road traffic signs and markings. Per <a
-            href="https://zh.wikisource.org/wiki/%E6%9D%83%E5%8F%B81999%E7%AC%AC50%E5%8F%B7" target="_blank">权司[1999]
-          第50号</a> issued by the National Copyright Administration, mandatory standards are technical standards with
-        legal natures, so the copyright protection is inapplicable pursuant to Article 5 of the <a
-            href="https://en.wikisource.org/wiki/Copyright_Law_of_the_People%27s_Republic_of_China" target="_blank">Copyright
-          Law of the People's Republic of China</a>.</p>
-    </blockquote>
-    <p>The signs are licensed under CC0.</p>
+    <template v-if="lang === 'zh'">
+      <p>
+        旅行本身是一种全新的生活体验。这个世界如此巨大，实在是有太多的未知等待我们去感受，去发掘。旅行对我而言，是一种用于记录和体现自己看待生活视角的方式，从旅行中我们能看到自己如何待人接物。</p>
+      <p>
+        拍照是记录旅行最为简单的方式，它是一种视角的记录。这些照片在旅行过后也将化身为故事的阐述者。通过重新查看这些照片，或许就可以与当时的心境和感受重新链接。</p>
+      <hr/>
+      <h1>网站设计</h1>
+      <h2>照片查看器的设计</h2>
+      <p>本网站的照片查看器围绕着功能的全面性和操作的简单、清晰性而设计。具体的一些特性说明如下：</p>
+      <ul>
+        <li>每个照片具有两种质量等级：原图和压缩，压缩后的图片高度为 1080px。</li>
+        <li>照片中蕴含的 GPS 信息会直接呈现出来（如果存在）。同时，根据 GPS 信息中的经纬度，会在一个可交互的世界地图上标出拍摄的地点。这一地图是基于
+          <a target="_blank" href="https://openlayers.org/">OpenLayers</a> 构建的。
+        </li>
+        <li>如果照片的拍摄地点是景区，也会按照实际标注在经纬度获取的地点旁边。这些经纬度与地点的映射信息依靠的是 <a
+            href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov" target="_blank">xiangyuecn/AreaCity-JsSpider-StatsGov</a>
+          项目所提供的数据。
+        </li>
+        <li>在公路旁所拍摄的图片，部分在地点旁也标有国家道路标志。</li>
+      </ul>
+      <h2>云服务与图片质量</h2>
+      <p>目前所采用的云服务是阿里云的对象存储（OSS）。</p>
+      <p>为了节省云服务的流量，以及使用 iPhone 拍摄的照片大部分为 HEIF 格式，本站的所有照片在上传之前都利用 <a
+          href="https://imagemagick.org/index.php" target="_blank">ImageMagick</a> 进行了 JPEG 压缩。压缩过程中尽量保留了原图的观感。</p>
+      <p>在图片加载器中加载图片时，默认加载的图像是经过缩放后的压缩图像，其高度被设置为 1080px。如果要查看原图，可点击图片底部工具栏中的
+        <icon :path="mdiImage" style="vertical-align: middle; margin-right: 4px"/>
+        <em>加载原图</em> 按钮，届时原始分辨率的图片会被下载并展示。
+      </p>
+      <h2>为什么没有用相机拍摄的图片？</h2>
+      <p>众所周知，手机拍出的照片质量与相机是不能轻易比较的。因为我并不是摄影师，为了旅途中的方便更倾向于使用 iPhone
+        去进行简单的记录（虽然其中有些图片用相机拍后可能有不错的反馈）。</p>
+      <p>本站并不是一个摄影展览网站，图片所记录的<em>整体内容</em>是重点，包括其背后的故事以及当时的感受，而非摄影的细节、构图等等。
+      </p>
+      <p>不过如果在未来有兴致和时间的话，也可以考虑使用相机进行一些创作。</p>
+      <h2>网站字体</h2>
+      <p>网站的 Logo（我们暂且看成是一个 logo 吧=。=）和网页本身使用的是 <a
+          href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> 字体。</p>
+      <h2>版权</h2>
+      <p>本站的所有照片均为原创，依据 <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1"
+                                        target="_blank" rel="license noopener noreferrer">CC BY-SA 4.0</a> 进行授权。</p>
+      <p><a href="https://github.com/Subilan/Frame" target="_blank">本网站的代码</a>采用 MIT 协议授权。</p>
+      <p>本网站上使用到的国家公路图标是在维基共享媒体上获取到的，它们的发布者各不相同。但根据他们自己写出的版权协议：
+      </p>
+      <blockquote>
+        <p>This image of road traffic sign is from the mandatory National Standard of the People's Republic of China GB
+          5768, Road traffic signs and markings. Per <a
+              href="https://zh.wikisource.org/wiki/%E6%9D%83%E5%8F%B81999%E7%AC%AC50%E5%8F%B7" target="_blank">权司[1999]
+            第50号</a> issued by the National Copyright Administration, mandatory standards are technical standards with
+          legal natures, so the copyright protection is inapplicable pursuant to Article 5 of the <a
+              href="https://en.wikisource.org/wiki/Copyright_Law_of_the_People%27s_Republic_of_China" target="_blank">Copyright
+            Law of the People's Republic of China</a>.</p>
+      </blockquote>
+      <p>因此这些图片应当属于公有领域。</p>
+    </template>
+    <template v-if="lang==='en'">
+      <p>The travel per se is a brand new experience as the world is so big and there's so many surprises and never-mets
+        for us to find. A travel also provides a valuable opportunity to document one's perspective on
+        life, or more specifically, the way you meet and recognize people and things.</p>
+      <p>And taking photos is a way of recording some parts of these things. The photos themselves are storytellers. You can
+        reconnect with the moments and feelings through them.</p>
+      <hr/>
+      <h1>Site Design</h1>
+      <h2>Photo viewer design</h2>
+      <p>Focusing on intuitiveness, the photo viewer in Frame is built to be simple, clear, and
+        fully functional.</p>
+      <ul>
+        <li>Each photo has two versions of quality available: original and compressed (1080px in height).</li>
+        <li>GPS details are present if available. Along with the longitude & latitude numbers, there's an
+          interactive map
+          built with <a target="_blank" href="https://openlayers.org/">OpenLayers</a>.
+        </li>
+        <li>With the long. & lat. data provided, names of the places and the related scenic spots where the photos were taken are
+          automatically retrieved from locally built Geojson data, which originally comes from <a
+              href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov" target="_blank">xiangyuecn/AreaCity-JsSpider-StatsGov</a>.
+        </li>
+        <li>The signs of the road code (of national highways, GXX and GXXX) are also included if possible.</li>
+      </ul>
+      <h2>Cloud service & photo quality</h2>
+      <p>The photos are mildly JPEG compressed using <a href="https://imagemagick.org/index.php" target="_blank">ImageMagick</a>
+        before uploaded in order to partially save the cost of storage and bandwidth without excessively affect the
+        photo
+        viewing perception. Aliyun OSS is the current cloud service.</p>
+      <p>When loading a photo in photo viewer, a resizing filter limiting the photo to a maximum height of 1080px
+        (refering to common 1920x1080 resolution) is applied. You can disable this filter and view in original quality
+        by
+        clicking the
+        <icon :path="mdiImage" style="vertical-align: middle; margin-right: 4px"/>
+        <em>Load original</em> button at the bottom of the image section (the unresized photo will be downloaded in the
+        meantime). This filter is always applied on page load to lower bandwidth consumption.
+      </p>
+      <h2>There's no photo actually taken with a camera. Why?</h2>
+      <p>The photos are mostly shot on iPhone for convenience. It's known that the quality of mobile photos is not
+        comparable to professional cameras.</p>
+      <p>Since this is not a photography exhibition webpage and I'm not a specialized photographer either, it's better
+        to emphasize that the <em>rough</em> look of the photo, not the textural details, is what matters to me <em>currently</em>.
+      </p>
+      <p>However, if my interest and time permit, there can be camera photos in the future.</p>
+      <h2>Font</h2>
+      <p>The logo (let's consider it a logo for now) of Frame and the whole web page is using <a
+          href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> as the primary font.</p>
+      <h2>Copyright</h2>
+      <p>Photos on this site is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1"
+                                                  target="_blank" rel="license noopener noreferrer">CC BY-SA 4.0</a>.
+      </p>
+      <p><a href="https://github.com/Subilan/Frame" target="_blank">Code of this project</a> is licensed under MIT.</p>
+      <p>The national highway road signs are collected from WikiMedia Commons, and they are from various authors.
+        According to their copyright claims:
+      </p>
+      <blockquote>
+        <p>This image of road traffic sign is from the mandatory National Standard of the People's Republic of China GB
+          5768, Road traffic signs and markings. Per <a
+              href="https://zh.wikisource.org/wiki/%E6%9D%83%E5%8F%B81999%E7%AC%AC50%E5%8F%B7" target="_blank">权司[1999]
+            第50号</a> issued by the National Copyright Administration, mandatory standards are technical standards with
+          legal natures, so the copyright protection is inapplicable pursuant to Article 5 of the <a
+              href="https://en.wikisource.org/wiki/Copyright_Law_of_the_People%27s_Republic_of_China" target="_blank">Copyright
+            Law of the People's Republic of China</a>.</p>
+      </blockquote>
+      <p>So the signs are in public domain.</p>
+    </template>
   </div>
 </template>
 <script setup lang="ts">
 import {mdiArrowRight, mdiImage} from "@mdi/js";
 import {buildObjectPath} from "#imports";
 
+const lang = useLanguage();
 const aboutGalleryControl = ref([true, false, false]);
 
 async function nextGallery() {
@@ -130,6 +201,20 @@ const imageSets = [
 </script>
 
 <style lang="scss" scoped>
+h1 {
+  text-align: center;
+  margin: 32px 0;
+  font-size: 300%;
+}
+
+.about-title {
+  font-size: 500%;
+  margin: 64px 0;
+  &[lang='en'] {
+    font-style: italic;
+  }
+}
+
 .about-container {
   max-width: 1200px;
   padding: 16px;
