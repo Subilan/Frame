@@ -59,7 +59,7 @@
         </div>
         <div class="exif">
           <label>{{ t('view.details.shotOn') }}</label>
-          <div class="apple" v-if="resolvedExif.model.includes('iPhone')">
+          <div class="apple" v-if="resolvedExif.make === 'Apple'">
             <div class="device">Apple {{ resolvedExif.model }}</div>
           </div>
         </div>
@@ -107,6 +107,10 @@
                 <span class="center" v-if="isRoad()">
                   <img alt="svg" height="50px"
                        :src="`/road-svg/${getSpecialSpotName('road').toLowerCase()}.svg`" draggable="false"/>
+                </span>
+                <span class="center" v-if="isSubwayStation()">
+                  <img alt="svg" height="50px"
+                       :src="`/subway-svg/${getSpecialSpotName('subway-station').toLowerCase()}.svg`" draggable="false"/>
                 </span>
                 <span v-if="isSpot()">
                   {{ getSpecialSpotName('spot') }}
@@ -259,6 +263,7 @@ interface ResolvedExif {
   date: string,
   timeOffset: string,
   model: string,
+  make: string,
   altitude: number,
   latitudeN: number[] | null,
   longitudeE: number[] | null,
@@ -323,9 +328,13 @@ function resolveExif(exif: Exif): ResolvedExif {
 
   if (!lensModelExecuted) throw new Error('cannot translate lens model');
 
+  let timeOffset = "+08:00";
+  if (exif.OffsetTime) timeOffset = exif.OffsetTime.value;
+
   const result = {
+    make: exif.Make.value,
     date: date.format("YYYY/MM/DD HH:mm:ss"),
-    timeOffset: exif.OffsetTime.value,
+    timeOffset,
     model: exif.Model.value,
     altitude: exif.GPSAltitude ? eval(exif.GPSAltitude.value) : -1,
     latitudeN: latiExecuted ? [1, 2, 3, 4].map(x => Number(latiExecuted?.[x])) : null,
@@ -419,6 +428,10 @@ function isInFlight() {
   return currentSpecialSpot.value.some(x => x.type === 'flight');
 }
 
+function isSubwayStation() {
+  return currentSpecialSpot.value.some(x => x.type === 'subway-station');
+}
+
 function isRoad() {
   return currentSpecialSpot.value.some(x => x.type === 'road');
 }
@@ -427,15 +440,18 @@ function isSpot() {
   return currentSpecialSpot.value.some(x => x.type === 'spot');
 }
 
-function getSpecialSpotName(type: 'spot' | 'road') {
+function getSpecialSpotName(type: 'spot' | 'road' | 'subway-station') {
   const spotInfo = currentSpecialSpot.value.filter(x => x.type === type);
   if (spotInfo.length === 0) return '';
+  // @ts-ignore
   return spotInfo[0].name;
 }
 
 await retrieveCurrentObject();
 await retrieveCurrentExif();
+// @ts-ignore
 await retrieveSpecialSpotInfo(currentObject.data.name);
+// @ts-ignore
 await retrieveCaptions(currentObject.data.name);
 
 watch(imageCoord, async x => {

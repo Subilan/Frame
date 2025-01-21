@@ -17,7 +17,7 @@ function spotIncludesName(name: string, spot: SpecialSpot) {
             const translated = translateExifDate(exif.exif.DateTime.value);
 
             if (translated === null) return false;
-            return translated.isBetween(startAt, endAt)
+            return translated.isBetween(startAt, endAt, null, "[]");
         })
 
         if (res) return true;

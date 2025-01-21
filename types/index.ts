@@ -249,7 +249,7 @@ interface SpecialSpotBase {
 }
 
 interface SpecialSpotDefault extends SpecialSpotBase {
-    type: "spot" | "road",
+    type: "spot" | "road" | "subway-station";
     name: string
 }
 

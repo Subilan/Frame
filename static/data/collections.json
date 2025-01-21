@@ -57,5 +57,26 @@
       }
     ],
     "theme": "yunnan-routemap.png"
+  },
+  {
+    "name": {
+      "en": "Tours in Greater Bay Area",
+      "zh": "大湾区阅历"
+    },
+    "date": {
+      "en": "2017-2024",
+      "zh": "2017 年至 2024 年"
+    },
+    "ossPrefix": "dawanqu",
+    "totalSize": 61300127191,
+    "totalAmount": 2361,
+    "pickedAmount": 161,
+    "banner": "2024.08.12_19.02.31.jpg",
+    "desc": {
+      "zh": "",
+      "en": ""
+    },
+    "external": [],
+    "theme": "dawanqu.png"
   }
 ]
