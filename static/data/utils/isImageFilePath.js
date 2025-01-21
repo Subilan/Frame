@@ -1,3 +1,4 @@
 export default function (str) {
-    return str.endsWith('jpg') || str.endsWith('jpeg') || str.endsWith('png') || str.endsWith('webp')
+    const s = str.toLowerCase();
+    return s.endsWith('jpg') || s.endsWith('jpeg') || s.endsWith('png') || s.endsWith('webp')
 }
