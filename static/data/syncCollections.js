@@ -37,7 +37,7 @@ const fileTree = result.filter(x => isImageFilePath(x.name)).sort((a, b) => getF
 const collections = {};
 
 fileTree.forEach(x => {
-    const collectionIdExec = /\/frame\/([A-Za-z\-_]+)\//.exec(x.url);
+    const collectionIdExec = /\/frame\/([0-9A-Za-z\-_]+)\//.exec(x.url);
     if (collectionIdExec !== null) {
         const collectionId = collectionIdExec[1];
         if (!Object.keys(collections).includes(collectionId)) collections[collectionId] = {
