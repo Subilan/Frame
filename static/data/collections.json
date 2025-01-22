@@ -52,7 +52,7 @@
     "external": [
       {
         "type": "article",
-        "name": "接着就是春天——云南浅游",
+        "name": "云中浅游",
         "href": "https://subilan.win/posts/a-brief-visit-of-yunnan"
       }
     ],
@@ -60,7 +60,7 @@
   },
   {
     "name": {
-      "en": "Tours in Greater Bay Area",
+      "en": "Experiences in Greater Bay Area",
       "zh": "大湾区阅历"
     },
     "date": {
@@ -78,5 +78,36 @@
     },
     "external": [],
     "theme": "dawanqu.png"
+  },
+  {
+    "name": {
+      "en": "Journey to Sichuan-Chongqing 2023",
+      "zh": "四川重庆游 2023"
+    },
+    "date": {
+      "en": "Jul, 2023",
+      "zh": "2023 年 7 月"
+    },
+    "ossPrefix": "sichuan-chongqing-2023",
+    "totalSize": 18965410636,
+    "totalAmount": 1737,
+    "pickedAmount": 107,
+    "banner": "2023.07.21_09.10.05.jpg",
+    "desc": {
+      "zh": "",
+      "en": ""
+    },
+    "external": [
+      {
+        "type": "article",
+        "name": "四川—重庆游记（上）",
+        "href": "https://subilan.win/posts/sichuan-chongqing-tour-1"
+      },
+      {
+        "type": "article",
+        "name": "四川—重庆游记（下）",
+        "href": "https://subilan.win/posts/sichuan-chongqing-tour-2"
+      }
+    ]
   }
 ]
