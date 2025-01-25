@@ -31,5 +31,5 @@ static/config.js
 # internal data files
 filetrees.json
 exifs.json
-map.geojson
+*.geojson
 map.json
