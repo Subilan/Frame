@@ -12,7 +12,7 @@ export type NGReason = 'invalid parameter' | 'nothing';
 
 export type FrameResp<T = any> = RespOK<T> | RespNG;
 
-export type Delayed<T = any> = { loading: true, data: {} } | { loading: false, data: T };
+export type Delayed<T = any> = {loading: boolean, data: T}
 
 export type Lang<T> = { zh: T, en: T }
 
@@ -225,7 +225,9 @@ export interface Geo {
     pid: number,
     deep: number,
     name: string,
+    en_name?: string,
     ext_path: string,
+    en_ext_path?: string,
     geo: string,
     polygon: number[][][]
 }
@@ -347,3 +349,5 @@ export type NavigationItem = {
     to: string,
     text: Lang<string>
 }
+
+export type Langs = 'en' | 'zh';

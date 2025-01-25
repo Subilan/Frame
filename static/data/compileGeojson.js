@@ -19,7 +19,7 @@ const geoContentParsed = JSON.parse(geoContent.toString());
 
 const features = geoContentParsed.features;
 
-const result = [];
+let result = [];
 
 features.forEach(x => {
     result.push(x.properties);
@@ -35,5 +35,26 @@ for (let r of result) {
         })
     }
 }
+
+result = result.filter(x => !x.ext_path.includes('香港'))
+
+const hkGeo = await fs.readFile('./hk.geojson');
+const hkGeoParsed = JSON.parse(hkGeo.toString());
+
+const hkFeatures = hkGeoParsed.features;
+
+hkFeatures.forEach(x => {
+    result.push({
+        id: x.properties.POLYGONID,
+        pid: -1,
+        deep: 2,
+        name: x.properties.CNAME,
+        en_name: x.properties.ENAME,
+        ext_path: `香港特别行政区 ${x.properties.CNAME}`,
+        en_ext_path: x.properties.ENAME + ", Hong Kong SAR",
+        geo: 0,
+        polygon: x.geometry.coordinates
+    });
+})
 
 await fs.writeFile('./map.json', JSON.stringify(result));
