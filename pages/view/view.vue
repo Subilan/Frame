@@ -555,7 +555,8 @@
     if (!lensModelExecuted) throw new Error('cannot translate lens model');
 
     let timeOffset = "+08:00";
-    if (exif.OffsetTime) timeOffset = exif.OffsetTime.value;
+    // prevent empty
+    if (exif.OffsetTime) if (exif.OffsetTime.value) if (exif.OffsetTime.value.trim().length > 0) timeOffset = exif.OffsetTime.value;
 
     const result = {
       make: exif.Make.value,
