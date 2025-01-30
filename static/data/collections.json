@@ -82,7 +82,7 @@
   {
     "name": {
       "en": "A Primary Glimpse of Chongqing & Sichuan",
-      "zh": "初见川渝"
+      "zh": "川渝初见"
     },
     "date": {
       "en": "Jul, 2023",
@@ -112,6 +112,26 @@
   },
   {
     "name": {
+      "en": "Nanjing Cursory Tour",
+      "zh": "小游金陵"
+    },
+    "date": {
+      "en": "Jun, 2024",
+      "zh": "2024 年 6 月"
+    },
+    "ossPrefix": "nanjing",
+    "totalSize": 12735955282,
+    "totalAmount": 308,
+    "pickedAmount": 26,
+    "banner": "2024.06.08_11.54.11.jpg",
+    "theme": "nanjing-theme.png",
+    "desc": {
+      "zh": "",
+      "en": ""
+    }
+  },
+  {
+    "name": {
       "en": "New Year's Eve in Qingdao",
       "zh": "2023-2024 青岛跨年"
     },
@@ -124,6 +144,7 @@
     "totalAmount": 533,
     "pickedAmount": 33,
     "banner": "2024.01.01_14.16.11.jpg",
+    "theme": "qingdao-theme.png",
     "desc": {
       "zh": "",
       "en": ""
