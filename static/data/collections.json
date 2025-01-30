@@ -81,8 +81,8 @@
   },
   {
     "name": {
-      "en": "Journey to Sichuan-Chongqing 2023",
-      "zh": "四川重庆游 2023"
+      "en": "A Primary Glimpse of Chongqing & Sichuan",
+      "zh": "初见川渝"
     },
     "date": {
       "en": "Jul, 2023",
@@ -109,5 +109,24 @@
         "href": "https://subilan.win/posts/sichuan-chongqing-tour-2"
       }
     ]
+  },
+  {
+    "name": {
+      "en": "New Year's Eve in Qingdao",
+      "zh": "2023-2024 青岛跨年"
+    },
+    "date": {
+      "en": "Dec, 2023 & Jan, 2024",
+      "zh": "2023 年 12 月至 2024 年 1 月"
+    },
+    "ossPrefix": "qingdao-2023",
+    "totalSize": 4615295864,
+    "totalAmount": 533,
+    "pickedAmount": 33,
+    "banner": "2024.01.01_14.16.11.jpg",
+    "desc": {
+      "zh": "",
+      "en": ""
+    }
   }
 ]
