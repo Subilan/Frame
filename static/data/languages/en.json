@@ -17,7 +17,7 @@
   },
   "collections": {
     "photoShownNum": "$1 shown",
-    "photoTotalNum": "$1 in total"
+    "photoTotalNum": "$1 taken"
   },
   "view": {
     "viewDetails": "View details",

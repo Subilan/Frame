@@ -30,6 +30,18 @@ const lang = useLanguage();
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 16px;
 
+  @media (max-width: 1600px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 1400px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     grid-gap: 8px;
@@ -43,6 +55,8 @@ const lang = useLanguage();
 }
 
 .collection {
+  height: 100%;
+
   .image {
     width: 100%;
     overflow: hidden;
