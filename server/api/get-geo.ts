@@ -1,8 +1,6 @@
 import { booleanPointInPolygon } from '@turf/turf';
 import getGeoJson from '@/server/utils/getGeoJson';
 import manualGeo from '@/static/data/manual-geo.json';
-import getDayjs from '~/utils/getDayjs';
-import translateExifDate from '~/utils/translateExifDate';
 
 export default defineEventHandler(async e => {
 	const geo = await getGeoJson();
