@@ -6,8 +6,8 @@
           <img :src="buildObjectPath(x.ossPrefix, x.banner)" alt="alt"/>
         </div>
         <div class="texts">
-          <h2>{{ x.name[lang] }}</h2>
-          <p class="basic-info">{{ x.date[lang] }} · {{ t('collections.photoShownNum', x.pickedAmount)}} · {{ t('collections.photoTotalNum', x.totalAmount)}}</p>
+          <h2><span>{{ x.name[lang] }}</span><small>{{ x.date[lang] }}</small></h2>
+          <p class="basic-info">{{ t('collections.photoShownNum', x.pickedAmount)}} · {{ t('collections.photoTotalNum', x.totalAmount)}}</p>
         </div>
       </div>
     </div>
@@ -87,10 +87,23 @@ const lang = useLanguage();
 
     h2 {
       margin: 0;
+
+      span {
+        margin-right: 8px;
+      }
+
+      small {
+        font-weight: 300;
+        text-wrap: nowrap;
+      }
     }
 
     small {
       color: #aaa;
+    }
+
+    .basic-info {
+      margin-bottom: 0;
     }
   }
 }
