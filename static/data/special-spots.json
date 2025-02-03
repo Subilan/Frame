@@ -802,7 +802,7 @@
     ]
   },
   {
-    "type": "post",
+    "type": "spot",
     "name": "中山陵",
     "timeRange": [
       [
@@ -812,7 +812,7 @@
     ]
   },
   {
-    "type": "post",
+    "type": "spot",
     "name": "南京南站",
     "includes": [
       "2024.06.09_16.05.38",
