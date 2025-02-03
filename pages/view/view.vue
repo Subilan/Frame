@@ -104,11 +104,11 @@
             <div v-else class="location-contents">
               <div class="location-primary">
                 <span class="center" v-if="isRoad()">
-                  <img alt="svg" height="50px" :src="`/road-svg/${getSpecialSpotName('road').toLowerCase()}.svg`"
+                  <img alt="svg" height="40px" :src="`/road-svg/${getSpecialSpotName('road').toLowerCase()}.svg`"
                     draggable="false" />
                 </span>
                 <span class="center" v-if="isSubwayStation()">
-                  <img alt="svg" height="50px"
+                  <img alt="svg" height="40px"
                     :src="`/subway-svg/${getSpecialSpotName('subway-station').toLowerCase()}.svg`" draggable="false" />
                 </span>
                 <span v-if="isSpot()">
