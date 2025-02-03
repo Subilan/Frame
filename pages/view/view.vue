@@ -5,7 +5,7 @@
         :src="finalURL" />
       <circle-spinner stroke="white" class="image-loading-spinner" />
       <div class="copyright-bar">
-        <image-copyright />
+        <image-copyright :year="translateExifDate(currentExif.data.DateTime.value)?.format('YYYY')" />
       </div>
       <div class="center-bar">
         <popup class="p8 top inline trigger-hover autowidth">
