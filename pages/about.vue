@@ -57,8 +57,8 @@
         <em>加载原图</em> 按钮，届时原始分辨率的图片会被下载并展示。
       </p>
       <h2>网站字体</h2>
-      <p>网站的 Logo（我们暂且看成是一个 logo 吧=。=）和网页本身使用的是 <a
-          href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> 字体。</p>
+      <p>网站的 Logo（我们暂且看成是一个 logo 吧TvT）使用的是 <a
+          href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> 字体，网站本身使用的是 <a href="https://fonts.google.com/specimen/Open+Sans" target="_blank">Open Sans</a>。</p>
       <h2>版权</h2>
       <p>本站的所有照片均为原创，依据 <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1"
                                         target="_blank" rel="license noopener noreferrer">CC BY-SA 4.0</a> 进行授权。</p>

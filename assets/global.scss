@@ -1,4 +1,6 @@
 @import './map';
+@import './fonts/open-sans/font.css';
+@import './fonts/fira-sans/font.css';
 
 $navbarHeight: 64px;
 $primary: #607d8b;
@@ -6,8 +8,8 @@ $primaryd: #263238;
 $primarydd: #1b2328;
 $primaryl: #eceff1;
 
-$fontFamilySet: 'Fira Sans', 'PingFang SC', 'Microsoft YaHei UI', sans-serif;
-$fontFamilyMonospaceSet: 'Fira Code', 'Consolas', 'Menlo', monospace;
+$fontFamilySet: 'Open Sans', 'PingFang SC', 'Microsoft YaHei UI', sans-serif;
+$fontFamilyMonospaceSet: 'Consolas', 'Menlo', monospace;
 
 body {
   margin: 0;

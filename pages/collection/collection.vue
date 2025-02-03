@@ -8,7 +8,7 @@
             <popup class="top p8 autowidth trigger-hover gt-768 font-12">
               <icon color="#aaa" size="16" :path="mdiHelpCircleOutline"/>
               <template #content>
-                <em>{{ t('collection.photoIsPicked', collection.pickedAmount, collection.totalAmount) }}</em>
+                <span>{{ t('collection.photoIsPicked', collection.pickedAmount, collection.totalAmount) }}</span>
               </template>
             </popup>
           </span>

@@ -126,7 +126,7 @@
                     {{ t('view.details.inflight') }}
                   </badge>
                   <template #content>
-                    <em>{{ t('view.details.inflightNote') }}</em>
+                    <span>{{ t('view.details.inflightNote') }}</span>
                   </template>
                 </popup>
               </div>
