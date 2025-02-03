@@ -56,12 +56,6 @@
         <icon :path="mdiImage" style="vertical-align: middle; margin-right: 4px"/>
         <em>加载原图</em> 按钮，届时原始分辨率的图片会被下载并展示。
       </p>
-      <h2>为什么没有用相机拍摄的图片？</h2>
-      <p>众所周知，手机拍出的照片质量与相机是不能轻易比较的。因为我并不是摄影师，为了旅途中的方便更倾向于使用 iPhone
-        去进行简单的记录（虽然其中有些图片用相机拍后可能有不错的反馈）。</p>
-      <p>本站并不是一个摄影展览网站，图片所记录的<em>整体内容</em>是重点，包括其背后的故事以及当时的感受，而非摄影的细节、构图等等。
-      </p>
-      <p>不过如果在未来有兴致和时间的话，也可以考虑使用相机进行一些创作。</p>
       <h2>网站字体</h2>
       <p>网站的 Logo（我们暂且看成是一个 logo 吧=。=）和网页本身使用的是 <a
           href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> 字体。</p>
@@ -118,13 +112,6 @@
         <em>Load original</em> button at the bottom of the image section (the unresized photo will be downloaded in the
         meantime). This filter is always applied on page load to lower bandwidth consumption.
       </p>
-      <h2>There's no photo actually taken with a camera. Why?</h2>
-      <p>The photos are mostly shot on iPhone for convenience. It's known that the quality of mobile photos is not
-        comparable to professional cameras.</p>
-      <p>Since this is not a photography exhibition webpage and I'm not a specialized photographer either, it's better
-        to emphasize that the <em>rough</em> look of the photo, not the textural details, is what matters to me <em>currently</em>.
-      </p>
-      <p>However, if my interest and time permit, there can be camera photos in the future.</p>
       <h2>Font</h2>
       <p>The logo (let's consider it a logo for now) of Frame and the whole web page is using <a
           href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> as the primary font.</p>
