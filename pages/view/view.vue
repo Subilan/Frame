@@ -109,12 +109,15 @@
                 </span>
                 <span class="center" v-if="isSubwayStation()">
                   <img alt="svg" height="40px"
-                    :src="`/subway-svg/${getSpecialSpotName('subway-station').toLowerCase()}.svg`" draggable="false" />
+                    :src="`/subway-svg/${getSubwayStationInfo()?.line}.svg`" draggable="false" />
                 </span>
-                <span v-if="isSpot()">
+                <span v-if="isSpot() && !isSubwayStation()">
                   {{ getSpecialSpotName('spot') }}
                 </span>
-                <span :style="{ 'font-size': isRoad() || isSpot() ? '85%' : '' }">
+                <span v-else-if="isSubwayStation()">
+                  {{ getSubwayStationInfo()?.station }}
+                </span>
+                <span :style="{ 'font-size': isRoad() || isSpot() || isSubwayStation() ? '85%' : '' }">
                   {{ geoName }}
                 </span>
                 <popup class="trigger-hover top p8 autowidth">
@@ -663,11 +666,17 @@
     return currentSpecialSpot.value.some(x => x.type === 'spot');
   }
 
-  function getSpecialSpotName(type: 'spot' | 'road' | 'subway-station') {
+  function getSpecialSpotName(type: 'spot' | 'road') {
     const spotInfo = currentSpecialSpot.value.filter(x => x.type === type);
     if (spotInfo.length === 0) return '';
     // @ts-ignore
     return spotInfo[0].name;
+  }
+
+  function getSubwayStationInfo() {
+    const spotInfo = currentSpecialSpot.value.filter(x => x.type === 'subway-station');
+    if (spotInfo.length === 0) return null;
+    return spotInfo[0];
   }
 
   await retrieveCurrentObject();

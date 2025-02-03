@@ -281,14 +281,8 @@
   },
   {
     "type": "subway-station",
-    "name": "guangzhou-apm",
-    "includes": [
-      "2024.08.12_11.24.27"
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "海心沙",
+    "line": "guangzhou-apm",
+    "station": "海心沙",
     "includes": [
       "2024.08.12_11.24.27"
     ]
@@ -330,7 +324,8 @@
   },
   {
     "type": "subway-station",
-    "name": "shenzhen-8",
+    "line": "shenzhen-8",
+    "station": "小梅沙",
     "includes": [
       "2024.08.16_19.10.47"
     ]
@@ -346,13 +341,6 @@
     ],
     "includes": [
       "2023.08.22_12.37.12"
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "小梅沙",
-    "includes": [
-      "2024.08.16_19.10.47"
     ]
   },
   {
@@ -464,15 +452,8 @@
   },
   {
     "type": "subway-station",
-    "name": "chongqing-2-3",
-    "includes": [
-      "2023.07.18_15.37.46",
-      "2023.07.18_15.28.15"
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "牛角沱",
+    "line": "chongqing-2-3",
+    "station": "牛角沱",
     "includes": [
       "2023.07.18_15.37.46",
       "2023.07.18_15.28.15"
@@ -566,17 +547,8 @@
   },
   {
     "type": "subway-station",
-    "name": "shenzhen-3",
-    "timeRange": [
-      [
-        "2023-08-18T12:20:00Z",
-        "2023-08-18T12:50:00Z"
-      ]
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "草埔",
+    "line": "shenzhen-3",
+    "station": "草埔",
     "timeRange": [
       [
         "2023-08-18T12:20:00Z",
@@ -604,16 +576,8 @@
   },
   {
     "type": "subway-station",
-    "name": "shenzhen-2-10-11-14",
-    "includes": [
-      "2023.08.18_21.31.01",
-      "2023.08.18_21.31.18",
-      "2023.08.18_21.32.07"
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "岗厦北",
+    "line": "shenzhen-2-10-11-14",
+    "station": "岗厦北",
     "includes": [
       "2023.08.18_21.31.01",
       "2023.08.18_21.31.18",
@@ -622,17 +586,10 @@
   },
   {
     "type": "subway-station",
-    "name": "shenzhen-10",
+    "line": "shenzhen-10",
+    "station": "福田口岸",
     "includes": [
       "2023.08.19_09.35.56"
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "福田口岸",
-    "includes": [
-      "2023.08.19_09.35.56",
-      "2023.08.19_10.09.47"
     ]
   },
   {
@@ -690,42 +647,24 @@
   },
   {
     "type": "subway-station",
-    "name": "shenzhen-1",
-    "includes": [
-      "2023.08.22_18.51.30"
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "白石洲",
+    "line": "shenzhen-1",
+    "station": "白石洲",
     "includes": [
       "2023.08.22_18.51.30"
     ]
   },
   {
     "type": "subway-station",
-    "name": "qingdao-3-4",
-    "includes": [
-      "2024.01.01_10.52.44"
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "人民会堂",
+    "line": "qingdao-3-4",
+    "station": "人民会堂",
     "includes": [
       "2024.01.01_10.52.44"
     ]
   },
   {
     "type": "subway-station",
-    "name": "qingdao-1-4",
-    "includes": [
-      "2023.12.30_14.27.37"
-    ]
-  },
-  {
-    "type": "spot",
-    "name": "海泊桥(海慈医疗)",
+    "line": "qingdao-1-4",
+    "station": "海泊桥(海慈医疗)",
     "includes": [
       "2023.12.30_14.27.37"
     ]

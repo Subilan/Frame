@@ -251,7 +251,7 @@ interface SpecialSpotBase {
 }
 
 interface SpecialSpotDefault extends SpecialSpotBase {
-    type: "spot" | "road" | "subway-station";
+    type: "spot" | "road";
     name: string
 }
 
@@ -259,7 +259,13 @@ interface SpecialSpotFlight extends SpecialSpotBase {
     type: "flight"
 }
 
-export type SpecialSpot = SpecialSpotDefault | SpecialSpotFlight;
+interface SpecialSpotSubwayStation extends SpecialSpotBase {
+    type: 'subway-station',
+    line: string,
+    station: string
+}
+
+export type SpecialSpot = SpecialSpotDefault | SpecialSpotFlight | SpecialSpotSubwayStation;
 
 export type Captions = { [prop: string]: string[] | string }
 
