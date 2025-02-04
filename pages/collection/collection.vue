@@ -60,7 +60,7 @@
   </div>
   <div class="loading-container center full flex-column gap-32 navbar-offset" v-else-if="initialLoading">
     <circle-spinner/>
-    <em>{{ t('collection.loadingCollection', collectionName) }}</em>
+    <span>{{ t('collection.loadingCollection', collectionName) }}</span>
   </div>
 </template>
 
