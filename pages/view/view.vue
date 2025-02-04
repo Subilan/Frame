@@ -748,10 +748,6 @@
   }
 }
 
-[lang='en'] label {
-  font-style: italic;
-}
-
 label {
   font-size: 22.4px;
   font-weight: bold;
