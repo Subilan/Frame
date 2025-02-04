@@ -47,7 +47,8 @@
     "moreInformation": {
       "moveYourCursorHere": "Move your cursor here",
       "other": "to learn more about these information."
-    }
+    },
+    "noGPS": "This photo has no GPS information attached."
   },
   "index": {
     "shotAt": "Shot at",

@@ -209,7 +209,7 @@
         </div>
       </div>
       <div class="center full" v-else>
-        <em>This photo has no GPS information attached.</em>
+        {{ t('view.noGPS') }}
       </div>
     </div>
   </div>
