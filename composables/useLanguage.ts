@@ -1,3 +1,5 @@
 export default function() {
-    return useState<'zh' | 'en'>('language', () => 'zh');
+    return useCookie<'zh' | 'en'>('the-frame-language', {
+        default: () => 'zh'
+    });
 }
