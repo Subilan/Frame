@@ -113,7 +113,7 @@
   },
   {
     "name": {
-      "en": "3 days in Nanjing with friends",
+      "en": "Nanjing in 3 days",
       "zh": "小游金陵"
     },
     "date": {
@@ -127,8 +127,8 @@
     "banner": "2024.06.08_11.54.11.jpg",
     "theme": "nanjing-theme.png",
     "desc": {
-      "zh": "",
-      "en": ""
+      "zh": "<p>和朋友一起去南京玩了 3 天的记录。</p>",
+      "en": "<p>Nanjing aka Jinling is a nice place. Long history, special food, temperate climate & fancy toilets.</p>"
     }
   },
   {

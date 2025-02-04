@@ -15,7 +15,7 @@
           <span><icon :path="mdiPackageVariant"/> {{ (collection.totalSize / 1024 / 1024 / 1024).toFixed(2) }} GB</span>
         </div>
         <div class="description" v-html="collection.desc[lang]"/>
-        <div class="section external-links" v-if="collection.external.length > 0">
+        <div class="section external-links" v-if="collection.external && collection.external.length > 0">
           <label>{{ t('collection.externalLinks') }} &raquo;</label>
           <a target="_blank" :href="x.href" v-for="x in collection.external.filter(x => x.type === 'article')">
             {{ t('collection.readExternal', x.name) }}
@@ -261,6 +261,7 @@ onMounted(() => {
 
   .description {
     max-width: 60%;
+    min-width: 300px;
 
     @media (max-width: 768px) {
       max-width: 100%;
