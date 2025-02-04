@@ -73,8 +73,8 @@
     "pickedAmount": 276,
     "banner": "2024.08.12_19.02.31.jpg",
     "desc": {
-      "zh": "",
-      "en": ""
+      "zh": "<p>实不相瞒，大湾区的几座城市给我的印象，一直是一种令人魂牵梦绕的居住体验——当然，需要有一定的物质基础。这里有山，有海，有科技，又有不羁推广自身文化的岭南人。亚热带气候与终年的湿润更添一份风味。十分有幸能有机会，得以窥见这大湾区之样貌。在这里徜徉，堪称是在中国进行城市探索与旅游的前沿体验。</p>",
+      "en": "<p>Picture this: mountains doing yoga with clouds, sunshine and sometimes rain by the sea, innovation hubs breathing alongside ancient trees, all wrapped in a rich Lingnan vibe. Though these cities are not my hometown, they've been luring me back with their magnetic charm. Who needs Hogwarts letters when you’ve got this urban wizardry?</p>"
     },
     "external": [],
     "theme": "dawanqu.png"
@@ -94,9 +94,10 @@
     "pickedAmount": 107,
     "banner": "2023.07.21_09.10.05.jpg",
     "desc": {
-      "zh": "",
-      "en": ""
+      "zh": "<p>这次旅途主要前往的是四川省内的几处自然名胜，重庆与成都的城市风光暂时无更多探讨。无论是九寨沟碧蓝的水体、黄龙幻黄的彩池，还是雨天峨眉山的别样风光，都能给人留下不浅的印象。随着季节的更替，植物更新换代，呈现出不同的外观，因而这些地方也都值得反复游历。</p>",
+      "en": "<p>Though involving Chongqing, the trip is mainly about the natural showstoppers in Sichuan. There are turquoise waters in Jiuzhaigou that look Photoshopped by nature in real life (scroll to view them now!), bizarre golden pools in Huanglong as if touched by Midas, and misty & cool summer mountain experience in Emei. The Nature is throwing A-game here, and every season scripts a new visual drama as foliage does its costume change backstage.</p>"
     },
+    "theme": "sichuan-theme.png",
     "external": [
       {
         "type": "article",
