@@ -170,7 +170,7 @@ onMounted(() => {
 <style lang="scss">
 .top .description p {
   margin: 16px 0;
-  line-height: 1.8;
+  line-height: 1.6;
 }
 </style>
 

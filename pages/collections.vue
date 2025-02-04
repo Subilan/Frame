@@ -3,11 +3,12 @@
     <div class="collection-outer" v-for="x in collections" @click="navigateTo(`/collection/${x.ossPrefix}`)">
       <div class="collection card">
         <div class="image">
-          <img :src="buildObjectPath(x.ossPrefix, x.banner)" alt="alt"/>
+          <img :src="buildObjectPath(x.ossPrefix, x.banner)" alt="alt" />
         </div>
         <div class="texts">
           <h2><span>{{ x.name[lang] }}</span><small>{{ x.date[lang] }}</small></h2>
-          <p class="basic-info">{{ t('collections.photoShownNum', x.pickedAmount)}} · {{ t('collections.photoTotalNum', x.totalAmount)}}</p>
+          <p class="basic-info">{{ t('collections.photoShownNum', x.pickedAmount) }} · {{ t('collections.photoTotalNum',
+            x.totalAmount)}}</p>
         </div>
       </div>
     </div>
@@ -15,10 +16,10 @@
 </template>
 
 <script setup>
-import collections from "@/static/data/collections.json";
-import buildObjectPath from "@/utils/buildObjectPath";
+  import collections from "@/static/data/collections.json";
+  import buildObjectPath from "@/utils/buildObjectPath";
 
-const lang = useLanguage();
+  const lang = useLanguage();
 </script>
 
 <style lang="scss">
@@ -93,7 +94,7 @@ const lang = useLanguage();
       }
 
       small {
-        font-weight: 300;
+        font-weight: normal;
         text-wrap: nowrap;
       }
     }
