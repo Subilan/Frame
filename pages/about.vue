@@ -113,8 +113,8 @@
         meantime). This filter is always applied on page load to lower bandwidth consumption.
       </p>
       <h2>Font</h2>
-      <p>The logo (let's consider it a logo for now) of Frame and the whole web page is using <a
-          href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> as the primary font.</p>
+      <p>The logo (let's consider it a logo for now XD) of Frame is using <a
+          href="https://mozilla.github.io/Fira/" target="_blank">Fira Sans</a> and the webpage is using <a href="https://fonts.google.com/specimen/Open+Sans" target="_blank">Open Sans</a>.</p>
       <h2>Copyright</h2>
       <p>Photos on this site is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1"
                                                   target="_blank" rel="license noopener noreferrer">CC BY-SA 4.0</a>.
@@ -197,9 +197,6 @@ h1 {
 .about-title {
   font-size: 500%;
   margin: 64px 0;
-  &[lang='en'] {
-    font-style: italic;
-  }
 }
 
 .about-container {
@@ -415,9 +412,12 @@ ul {
 }
 
 blockquote {
-  border-left: 3px solid black;
+  border-left: 3px solid #aaa;
   margin-left: 0;
   padding-left: 16px;
   font-style: italic;
+  &, * {
+    color: #aaa;
+  }
 }
 </style>
