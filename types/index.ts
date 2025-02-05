@@ -348,7 +348,8 @@ export type HomeBannerItem = {
         device: string
         region: string
     }
-    story: string[]
+    story: string[],
+    dark?: boolean
 }
 
 export type NavigationItem = {

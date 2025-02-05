@@ -2,7 +2,7 @@
   <div class="index-background navbar-offset">
     <img :src="indexImagePath" @load="backgroundLoaded" :class="{backgroundNotLoad, loaded:imageLoaded}" loading="lazy"
          alt="background" class="index-background-image"/>
-    <div class="overlay"/>
+    <div class="overlay" :class="{dark: selected ? selected.dark : false}"/>
     <div class="+overlay">
       <transition name="scale-bottom" mode="out-in">
         <div class="hero-text" v-if="textLoaded">
@@ -10,7 +10,7 @@
             <div class="road" v-if="withRoad">
               <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`"/>&nbsp;
             </div>
-            <span class="name" v-else>{{ selected.name }}&nbsp;&nbsp;</span>
+            <span class="name" v-else>{{ selected.name }}&nbsp;</span>
             <span class="region">
             {{ selected.meta.region }}
           </span>
@@ -191,6 +191,10 @@ function refreshBackgroundImage() {
     left: 0;
     background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .3));
     z-index: 1;
+
+    &.dark {
+      background: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .4));
+    }
   }
 }
 
@@ -198,7 +202,7 @@ function refreshBackgroundImage() {
   color: white;
   max-width: 50%;
   font-size: 36px;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, .3);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, .5);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -263,7 +267,7 @@ function refreshBackgroundImage() {
   }
 
   .hero-text-content {
-    font-size: 70%;
+    font-size: 65%;
     line-height: 1.6;
   }
 
