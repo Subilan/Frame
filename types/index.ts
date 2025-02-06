@@ -344,7 +344,7 @@ export type HomeBannerItem = {
     image: string
     name: string
     meta: {
-        altitude: number
+        altitude?: number
         date: string
         device: string
         region: string

@@ -20,7 +20,7 @@
                 class="gt-768">{{ t('index.shotAt') }}&nbsp;</span>{{ formatDate(selected.meta.date) }}</span>
             <span class="device"><span class="gt-768">{{ t('index.shotOn') }}&nbsp;</span><span
                 :class="{apple: selected.meta.device.includes('iPhone')}">{{ selected.meta.device }}</span></span>
-            <span class="altitude"><span class="gt-768">{{ t('index.altitude') }}&nbsp;</span>{{
+            <span class="altitude" v-if="selected.meta.altitude"><span class="gt-768">{{ t('index.altitude') }}&nbsp;</span>{{
                 selected.meta.altitude.toFixed(0)
               }}<small>m</small></span>
           </div>
