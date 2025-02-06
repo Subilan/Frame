@@ -1,48 +1,49 @@
 <template>
   <div class="index-background navbar-offset">
-    <img :src="indexImagePath" @load="backgroundLoaded" :class="{backgroundNotLoad, loaded:imageLoaded}" loading="lazy"
-         alt="background" class="index-background-image"/>
-    <div class="overlay" :class="{dark: selected ? selected.dark : false}"/>
+    <img :src="indexImagePath" @load="backgroundLoaded" :class="{ backgroundNotLoad, loaded: imageLoaded }"
+      loading="lazy" alt="background" class="index-background-image" />
+    <div class="overlay" :class="{ dark: selected ? selected.dark : false }" />
     <div class="+overlay">
       <transition name="scale-bottom" mode="out-in">
         <div class="hero-text" v-if="textLoaded">
-          <div class="hero-text-head" :class="{withRoad}">
+          <div class="hero-text-head" :class="{ withRoad }">
             <div class="road" v-if="withRoad">
-              <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`"/>&nbsp;
+              <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`" />&nbsp;
             </div>
             <span class="name" v-else>{{ selected.name }}&nbsp;</span>
             <span class="region">
-            {{ selected.meta.region }}
-          </span>
+              {{ selected.meta.region }}
+            </span>
           </div>
           <div class="hero-text-meta">
-            <span class="date"><span
-                class="gt-768">{{ t('index.shotAt') }}&nbsp;</span>{{ formatDate(selected.meta.date) }}</span>
+            <span class="date"><span class="gt-768">{{ t('index.shotAt') }}&nbsp;</span>{{
+              formatDate(selected.meta.date) }}</span>
             <span class="device"><span class="gt-768">{{ t('index.shotOn') }}&nbsp;</span><span
-                :class="{apple: selected.meta.device.includes('iPhone')}">{{ selected.meta.device }}</span></span>
-            <span class="altitude" v-if="selected.meta.altitude"><span class="gt-768">{{ t('index.altitude') }}&nbsp;</span>{{
-                selected.meta.altitude.toFixed(0)
-              }}<small>m</small></span>
+                :class="{ apple: selected.meta.device.includes('iPhone') }">{{ selected.meta.device }}</span></span>
+            <span class="altitude" v-if="selected.meta.altitude"><span class="gt-768">{{ t('index.altitude')
+                }}&nbsp;</span>{{
+                  selected.meta.altitude.toFixed(0)
+                }}<small>m</small></span>
           </div>
-          <div class="hero-text-content" v-html="selected.story.join('')"/>
+          <div class="hero-text-content" v-html="selected.story.join('')" />
           <div class="hero-text-actions">
             <btn class="shadow border-primary bg-white text-primary"
-                 @click="navigateTo(buildViewerPath(selected.ossPrefix, selected.image))">
+              @click="navigateTo(buildViewerPath(selected.ossPrefix, selected.image))">
               {{ t('index.viewImage') }}
-              <icon :path="mdiArrowTopRight"/>
+              <icon :path="mdiArrowTopRight" />
             </btn>
             <btn class="shadow" @click="navigateTo('/collections')">
               {{ t('index.seeCollections') }}
-              <icon :path="mdiArrowRight"/>
+              <icon :path="mdiArrowRight" />
             </btn>
           </div>
         </div>
       </transition>
       <div class="next-image-button-container">
-        <btn @click="refreshBackgroundImage"
-             class="next-image-button shadow-dark border-white bg-transparent text-white">
+        <btn @click="refreshBackgroundImage" :class="{ 'border-white': imageLoaded, 'bg-transparent': imageLoaded }"
+          class="next-image-button shadow-dark bg-transparent text-white">
           <span class="text">{{ t('index.nextImage') }}</span>
-          <icon :path="mdiArrowRight"/>
+          <icon :class="{ buttonIconRotating: !imageLoaded }" :path="mdiRefresh" />
         </btn>
       </div>
     </div>
@@ -50,52 +51,65 @@
 </template>
 
 <script setup lang="ts">
-import {mdiArrowRight, mdiArrowTopRight} from '@mdi/js';
-import bannersImport from '@/static/data/banners.json';
-import type {HomeBannerItem} from "~/types";
-import buildObjectPath from "~/utils/buildObjectPath";
-import formatDate from '~/utils/formatDate';
-import buildViewerPath from "~/utils/buildViewerPath";
+  import { mdiArrowRight, mdiArrowTopRight, mdiRefresh } from '@mdi/js';
+  import bannersImport from '@/static/data/banners.json';
+  import type { HomeBannerItem } from "~/types";
+  import buildObjectPath from "~/utils/buildObjectPath";
+  import formatDate from '~/utils/formatDate';
+  import buildViewerPath from "~/utils/buildViewerPath";
 
-function randArrayIndex(array: any[]) {
-  return Math.floor(Math.random() * array.length);
-}
+  function randArrayIndex(array: any[]) {
+    return Math.floor(Math.random() * array.length);
+  }
 
-function loopArrayIndex(i: number, array: any[]) {
-  return (i + 1) % array.length;
-}
+  function loopArrayIndex(i: number, array: any[]) {
+    return (i + 1) % array.length;
+  }
 
-const banners: HomeBannerItem[] = bannersImport;
+  const banners: HomeBannerItem[] = bannersImport;
 
-const indexImagePath = ref('');
-const withRoad = ref(false);
-const imageLoaded = ref(false);
-const textLoaded = ref(false);
+  const indexImagePath = ref('');
+  const withRoad = ref(false);
+  const imageLoaded = ref(false);
+  const textLoaded = ref(false);
 
-let selected: HomeBannerItem;
-let selectedIndex = 0;
+  let selected: HomeBannerItem;
+  let prevSelected: number[] = [];
+  let exactPrevSelected: number;
+  let selectedIndex = 0;
 
-const backgroundNotLoad = ref(true);
+  const backgroundNotLoad = ref(true);
 
-onMounted(() => {
-  refreshBackgroundImage();
-})
+  onMounted(() => {
+    refreshBackgroundImage();
+  })
 
-function backgroundLoaded() {
-  imageLoaded.value = true;
-  setTimeout(() => textLoaded.value = true, 150);
-}
+  function backgroundLoaded() {
+    imageLoaded.value = true;
+    setTimeout(() => textLoaded.value = true, 150);
+  }
 
-function refreshBackgroundImage() {
-  selectedIndex = loopArrayIndex(selectedIndex, banners);
-  selected = banners[selectedIndex];
-  backgroundNotLoad.value = true;
-  imageLoaded.value = false;
-  textLoaded.value = false;
-  indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
-  backgroundNotLoad.value = false;
-  withRoad.value = selected.name.startsWith('road-');
-}
+  function refreshBackgroundImage() {
+    selectedIndex = randArrayIndex(banners);
+    selected = banners[selectedIndex];
+
+    if (prevSelected.length === banners.length) prevSelected = [];
+    
+    while (prevSelected.includes(selectedIndex) || exactPrevSelected === selectedIndex) {
+      selectedIndex = randArrayIndex(banners);
+      selected = banners[selectedIndex];
+    }
+
+    prevSelected.push(selectedIndex);
+
+    exactPrevSelected = selectedIndex;
+    backgroundNotLoad.value = true;
+    imageLoaded.value = false;
+    textLoaded.value = false;
+    indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
+    backgroundNotLoad.value = false;
+    withRoad.value = selected.name.startsWith('road-');
+  }
 </script>
 
 <style lang="scss">
@@ -116,13 +130,23 @@ function refreshBackgroundImage() {
 <style lang="scss" scoped>
 @use "assets/global";
 
+@keyframes Rotating {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .next-image-button-container {
   position: absolute;
   bottom: 32px;
 
   .next-image-button {
     transition: all .2s ease;
-    transform: scale(0.9);
+    transform: rotate(0deg);
 
     @media (max-width: 768px) {
       padding: 12px;
@@ -133,10 +157,9 @@ function refreshBackgroundImage() {
       }
     }
 
-    @media (min-width: 1200px) {
-      &:hover {
-        transform: scale(1.1) translateY(-10px);
-      }
+    .buttonIconRotating {
+      animation: 2s ease Rotating infinite;
+      animation-fill-mode: forwards;
     }
   }
 }
@@ -250,7 +273,7 @@ function refreshBackgroundImage() {
     align-items: center;
     font-size: 50%;
 
-    > *:not(:last-child)::after {
+    >*:not(:last-child)::after {
       content: '·';
       margin: 0 12px;
 
