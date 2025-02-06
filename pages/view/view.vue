@@ -152,7 +152,7 @@
             </div>
             <div>
               <label>{{ t('view.details.speed') }}</label>
-              <span>{{ resolvedExif.gpsspeed.toFixed(2) }} <small>km/h</small></span>
+              <span>{{ resolvedExif.gpsspeed > 0 ? resolvedExif.gpsspeed.toFixed(2) : t('view.gpsSpeedZero') }} <small v-if="resolvedExif.gpsspeed > 0.1">km/h</small></span>
             </div>
           </div>
           <client-only>

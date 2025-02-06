@@ -319,7 +319,8 @@ export type I18n = {
             moveYourCursorHere: string,
             other: string,
         },
-        noGPS: string
+        noGPS: string,
+        gpsSpeedZero: string
     },
     index: {
         shotOn: string,

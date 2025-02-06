@@ -48,7 +48,8 @@
       "moveYourCursorHere": "将鼠标移动至此处",
       "other": "以了解更多信息"
     },
-    "noGPS": "该照片未记录 GPS 信息"
+    "noGPS": "该照片未记录 GPS 信息",
+    "gpsSpeedZero": "静止"
   },
   "index": {
     "shotAt": "拍摄于",
