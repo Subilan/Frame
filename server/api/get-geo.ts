@@ -1,9 +1,10 @@
 import { booleanPointInPolygon } from '@turf/turf';
-import getGeoJson from '@/server/utils/getGeoJson';
 import manualGeo from '@/static/data/manual-geo.json';
+import getJson from '../utils/getJson';
+import { Geo } from '~/types';
 
 export default defineEventHandler(async e => {
-	const geo = await getGeoJson();
+	const geo = await getJson('map.json') as Geo[];
 	const query = getQuery(e);
 	const depthStr = suspect(query.depth as string, '2');
 	const coordinateX = suspect(query.x as string, '');

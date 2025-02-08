@@ -3,7 +3,7 @@ import getExifByName from "@/server/utils/getExifByName";
 
 export default defineEventHandler(e => {
     const query = getQuery(e);
-    let name = suspect(query.name as string, '');
+    let name = suspect(query.remotePath as string, '');
 
     if (name === '') return ng('invalid parameter');
 
