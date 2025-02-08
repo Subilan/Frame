@@ -1,43 +1,21 @@
 import FileTreeResultJson from '@/static/data/filetrees.json';
-
-export interface CollectionFile {
-    name: string;
-    url: string;
-    lastModified: string;
-    etag: string;
-    type: string;
-    size: number;
-    storageClass: string;
-    owner: null;
-}
-
-export interface CollectionContent {
-    files: CollectionFile[];
-    totalSize: number;
-}
-
-interface FileTree {
-    collections: {
-        [prop: string]: CollectionContent
-    },
-    totalSize: number;
-}
+import { CollectionDataBody, CollectionDataKeys, Filetrees } from '~/types';
 
 /**
  * 获取指定 tag 所表示的集合（collection）
  * @param tag 指定的 tag。如果留空，则获取所有集合的内容，不区分 tag
  */
-export default function (tag: string = '') {
-    const j = FileTreeResultJson as FileTree;
+export default function (tag = '') {
+    const j = FileTreeResultJson as Filetrees;
 
     if (tag !== '') {
         const filteredKey = Object.keys(j.collections).filter(x => x.toLowerCase() === tag.toLowerCase());
         if (filteredKey.length === 0) return null;
-        return j.collections[filteredKey[0]];
+        return j.collections[filteredKey[0] as CollectionDataKeys];
     }
 
-    const result: CollectionContent = {
-        files: [],
+    const result = {
+        files: [] as CollectionDataBody[],
         totalSize: 0
     };
 
