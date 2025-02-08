@@ -57,14 +57,7 @@
   import buildObjectPath from "~/utils/buildObjectPath";
   import formatDate from '~/utils/formatDate';
   import buildViewerPath from "~/utils/buildViewerPath";
-
-  function randArrayIndex(array: any[]) {
-    return Math.floor(Math.random() * array.length);
-  }
-
-  function loopArrayIndex(i: number, array: any[]) {
-    return (i + 1) % array.length;
-  }
+  import randomArrayIndex from '~/utils/randomArrayIndex';
 
   const banners: HomeBannerItem[] = bannersImport;
 
@@ -91,13 +84,13 @@
   }
 
   function refreshBackgroundImage() {
-    selectedIndex = randArrayIndex(banners);
+    selectedIndex = randomArrayIndex(banners);
     selected = banners[selectedIndex];
 
     if (prevSelected.length === banners.length) prevSelected = [];
 
     while (prevSelected.includes(selectedIndex) || exactPrevSelected === selectedIndex) {
-      selectedIndex = randArrayIndex(banners);
+      selectedIndex = randomArrayIndex(banners);
       selected = banners[selectedIndex];
     }
 

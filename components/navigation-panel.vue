@@ -11,7 +11,7 @@
                             {{ t('view.navigationPanel.backToCollection') }}
                         </div>
                     </div>
-                    <div class="navigation-block">
+                    <div class="navigation-block" @click="toRandom(currentCollectionName as CollectionDataKeys)">
                         <div class="icon">
                             <icon :path="mdiDice5" />
                         </div>
@@ -20,7 +20,7 @@
                                 collection.name[lang]) }}</small>
                         </div>
                     </div>
-                    <div class="navigation-block">
+                    <div class="navigation-block" @click="toRandom('all')">
                         <div class="icon">
                             <icon :path="mdiDice5Outline" />
                         </div>
@@ -57,6 +57,8 @@
 
 <script setup lang="ts">
     import { mdiApps, mdiArrowLeft, mdiArrowRight, mdiDice5, mdiDice5Outline } from '@mdi/js';
+    import type { Reactive } from 'vue';
+    import type { CollectionDataBody, FrameResp, CollectionDataKeys, Delayed } from '~/types';
 
     const model = defineModel();
 
@@ -86,6 +88,38 @@
     const lang = useLanguage();
 
     const collection = computed(() => getCollectionByName(props.currentCollectionName));
+
+    const randomResult: Reactive<Delayed<CollectionDataBody>> = reactive({
+        loading: true,
+        data: {
+            name: '',
+            url: '',
+            lastModified: '',
+            etag: '',
+            type: '',
+            size: 0,
+            storageClass: '',
+            owner: undefined
+        }
+    });
+
+    async function getRandomPhoto(scope: CollectionDataKeys | 'all') {
+        randomResult.loading = true;
+
+        const res = await $fetch<FrameResp<CollectionDataBody>>(`/api/random?scope=${scope}`);
+
+        if (res.code === 'ng') return;
+
+        Object.assign(randomResult.data, res.data);
+
+        randomResult.loading = false;
+    }
+
+    async function toRandom(scope: CollectionDataKeys | 'all') {
+        await getRandomPhoto(scope);
+
+        navigateTo(buildViewerPath(getCollectionNameByRemotePath(randomResult.data.name), getImageNameByRemotePath(randomResult.data.name)));
+    }
 </script>
 
 <style lang="scss" scoped>
