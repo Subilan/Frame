@@ -108,8 +108,8 @@
                     draggable="false" />
                 </span>
                 <span class="center" v-if="isSubwayStation()">
-                  <img alt="svg" height="40px"
-                    :src="`/subway-svg/${getSubwayStationInfo()?.line}.svg`" draggable="false" />
+                  <img alt="svg" height="40px" :src="`/subway-svg/${getSubwayStationInfo()?.line}.svg`"
+                    draggable="false" />
                 </span>
                 <span v-if="isSpot() && !isSubwayStation()">
                   {{ getSpecialSpotName('spot') }}
@@ -138,13 +138,13 @@
               <label>{{ t('view.details.latitude') }}</label>
               <span>{{ resolvedExif.latitudeN[0] }}°{{ resolvedExif.latitudeN[1] }}'{{
                 resolvedExif.latitudeN[2]
-              }}" <small>N</small></span>
+                }}" <small>N</small></span>
             </div>
             <div>
               <label>{{ t('view.details.longitude') }}</label>
               <span>{{ resolvedExif.longitudeE[0] }}°{{ resolvedExif.longitudeE[1] }}'{{
                 resolvedExif.longitudeE[2]
-              }}" <small>E</small></span>
+                }}" <small>E</small></span>
             </div>
             <div>
               <label>{{ t('view.details.altitude') }}</label>
@@ -152,7 +152,8 @@
             </div>
             <div>
               <label>{{ t('view.details.speed') }}</label>
-              <span>{{ resolvedExif.gpsspeed > 0 ? resolvedExif.gpsspeed.toFixed(2) : t('view.gpsSpeedZero') }} <small v-if="resolvedExif.gpsspeed > 0.1">km/h</small></span>
+              <span>{{ resolvedExif.gpsspeed > 0 ? resolvedExif.gpsspeed.toFixed(2) : t('view.gpsSpeedZero') }} <small
+                  v-if="resolvedExif.gpsspeed > 0.1">km/h</small></span>
             </div>
           </div>
           <client-only>
@@ -213,17 +214,27 @@
       </div>
     </div>
   </div>
+
+  <div class="navigation-toggle" @click="navigationPanelEnabled = true">
+    <icon :path="mdiPlus" />
+  </div>
+
+  <navigation-panel v-model="navigationPanelEnabled" :prev-name="prevImageName" :next-name="nextImageName"
+    :current-collection-name="currentCollectionName" :prev-image-viewer-path="prevImageViewerPath"
+    :next-image-viewer-path="nextImageViewerPath" />
 </template>
 
 <script setup lang="ts">
-  import type { Delayed, Exif, FrameResp, Geo, SpecialSpot } from "@/types";
-  import type { CollectionFile } from "@/server/utils/getCollection";
+  import type { CollectionDataBody, Delayed, Exif, FrameResp, Geo, NullableString, SpecialSpot } from "@/types";
   import {
     mdiAirplane, mdiAlertOutline,
+    mdiArrowLeft,
+    mdiArrowRight,
     mdiDownload, mdiFullscreen,
     mdiImage,
     mdiImageOutline,
-    mdiInformationOutline
+    mdiInformationOutline,
+    mdiPlus
   } from "@mdi/js";
   import Popup from "@/components/popup.vue";
   import translateExifDate from "@/utils/translateExifDate";
@@ -232,13 +243,16 @@
 
   const lang = useLanguage();
 
+  const navigationPanelEnabled = ref(false);
+
   const geoName = computed(() => withFallback(lang.value, currentGeo.data.en_name, currentGeo.data.name));
   const geoExtPath = computed(() => withFallback(lang.value, currentGeo.data.en_ext_path, currentGeo.data.ext_path));
   const geoExtPathPrefix = computed(() => geoExtPath.value.replace(`${geoName.value}`, '').replace(', ', ''));
 
   const route = useRoute();
   const remotePath = route.params.remotePath as string;
-  const currentImage = reactive<Delayed<CollectionFile>>({
+
+  const currentImage = reactive<Delayed<CollectionDataBody>>({
     loading: true,
     data: {
       name: "",
@@ -251,6 +265,14 @@
       owner: null
     }
   });
+
+  const prevImageName = ref('');
+  const nextImageName = ref('');
+
+  const currentCollectionName = computed(() => getCollectionNameByRemotePath(remotePath));
+  const nextImageViewerPath = computed(() => buildViewerPath(currentCollectionName.value, getImageNameByRemotePath(nextImageName.value)));
+  const prevImageViewerPath = computed(() => buildViewerPath(currentCollectionName.value, getImageNameByRemotePath(prevImageName.value)));
+
   const currentExif = reactive<Delayed<Exif>>({
     loading: true,
     data: {
@@ -587,7 +609,7 @@
   }
 
   async function retrieveCurrentExif() {
-    const res = await $fetch<FrameResp<Exif>>(`/api/get-exif?name=${btoa(remotePath)}`)
+    const res = await $fetch<FrameResp<Exif>>(`/api/get-exif?remotePath=${btoa(remotePath)}`)
 
     if (res.code === 'ng') {
       console.error(res);
@@ -599,7 +621,7 @@
   }
 
   async function retrieveCurrentObject() {
-    const res = await $fetch<FrameResp<CollectionFile>>(`/api/get-object?remotePath=${btoa(remotePath)}`);
+    const res = await $fetch<FrameResp<CollectionDataBody>>(`/api/get-object?remotePath=${btoa(remotePath)}`);
 
     if (res.code === 'ng') {
       console.error(res);
@@ -646,6 +668,18 @@
     captions.value = res.data;
   }
 
+  async function retrievePrevNext(name: string) {
+    const res = await $fetch<FrameResp<{ prev: NullableString, next: NullableString }>>(`/api/get-prev-next?remotePath=${btoa(name)}`);
+
+    if (res.code === 'ng') {
+      console.error(res);
+      return;
+    }
+
+    if (res.data.prev !== null) prevImageName.value = res.data.prev;
+    if (res.data.next !== null) nextImageName.value = res.data.next;
+  }
+
   function downloadPhoto() {
     alert('Download is not available at present.');
   }
@@ -681,10 +715,9 @@
 
   await retrieveCurrentObject();
   await retrieveCurrentExif();
-  // @ts-ignore
   await retrieveSpecialSpotInfo(currentImage.data.name);
-  // @ts-ignore
   await retrieveCaptions(currentImage.data.name);
+  await retrievePrevNext(currentImage.data.name)
 
   watch(imageCoord, async x => {
     if (x[0] !== 0 && x[1] !== 0) {
@@ -692,6 +725,33 @@
     }
   })
 </script>
+
+<style lang="scss" scoped>
+@use 'assets/global';
+
+.navigation-toggle {
+  width: 64px;
+  height: 64px;
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: global.$primaryd;
+  color: white;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, .4);
+  border-radius: 100%;
+  cursor: pointer;
+  transition: all .2s ease;
+
+  &:hover {
+    background: global.$primarydd;
+    box-shadow: 0 8px 10px rgba(0, 0, 0, .4);
+    transform: translateY(-2px);
+  }
+}
+</style>
 
 <style lang="scss">
 .center-bar {

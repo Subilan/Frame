@@ -142,3 +142,11 @@ p, h1, h2, h3, h4, h5, h6 {
     display: none;
   }
 }
+
+kbd {
+  font-family: $fontFamilySet;
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 0 4px;
+  box-shadow: 0 2px 0 #ddd;
+}
