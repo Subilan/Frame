@@ -49,7 +49,15 @@
       "other": "to learn more about these information."
     },
     "noGPS": "This photo has no GPS information attached.",
-    "gpsSpeedZero": "Static"
+    "gpsSpeedZero": "Static",
+    "navigationPanel": {
+      "random": "Random",
+      "next": "Next",
+      "prev": "Previous",
+      "backToCollection": "Back to Collection",
+      "inCollection": "in \"$1\"",
+      "inAll": "in all photos"
+    }
   },
   "index": {
     "shotAt": "Shot at",

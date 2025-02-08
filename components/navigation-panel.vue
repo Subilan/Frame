@@ -8,7 +8,7 @@
                             <icon :path="mdiApps" />
                         </div>
                         <div class="text">
-                            回到合集
+                            {{ t('view.navigationPanel.backToCollection') }}
                         </div>
                     </div>
                     <div class="navigation-block">
@@ -16,7 +16,8 @@
                             <icon :path="mdiDice5" />
                         </div>
                         <div class="text">
-                            随机一张<br /><small>“{{ collection.name[lang] }}”内</small>
+                            {{ t('view.navigationPanel.random') }}<br /><small>{{ t('view.navigationPanel.inCollection',
+                                collection.name[lang]) }}</small>
                         </div>
                     </div>
                     <div class="navigation-block">
@@ -24,7 +25,8 @@
                             <icon :path="mdiDice5Outline" />
                         </div>
                         <div class="text">
-                            随机一张<br /><small>全站范围</small>
+                            {{ t('view.navigationPanel.random') }}<br /><small>{{ t('view.navigationPanel.inAll')
+                                }}</small>
                         </div>
                     </div>
                     <div class="navigation-block prev" v-if="prevName.length > 0"
@@ -33,7 +35,7 @@
                             <icon :path="mdiArrowLeft" />
                         </div>
                         <div class="text">
-                            上一张<br /><small><kbd>Shift</kbd> + <kbd>A</kbd></small>
+                            {{ t('view.navigationPanel.prev') }}
                         </div>
                     </div>
 
@@ -43,7 +45,7 @@
                             <icon :path="mdiArrowRight" />
                         </div>
                         <div class="text">
-                            下一张<br /><small><kbd>Shift</kbd> + <kbd>S</kbd></small>
+                            {{ t('view.navigationPanel.next') }}
                         </div>
                     </div>
                 </div>

@@ -250,7 +250,7 @@ export type CollectionDataBody = {
 export type CollectionDataKeys = 'dawanqu' | 'nanjing' | 'yunnan' | 'journey-to-the-north-xinjiang' | 'qingdao-2023' | 'sichuan-chongqing-2023';
 
 export interface Filetrees {
-	collections: Record<CollectionDataKeys, { files: CollectionDataBody[], totalSize: number }>;
+	collections: Record<CollectionDataKeys, { files: CollectionDataBody[]; totalSize: number }>;
 	totalSize: number;
 }
 
@@ -343,6 +343,14 @@ export type I18n = {
 		};
 		noGPS: string;
 		gpsSpeedZero: string;
+		navigationPanel: {
+			random: string;
+			next: string;
+			prev: string;
+			inAll: string;
+			inCollection: string;
+			backToCollection: string;
+		};
 	};
 	index: {
 		shotOn: string;
