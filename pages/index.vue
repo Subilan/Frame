@@ -86,6 +86,7 @@
 
   function backgroundLoaded() {
     imageLoaded.value = true;
+    backgroundNotLoad.value = false;
     setTimeout(() => textLoaded.value = true, 150);
   }
 
@@ -94,7 +95,7 @@
     selected = banners[selectedIndex];
 
     if (prevSelected.length === banners.length) prevSelected = [];
-    
+
     while (prevSelected.includes(selectedIndex) || exactPrevSelected === selectedIndex) {
       selectedIndex = randArrayIndex(banners);
       selected = banners[selectedIndex];
@@ -106,8 +107,10 @@
     backgroundNotLoad.value = true;
     imageLoaded.value = false;
     textLoaded.value = false;
-    indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
-    backgroundNotLoad.value = false;
+    backgroundNotLoad.value = true;
+    setTimeout(() => {
+      indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
+    }, 1000);
     withRoad.value = selected.name.startsWith('road-');
   }
 </script>
@@ -203,6 +206,10 @@
 
     &.loaded {
       opacity: 1;
+    }
+
+    &.backgroundNotLoad {
+      opacity: 0 !important;
     }
   }
 
