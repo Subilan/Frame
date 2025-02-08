@@ -16,16 +16,14 @@
       <h2>What's this website about?</h2>
       <p>It's about the photos <em>I took</em> during my travels to different places.</p>
       <p>The website is based on Frame (stylizedly displayed as <site-title />), a simple web application built with
-        Nuxt 3. The initial motive for creating
-        this
-        is my belief of the significance of recording my life, the desire to share the wonderful scenery and the
+        Nuxt 3, which enables me to share the wonderful scenery and the
         underlying stories & experiences that impressed me.</p>
       <h2>A travel is... (IMO)</h2>
       <p>Going on a travel is taking a brand new experience in this big big world. There's so many surprises and
         never-mets for us to find.</p>
       <p>Do you find it fanscinating to feel and record your own real perspective on things, or even your life? Just fly
         to somewhere you've never been to, make plans for your daily exploration goal without any deliberate
-        sophistication, and collect something new or interesting.</p>
+        sophistication, and collect something refreshing & interesting. You will feel that you are <em>omnipotent</em>.</p>
       <p>And taking photos is one of the approaches to document your unique POV. Photos are
         storytellers. You can reconnect with the precious moments and your feelings through them, anytime, anywhere.</p>
     </template>
