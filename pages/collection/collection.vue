@@ -20,6 +20,9 @@
           <a target="_blank" :href="x.href" v-for="x in collection.external.filter(x => x.type === 'article')">
             {{ t('collection.readExternal', x.name) }}
           </a>
+          <a target="_blank" :href="x.href" v-for="x in collection.external.filter(x => x.type === 'video')">
+            {{ t('collection.watchExternal', x.name) }}
+          </a>
         </div>
       </div>
       <div class="spacer"/>

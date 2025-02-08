@@ -27,6 +27,11 @@
         "type": "article",
         "name": "北疆之旅（二）",
         "href": "https://subilan.win/posts/a-journey-to-xinjiang-2"
+      },
+      {
+        "type": "video",
+        "name": "2024 旅行随剪 / Part 1",
+        "href": "https://www.bilibili.com/video/BV1wx42117jo"
       }
     ],
     "theme": "xinjiang-routemap.png"
@@ -51,9 +56,9 @@
     },
     "external": [
       {
-        "type": "article",
-        "name": "云中浅游",
-        "href": "https://subilan.win/posts/a-brief-visit-of-yunnan"
+        "type": "video",
+        "name": "2024 旅行随剪 / Part 2",
+        "href": "https://www.bilibili.com/video/BV1Yr421L7aJ"
       }
     ],
     "theme": "yunnan-routemap.png"
