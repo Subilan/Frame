@@ -44,10 +44,7 @@
       "loadingLocation": "Loading location..."
     },
     "hwaWarning": "Hardware acceleration may cause incorrect white block in the map canvas.",
-    "moreInformation": {
-      "moveYourCursorHere": "Move your cursor here",
-      "other": "to learn more about these information."
-    },
+    "aboutGPSInformation": "About GPS information here...",
     "noGPS": "This photo has no GPS information attached.",
     "gpsSpeedZero": "Static",
     "navigationPanel": {

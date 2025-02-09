@@ -44,10 +44,7 @@
       "loadingLocation": "加载地点信息中..."
     },
     "hwaWarning": "硬件加速可能导致地图中出现不正常的白块区域",
-    "moreInformation": {
-      "moveYourCursorHere": "将鼠标移动至此处",
-      "other": "以了解更多信息"
-    },
+    "aboutGPSInformation": "关于此处的 GPS 信息...",
     "noGPS": "该照片未记录 GPS 信息",
     "gpsSpeedZero": "静止",
     "navigationPanel": {

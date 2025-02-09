@@ -337,10 +337,7 @@ export type I18n = {
 			loadingLocation: string;
 		};
 		hwaWarning: string;
-		moreInformation: {
-			moveYourCursorHere: string;
-			other: string;
-		};
+		aboutGPSInformation: string;
 		noGPS: string;
 		gpsSpeedZero: string;
 		navigationPanel: {
