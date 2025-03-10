@@ -266,6 +266,10 @@ onMounted(() => {
     max-width: 60%;
     min-width: 300px;
 
+    @media (max-width: 1350px) {
+      max-width: 90%;
+    }
+
     @media (max-width: 768px) {
       max-width: 100%;
     }

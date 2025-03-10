@@ -23,7 +23,8 @@
         never-mets for us to find.</p>
       <p>Do you find it fanscinating to feel and record your own real perspective on things, or even your life? Just fly
         to somewhere you've never been to, make plans for your daily exploration goal without any deliberate
-        sophistication, and collect something refreshing & interesting. You will feel that you are <em>omnipotent</em>.</p>
+        sophistication, and collect something refreshing & interesting. You will feel that you are <em>omnipotent</em>.
+      </p>
       <p>And taking photos is one of the approaches to document your unique POV. Photos are
         storytellers. You can reconnect with the precious moments and your feelings through them, anytime, anywhere.</p>
     </template>
@@ -68,7 +69,8 @@
       <ul>
         <li><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"
             target="_blank">xiangyuecn/AreaCity-JsSpider-StatsGov</a> - 大陆三级行政区划地理边界信息</li>
-        <li><a href="https://github.com/2blam/HK-geojson">2blam/HK-geojson</a> - 非官方的香港选区地理边界信息 <em> - 不确定是否可以和大陆的那种地区名称一样使用</em></li>
+        <li><a href="https://github.com/2blam/HK-geojson">2blam/HK-geojson</a> - 非官方的香港选区地理边界信息 <em> -
+            不确定是否可以和大陆的那种地区名称一样使用</em></li>
       </ul>
       <h2>版权</h2>
       <p>本站的所有照片均为原创，以 <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1" target="_blank"
@@ -87,7 +89,7 @@
             Law of the People's Republic of China</a>.</p>
       </blockquote>
       <p>本站上的地铁线路标志为自制，以 <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1" target="_blank"
-        rel="license noopener noreferrer">CC BY-SA 4.0</a> 协议授权。</p>
+          rel="license noopener noreferrer">CC BY-SA 4.0</a> 协议授权。</p>
     </template>
     <template v-if="lang === 'en'">
       <hr />
@@ -202,6 +204,12 @@
   ]
 </script>
 
+<style lang="scss">
+.about-container p {
+  font-size: 18px;
+}
+</style>
+
 <style lang="scss" scoped>
 .about-title {
   margin-top: 64px;
@@ -229,6 +237,10 @@
   height: 782px;
   overflow: hidden;
   position: relative;
+
+  @media (max-width: 768px) {
+    height: auto;
+  }
 
   .next-btn {
     position: absolute;
@@ -272,9 +284,17 @@
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, 1fr);
 
+  @media (max-width: 768px) {
+    grid-gap: 8px;
+  }
+
   .img {
     height: 250px;
     position: relative;
+
+    @media (max-width: 768px) {
+      height: 100px;
+    }
 
     .loading {
       opacity: 0;
@@ -292,7 +312,7 @@
   }
 
   img {
-    height: 250px;
+    height: 100%;
     width: 100%;
     object-fit: cover;
     pointer-events: none;
@@ -418,7 +438,6 @@ h1 {
 p,
 li {
   line-height: 1.5;
-  font-size: 18px;
 }
 
 ul {
