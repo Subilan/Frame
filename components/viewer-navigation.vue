@@ -26,7 +26,7 @@
                         </div>
                         <div class="text">
                             {{ t('view.navigationPanel.random') }}<br /><small>{{ t('view.navigationPanel.inAll')
-                                }}</small>
+                            }}</small>
                         </div>
                     </div>
                     <div class="navigation-block prev" v-if="prevName.length > 0"
@@ -120,6 +120,20 @@
 
         navigateTo(buildViewerPath(getCollectionNameByRemotePath(randomResult.data.name), getImageNameByRemotePath(randomResult.data.name)));
     }
+
+    const keydownEventHandler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            model.value = false;
+        }
+    };
+
+    onMounted(() => {
+        window.addEventListener('keydown', keydownEventHandler);
+    });
+
+    onUnmounted(() => {
+        window.removeEventListener('keydown', keydownEventHandler);
+    })
 </script>
 
 <style lang="scss" scoped>

@@ -201,7 +201,7 @@
     <icon :path="mdiPlus" />
   </div>
 
-  <navigation-panel v-model="navigationPanelEnabled" :prev-name="prevImageName" :next-name="nextImageName"
+  <viewer-navigation v-model="navigationPanelEnabled" :prev-name="prevImageName" :next-name="nextImageName"
     :current-collection-name="currentCollectionName" :prev-image-viewer-path="prevImageViewerPath"
     :next-image-viewer-path="nextImageViewerPath" />
 </template>
