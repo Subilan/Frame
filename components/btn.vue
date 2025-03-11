@@ -56,8 +56,12 @@
     background: white;
 
     &:hover {
-      background: #ddd;
+      background: #eee;
     }
+
+    &:active {
+    filter: brightness(80%);
+  }
   }
 
   &.border-white {

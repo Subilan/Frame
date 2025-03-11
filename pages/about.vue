@@ -151,14 +151,22 @@
           href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1" target="_blank"
           rel="license noopener noreferrer">CC BY-SA 4.0</a>.</p>
     </template>
+
+    <div class="suggestion-btn" @click="suggestionLayer = true">
+      <btn class="shadow"><icon :path="mdiCommentOutline"/>{{  lang === 'zh' ? '提出建议' : 'Give advice' }}</btn>
+    </div>
+
+    <about-suggestion-layer v-model="suggestionLayer"/>
   </div>
 </template>
 <script setup lang="ts">
-  import { mdiArrowRight, mdiImage } from "@mdi/js";
+  import { mdiArrowRight, mdiCommentOutline, mdiImage } from "@mdi/js";
   import { buildObjectPath } from "#imports";
 
   const lang = useLanguage();
   const aboutGalleryControl = ref([true, false, false]);
+
+  const suggestionLayer = ref(false);
 
   async function nextGallery() {
     for (let i = 0; i < aboutGalleryControl.value.length; i++) {
@@ -214,6 +222,20 @@
 .about-title {
   margin-top: 64px;
   margin-bottom: 16px;
+}
+
+.suggestion-btn {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 32px;
+
+  .button {
+    font-size: 18px;
+  }
 }
 
 .about-container {

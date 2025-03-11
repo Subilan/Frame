@@ -212,11 +212,11 @@
     position: absolute;
     top: 0;
     left: 0;
-    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .3));
+    background: linear-gradient(to bottom, rgba(0, 0, 0, .1), rgba(0, 0, 0, .5));
     z-index: 1;
 
     &.dark {
-      background: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .4));
+      background: linear-gradient(to bottom, rgba(0, 0, 0, .3), rgba(0, 0, 0, .6));
     }
   }
 }
