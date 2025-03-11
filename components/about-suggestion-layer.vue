@@ -11,12 +11,12 @@
                     <h2>Give advice</h2>
                     <p>This site is built from scratch (i.e. no UI lib used and the design is in parallel with dev)
                         during January and Feburary in 2025, and released in March.</p>
-                    <p>There could be some mistake on location names and English translation. The layout and functions
-                        can also be unsatisfying or even buggy. You can bring me your advice on this site if you want.
+                    <p>There could be some mistakes on location names and English translation. The layout and functions
+                        can also be buggy. Any suggestion is welcome and appreciated.
                     </p>
                 </template>
                 <div class="actions">
-                    <btn @click="open('https://github.com/Subilan/Frame')">
+                    <btn @click="open('https://github.com/Subilan/Frame/issues/new')">
                         <icon :path="mdiGithub" />{{ lang === 'zh' ? '在 GitHub 上发布 Issue' : 'Create Issue on GitHub' }}
                     </btn>
                     <btn class="bg-white text-primary border-primary" @click="open('mailto:christophersubilan@gmail.com', false)">
