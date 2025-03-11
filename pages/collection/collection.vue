@@ -1,4 +1,5 @@
 <template>
+  <Title>{{lang === 'zh' ? '合集：' : 'Collection: '}}{{collection ? collection.name[lang] : '' }}</Title>
   <div class="single-collection-container navbar-offset" v-if="!notFound && !initialLoading && collection">
     <div class="top">
       <div class="left">

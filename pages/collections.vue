@@ -1,4 +1,5 @@
 <template>
+  <Title>{{ lang === 'zh' ? '所有合集' : 'Collections' }}</Title>
   <div class="collection-container navbar-offset">
     <div class="collection-outer" v-for="x in collections" @click="navigateTo(`/collection/${x.ossPrefix}`)">
       <div class="collection card">

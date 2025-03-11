@@ -1,4 +1,5 @@
 <template>
+  <Title>{{ lang === 'zh' ? '关于' : 'About' }}</Title>
   <div class="about-container navbar-offset">
     <template v-if="lang === 'zh'">
       <h1 class="about-title">关于</h1>

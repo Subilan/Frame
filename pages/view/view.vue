@@ -1,4 +1,8 @@
 <template>
+  <Title>
+    {{ lang === 'zh' ? '查看' : 'View' }} {{ !currentImage.loading ? getImageNameByRemotePath(currentImage.data.name) : ''
+    }}
+  </Title>
   <div :lang="lang" class="viewer-container navbar-offset" v-if="!currentImage.loading && !currentExif.loading">
     <div class="image-container full navbar-offset">
       <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading" draggable="false"
@@ -138,13 +142,13 @@
               <label>{{ t('view.details.latitude') }}</label>
               <span>{{ resolvedExif.latitudeN[0] }}°{{ resolvedExif.latitudeN[1] }}'{{
                 resolvedExif.latitudeN[2]
-              }}" <small>N</small></span>
+                }}" <small>N</small></span>
             </div>
             <div>
               <label>{{ t('view.details.longitude') }}</label>
               <span>{{ resolvedExif.longitudeE[0] }}°{{ resolvedExif.longitudeE[1] }}'{{
                 resolvedExif.longitudeE[2]
-              }}" <small>E</small></span>
+                }}" <small>E</small></span>
             </div>
             <div>
               <label>{{ t('view.details.altitude') }}</label>
@@ -157,7 +161,7 @@
             </div>
           </div>
           <client-only>
-            <div class="note">
+            <div class="note gt-1400">
               <div class="note-item" v-if="hasHWA()">
                 <icon :path="mdiAlertOutline" />
                 <span>{{ t('view.hwaWarning') }}</span>
@@ -250,6 +254,7 @@
   const nextImageName = ref('');
 
   const currentCollectionName = computed(() => getCollectionNameByRemotePath(remotePath));
+  const currentCollectionNameHuman = computed(() => getCollectionByName(currentCollectionName.value)?.name)
   const nextImageViewerPath = computed(() => buildViewerPath(currentCollectionName.value, getImageNameByRemotePath(nextImageName.value)));
   const prevImageViewerPath = computed(() => buildViewerPath(currentCollectionName.value, getImageNameByRemotePath(prevImageName.value)));
 
@@ -728,6 +733,7 @@
   @media (max-width: 768px) {
     width: 48px;
     height: 48px;
+
     svg {
       width: 20px;
       height: 20px;
@@ -877,13 +883,12 @@ label {
     div {
       flex: 1;
       font-size: 28px;
+      display: flex;
+      flex-direction: column;
 
       @media (max-width: 768px) {
         font-size: 24px;
       }
-
-      display: flex;
-      flex-direction: column;
 
       span {
         margin-top: 8px;

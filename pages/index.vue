@@ -1,4 +1,5 @@
 <template>
+  <Title>{{ lang === 'zh' ? '首页' : 'Main Page' }}</Title>
   <div class="index-background navbar-offset">
     <img :src="indexImagePath" @load="backgroundLoaded" :class="{ backgroundNotLoad, loaded: imageLoaded }"
       loading="lazy" alt="background" class="index-background-image" />
