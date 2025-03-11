@@ -370,14 +370,17 @@ export type I18nKeys = Leaves<I18n>;
 export type HomeBannerItem = {
 	ossPrefix: string;
 	image: string;
-	name: string;
+	name: string | Lang<string>;
 	meta: {
 		altitude?: number;
 		date: string;
 		device: string;
-		region: string;
+		region: Lang<string>;
 	};
-	story: string[];
+	story: {
+		zh: string[],
+		en: string[]
+	}
 	dark?: boolean;
 };
 

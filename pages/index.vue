@@ -6,13 +6,13 @@
     <div class="+overlay">
       <transition name="scale-bottom" mode="out-in">
         <div class="hero-text" v-if="textLoaded">
-          <div class="hero-text-head" :class="{ withRoad }">
-            <div class="road" v-if="withRoad">
+          <div class="hero-text-head" :class="{ withRoad: typeof selected.name === 'string' && selected.name.startsWith('road-') }">
+            <div class="road" v-if="typeof selected.name === 'string' && selected.name.startsWith('road-')">
               <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`" />&nbsp;
             </div>
-            <span class="name" v-else>{{ selected.name }}&nbsp;</span>
+            <span class="name" v-else-if="typeof selected.name === 'object'">{{ selected.name[lang] }}&nbsp;</span>
             <span class="region">
-              {{ selected.meta.region }}
+              {{ selected.meta.region[lang] }}
             </span>
           </div>
           <div class="hero-text-meta">
@@ -25,7 +25,7 @@
                   selected.meta.altitude.toFixed(0)
                 }}<small>m</small></span>
           </div>
-          <div class="hero-text-content" v-html="selected.story.join('')" />
+          <div class="hero-text-content" v-html="selected.story[lang].join('')" />
           <div class="hero-text-actions">
             <btn class="shadow border-primary bg-white text-primary"
               @click="navigateTo(buildViewerPath(selected.ossPrefix, selected.image))">
@@ -61,8 +61,9 @@
 
   const banners: HomeBannerItem[] = bannersImport;
 
+  const lang = useLanguage();
+
   const indexImagePath = ref('');
-  const withRoad = ref(false);
   const imageLoaded = ref(false);
   const textLoaded = ref(false);
 
@@ -104,7 +105,6 @@
     setTimeout(() => {
       indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
     }, 1000);
-    withRoad.value = selected.name.startsWith('road-');
   }
 </script>
 
