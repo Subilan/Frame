@@ -156,6 +156,7 @@
     display: flex;
     flex-direction: column;
     gap: 32px;
+    margin: 0 32px;
 }
 
 .navigation-blocks {
@@ -184,6 +185,10 @@
     flex-direction: column;
     align-items: center;
     gap: 16px;
+
+    @media (max-height: 900px) {
+        padding: 16px;
+    }
 
     @media (max-width: 864px) {
         padding: 16px 32px;
@@ -220,6 +225,10 @@
         text-align: center;
         font-size: 26px;
 
+        @media (max-height: 900px) {
+            font-size: 20px;
+        }
+
         small {
             font-size: 16px;
             color: #aaa;
@@ -241,7 +250,7 @@
             height: 64px;
             width: 64px;
 
-            @media (max-width: 864px) {
+            @media (max-width: 864px) or (max-height: 900px){
                 height: 48px;
                 width: 48px;
             }
