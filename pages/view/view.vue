@@ -138,13 +138,13 @@
               <label>{{ t('view.details.latitude') }}</label>
               <span>{{ resolvedExif.latitudeN[0] }}°{{ resolvedExif.latitudeN[1] }}'{{
                 resolvedExif.latitudeN[2]
-                }}" <small>N</small></span>
+              }}" <small>N</small></span>
             </div>
             <div>
               <label>{{ t('view.details.longitude') }}</label>
               <span>{{ resolvedExif.longitudeE[0] }}°{{ resolvedExif.longitudeE[1] }}'{{
                 resolvedExif.longitudeE[2]
-                }}" <small>E</small></span>
+              }}" <small>E</small></span>
             </div>
             <div>
               <label>{{ t('view.details.altitude') }}</label>
@@ -210,8 +210,6 @@
   import type { CollectionDataBody, Delayed, Exif, FrameResp, Geo, NullableString, SpecialSpot } from "@/types";
   import {
     mdiAirplane, mdiAlertOutline,
-    mdiArrowLeft,
-    mdiArrowRight,
     mdiDownload, mdiFullscreen,
     mdiImage,
     mdiImageOutline,
@@ -727,11 +725,23 @@
   cursor: pointer;
   transition: all .2s ease;
 
-  &:hover {
-    background: global.$primarydd;
-    box-shadow: 0 8px 10px rgba(0, 0, 0, .4);
-    transform: translateY(-2px);
+  @media (max-width: 768px) {
+    width: 48px;
+    height: 48px;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
+
+  @media (min-width: 768px) {
+    &:hover {
+      background: global.$primarydd;
+      box-shadow: 0 8px 10px rgba(0, 0, 0, .4);
+      transform: translateY(-2px);
+    }
+  }
+
 }
 </style>
 
@@ -867,6 +877,10 @@ label {
     div {
       flex: 1;
       font-size: 28px;
+
+      @media (max-width: 768px) {
+        font-size: 24px;
+      }
 
       display: flex;
       flex-direction: column;
