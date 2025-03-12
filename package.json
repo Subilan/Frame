@@ -5,7 +5,7 @@
   "scripts": {
     "syncLocal": "env-cmd -- npm run sync ",
     "sync": "cd static/data && node syncCollections.js && node syncImageExif.js",
-    "build": "npm run sync && nuxt build",
+    "build": "git lfs pull && npm run sync && nuxt build",
     "buildLocal": "npm run syncLocal && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
