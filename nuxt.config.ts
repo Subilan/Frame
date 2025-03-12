@@ -15,7 +15,17 @@ export default defineNuxtConfig({
 	modules: ['@nuxt/image', 'nuxt-route-meta'],
 
 	vite: {
-		plugins: [svgLoader()]
+		plugins: [svgLoader()],
+		css: {
+			preprocessorOptions: {
+				sass: {
+					api: 'modern'
+				},
+				scss: {
+					api: 'modern'
+				}
+			}
+		}
 	},
 
 	plugins: [
