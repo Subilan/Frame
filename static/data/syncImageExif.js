@@ -17,7 +17,7 @@ function exifAlreadyPresent(name) {
 }
 
 if (await exists('./filetrees.json')) {
-    const filetreeContent = await  fs.readFile('./filetrees.json');
+    const filetreeContent = await fs.readFile('./filetrees.json');
     dataFiletrees = JSON.parse(filetreeContent.toString());
 }
 

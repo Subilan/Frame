@@ -127,7 +127,7 @@ async function update() {
   loadAttempts.value += 1;
   if (objects.status === 200) {
     if (objects.data.code === 'ok') {
-      images.value.push(...objects.data.data.images)
+      images.value.push(...objects.data.data.images);
       currentIndexCursor.value += limit;
       hasNext.value = objects.data.data.hasNext;
     } else if (objects.data.code === 'ng') {

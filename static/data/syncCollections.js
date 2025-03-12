@@ -37,13 +37,14 @@ const fileTree = result.filter(x => isImageFilePath(x.name)).sort((a, b) => getF
 const collections = {};
 
 fileTree.forEach(x => {
+    x.url = x.url.replace('http', 'https');
     const collectionIdExec = /\/frame\/([0-9A-Za-z\-_]+)\//.exec(x.url);
     if (collectionIdExec !== null) {
         const collectionId = collectionIdExec[1];
         if (!Object.keys(collections).includes(collectionId)) collections[collectionId] = {
             files: [],
             totalSize: -1
-        };
+        }
         collections[collectionId]['files'].push(x);
         collections[collectionId]['totalSize'] += x.size;
     }
