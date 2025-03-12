@@ -594,7 +594,7 @@
   }
 
   async function retrieveCurrentExif() {
-    const res = await $fetch<FrameResp<Exif>>(`/api/get-exif?remotePath=${btoa(remotePath)}`)
+    const res = await req<Exif>(`/api/get-exif?remotePath=${btoa(remotePath)}`)
 
     if (res.code === 'ng') {
       console.error(res);
@@ -606,7 +606,7 @@
   }
 
   async function retrieveCurrentObject() {
-    const res = await $fetch<FrameResp<CollectionDataBody>>(`/api/get-object?remotePath=${btoa(remotePath)}`);
+    const res = await req<CollectionDataBody>(`/api/get-object?remotePath=${btoa(remotePath)}`);
 
     if (res.code === 'ng') {
       console.error(res);
@@ -618,7 +618,7 @@
   }
 
   async function retrieveGeo(name: string, coord: number[]) {
-    const res = await $fetch<FrameResp<Geo>>(`/api/get-geo?name=${btoa(name)}&x=${coord[0]}&y=${coord[1]}&depth=2`);
+    const res = await req<Geo>(`/api/get-geo?name=${btoa(name)}&x=${coord[0]}&y=${coord[1]}&depth=2`);
 
     if (res.code === 'ng') {
       console.error(res);
@@ -630,7 +630,7 @@
   }
 
   async function retrieveSpecialSpotInfo(name: string) {
-    const res = await $fetch<FrameResp<SpecialSpot[]>>(`/api/get-special-spot?name=${btoa(name)}`);
+    const res = await req<SpecialSpot[]>(`/api/get-special-spot?name=${btoa(name)}`);
 
     specialSpotLoading.value = false;
 
@@ -643,7 +643,7 @@
   }
 
   async function retrieveCaptions(name: string) {
-    const res = await $fetch<FrameResp<string>>(`/api/get-captions?name=${btoa(name)}`);
+    const res = await req<string>(`/api/get-captions?name=${btoa(name)}`);
 
     if (res.code === 'ng') {
       console.error(res);
@@ -654,7 +654,7 @@
   }
 
   async function retrievePrevNext(name: string) {
-    const res = await $fetch<FrameResp<{ prev: NullableString, next: NullableString }>>(`/api/get-prev-next?remotePath=${btoa(name)}`);
+    const res = await req<{ prev: NullableString, next: NullableString }>(`/api/get-prev-next?remotePath=${btoa(name)}`);
 
     if (res.code === 'ng') {
       console.error(res);
