@@ -43,7 +43,7 @@ const lang = useLanguage();
 </script>
 
 <style lang="scss">
-@import "assets/global";
+@use "assets/global";
 
 .fade-enter-active,
 .fade-leave-active {
