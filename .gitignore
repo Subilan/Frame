@@ -29,7 +29,4 @@ logs
 static/config.js
 
 # internal data files
-filetrees.json
-exifs.json
 *.geojson
-map.json
