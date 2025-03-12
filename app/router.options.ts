@@ -17,7 +17,7 @@ export default {
         {
             name: 'collection',
             path: '/collection/:collection',
-            component: () => import('@/pages/collection/collection.vue')
+            component: () => import('@/pages/collection.vue')
         },
         {
             name: 'about',
@@ -27,7 +27,7 @@ export default {
         {
             name: 'imageview',
             path: '/view/:remotePath(.*)',
-            component: () => import('~/pages/view/view.vue')
+            component: () => import('@/pages/view.vue')
         }
     ],
 } satisfies RouterConfig
