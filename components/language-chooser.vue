@@ -43,13 +43,13 @@ const lang = useLanguage();
 
   .language-chooser {
     width: 25%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 
     @media (max-width: 1340px) {
       width: 35%;
     }
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
 
     section {
       margin: 8px 0;
