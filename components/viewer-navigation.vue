@@ -157,6 +157,7 @@
     flex-direction: column;
     gap: 32px;
     margin: 0 32px;
+    pointer-events: none;
 }
 
 .navigation-blocks {
@@ -185,6 +186,7 @@
     flex-direction: column;
     align-items: center;
     gap: 16px;
+    pointer-events: all;
 
     @media (max-height: 900px) {
         padding: 16px;
