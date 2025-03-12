@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "sync": "node static/data/syncCollection.js && node static/data/syncImageExif.js",
+    "sync": "cd static/data && env-cmd -f ../../.env -- node syncCollections.js && node syncImageExif.js",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
