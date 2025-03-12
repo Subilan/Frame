@@ -48,5 +48,5 @@ export default defineNuxtConfig({
 		public: {
 			LOCAL_BASE_URL: `http://localhost:${port}`
 		}
-	}
+	},
 });

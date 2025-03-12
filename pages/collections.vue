@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-  import collections from "~/public/data/collections.json";
+  import collections from "~/static/data/data/collections.json";
   import buildObjectPath from "@/utils/buildObjectPath";
 
   const lang = useLanguage();

@@ -1,5 +1,5 @@
 import { booleanPointInPolygon } from '@turf/turf';
-import manualGeo from '~/public/data/manual-geo.json';
+import manualGeo from '~/static/data/data/manual-geo.json';
 import getJson from '../utils/getJson';
 import { Geo } from '~/types';
 

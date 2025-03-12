@@ -1,4 +1,4 @@
-import specialSpots from "~/public/data/special-spots.json";
+import specialSpots from "~/static/data/data/special-spots.json";
 import {SpecialSpot} from "@/types";
 import getExifByName from "@/server/utils/getExifByName";
 import translateExifDate from "@/utils/translateExifDate";

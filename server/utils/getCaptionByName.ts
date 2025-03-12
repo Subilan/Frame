@@ -1,4 +1,4 @@
-import captions from '~/public/data/captions.json';
+import captions from '~/static/data/data/captions.json';
 import {Captions} from "~/types";
 
 export default function (name: string) {
