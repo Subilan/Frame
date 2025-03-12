@@ -1,1 +1,0 @@
-import{_ as t}from"./DlAUqK2U.js";import{v as r,x as o,C as s,y as a}from"./D1_wxKH1.js";const n={};function c(_,e){return r(),o("div",null,e[0]||(e[0]=[s(" the "),a("strong",null,"frame",-1)]))}const d=t(n,[["render",c],["__scopeId","data-v-771905f5"]]);export{d as S};

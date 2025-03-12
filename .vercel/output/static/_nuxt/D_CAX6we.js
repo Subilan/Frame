@@ -1,1 +1,0 @@
-import{_ as o}from"./DlAUqK2U.js";import{v as e,x as n,V as s}from"./D1_wxKH1.js";const r={},_={class:"button"};function c(t,a){return e(),n("button",_,[s(t.$slots,"default")])}const m=o(r,[["render",c]]);export{m as _};
