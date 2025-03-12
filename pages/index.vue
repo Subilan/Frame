@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
   import { mdiArrowRight, mdiArrowTopRight, mdiRefresh } from '@mdi/js';
-  import bannersImport from '~/static/data/data/banners.json';
+  import bannersImport from '~/static/data/banners.json';
   import type { HomeBannerItem } from "~/types";
   import buildObjectPath from "~/utils/buildObjectPath";
   import formatDate from '~/utils/formatDate';
