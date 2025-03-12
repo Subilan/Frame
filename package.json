@@ -3,10 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "syncLocal": "env-cmd -- npm run sync ",
-    "sync": "cd static/data && node syncCollections.js && node syncImageExif.js",
-    "build": "git lfs pull && npm run sync && nuxt build",
-    "buildLocal": "npm run syncLocal && nuxt build",
+    "sync": "cd static/data && env-cmd -f ../../.env -- node syncCollections.js && node syncImageExif.js",
+    "build": "git lfs pull && nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
