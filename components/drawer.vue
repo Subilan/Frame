@@ -127,7 +127,7 @@ section.drawer-links {
 
     &.router-link-exact-active {
       border-color: white;
-      background: $primaryd;
+      background: global.$primaryd;
       color: white;
 
       .non-active-icon {

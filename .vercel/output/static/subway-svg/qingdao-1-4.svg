@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="uuid-0504fa09-ac20-420e-939f-95b62d488018" data-name="图层 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450.77 193.62">
+  <defs>
+    <style>
+      .uuid-59fecc0f-b69c-4d36-86cd-987130fe5e2a {
+        fill: #fff;
+      }
+
+      .uuid-34b6bf43-e468-4902-9470-8128a66cbe67 {
+        fill: #e1ae3b;
+      }
+
+      .uuid-7e427f37-73df-4204-b4be-aac6b2deca7e {
+        fill: #357939;
+      }
+    </style>
+  </defs>
+  <g id="uuid-989eaaef-1054-4865-aa63-24dfd27992ae" data-name="图层 1">
+    <rect class="uuid-34b6bf43-e468-4902-9470-8128a66cbe67" width="193" height="193"/>
+    <path class="uuid-59fecc0f-b69c-4d36-86cd-987130fe5e2a" d="m114.12,154.89h-24.38v-83.49h-28.47v-16.2c7.51-.33,12.77-.83,15.78-1.5,4.79-1.06,8.68-3.17,11.69-6.35,2.06-2.17,3.62-5.06,4.68-8.68.61-2.17.92-3.78.92-4.84h19.79v121.06Z"/>
+    <rect class="uuid-7e427f37-73df-4204-b4be-aac6b2deca7e" x="257.77" y=".62" width="193" height="193"/>
+    <path class="uuid-59fecc0f-b69c-4d36-86cd-987130fe5e2a" d="m403.03,112.67v21.47h-15.79v30.04h-26.87v-30.04h-55.27v-23.98l51.33-84.74h30.81v87.25h15.79Zm-77.62,0h34.96v-60.28l-34.96,60.28Z"/>
+  </g>
+</svg>
