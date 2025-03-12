@@ -1,6 +1,9 @@
 import svgLoader from 'vite-svg-loader';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+const port = 7070;
+
 export default defineNuxtConfig({
 	compatibilityDate: '2024-04-03',
 
@@ -9,7 +12,7 @@ export default defineNuxtConfig({
 	},
 
 	devServer: {
-		port: 7070
+		port
 	},
 
 	modules: ['@nuxt/image', 'nuxt-route-meta'],
@@ -38,12 +41,12 @@ export default defineNuxtConfig({
 	app: {
 		head: {
 			link: [{ rel: 'icon', type: 'image/png', href: '/favicon.png' }]
-		},
+		}
 	},
 
-	$production: {
-		nitro: {
-			preset: 'vercel'
+	runtimeConfig: {
+		public: {
+			LOCAL_BASE_URL: `http://localhost:${port}`
 		}
 	}
 });
