@@ -1,4 +1,4 @@
-import FileTreeResultJson from '@/static/data/filetrees.json';
+import FileTreeResultJson from '~/public/data/filetrees.json';
 import { CollectionDataBody, CollectionDataKeys, Filetrees } from '~/types';
 
 /**
