@@ -40,7 +40,11 @@ export default defineNuxtConfig({
 
 	app: {
 		head: {
-			link: [{ rel: 'icon', type: 'image/png', href: '/favicon.png' }]
+			link: [
+				{ rel: 'icon', type: 'image/png', href: '/favicon.png' },
+				{ rel: 'stylesheet', href: '/fonts/fira-sans/font.css' },
+				{ rel: 'stylesheet', href: '/fonts/open-sans/font.css' }
+			]
 		}
 	},
 
@@ -48,5 +52,5 @@ export default defineNuxtConfig({
 		public: {
 			LOCAL_BASE_URL: `http://localhost:${port}`
 		}
-	},
+	}
 });
