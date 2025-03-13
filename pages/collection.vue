@@ -1,21 +1,24 @@
 <template>
-  <Title>{{lang === 'zh' ? '合集：' : 'Collection: '}}{{collection ? collection.name[lang] : '' }}</Title>
+  <Title>{{ lang === 'zh' ? '合集：' : 'Collection: ' }}{{ collection ? collection.name[lang] : '' }}</Title>
   <div class="single-collection-container navbar-offset" v-if="!notFound && !initialLoading && collection">
     <div class="top">
       <div class="left">
         <h2>{{ collection.name[lang] }}&nbsp;&nbsp;<small>{{ collection.date[lang] }}</small></h2>
         <div class="meta">
-          <span><icon :path="mdiImage"/>{{ t('collection.photoNum', collection.pickedAmount, collection.totalAmount) }}
+          <span>
+            <icon :path="mdiImage" />{{ t('collection.photoNum', collection.pickedAmount, collection.totalAmount) }}
             <popup class="top p8 autowidth trigger-hover gt-768 font-12">
-              <icon color="#aaa" size="16" :path="mdiHelpCircleOutline"/>
+              <icon color="#aaa" size="16" :path="mdiHelpCircleOutline" />
               <template #content>
                 <span>{{ t('collection.photoIsPicked', collection.pickedAmount, collection.totalAmount) }}</span>
               </template>
             </popup>
           </span>
-          <span><icon :path="mdiPackageVariant"/> {{ (collection.totalSize / 1024 / 1024 / 1024).toFixed(2) }} GB</span>
+          <span>
+            <icon :path="mdiPackageVariant" /> {{ (collection.totalSize / 1024 / 1024 / 1024).toFixed(2) }} GB
+          </span>
         </div>
-        <div class="description" v-html="collection.desc[lang]"/>
+        <div class="description" v-html="collection.desc[lang]" />
         <div class="section external-links" v-if="collection.external && collection.external.length > 0">
           <label>{{ t('collection.externalLinks') }} &raquo;</label>
           <a target="_blank" :href="x.href" v-for="x in collection.external.filter(x => x.type === 'article')">
@@ -26,129 +29,129 @@
           </a>
         </div>
       </div>
-      <div class="spacer"/>
+      <div class="spacer" />
       <div class="right" v-if="collection.theme">
-        <img alt="theme" :src="`/theme-pics/${collection.theme}`"/>
+        <img alt="theme" :src="`/theme-pics/${collection.theme}`" />
       </div>
     </div>
     <div class="images" v-if="images.length > 0">
-      <div class="image" @click="navigateTo(`/view/${x.name}`)" v-for="x in images">
-        <nuxt-img draggable="false" :src="toThumbnail(x.url)" loading="lazy" placeholder placeholder-class="loading"/>
-        <circle-spinner class="image-loading-indicator"/>
+      <router-link class="image" :to="buildViewerPathFromObjectPath(x.name) || '#'" v-for="x in images">
+        <nuxt-img draggable="false" :src="toThumbnail(x.url)" loading="lazy" placeholder placeholder-class="loading" />
+        <circle-spinner class="image-loading-indicator" />
         <div class="layer">
           <p>{{ t('collection.viewNow') }}
-            <icon :path="mdiLaunch"/>
+            <icon :path="mdiLaunch" />
           </p>
         </div>
-      </div>
+      </router-link>
     </div>
     <div class="no-content" v-else-if="!hasNext">
       {{ t('collection.noContent') }}
     </div>
     <div class="bottom-indicator" ref="bottomIndicator" v-if="hasNext"></div>
     <div class="long-time-loading-indicator-wrapper">
-      <div class="long-time-loading-indicator" :class="{active: longTimeLoadingIndicator}">
-        <circle-spinner size="16"/>
+      <div class="long-time-loading-indicator" :class="{ active: longTimeLoadingIndicator }">
+        <circle-spinner size="16" />
         <span>{{ t('collection.loadingPhotos') }}</span>
       </div>
     </div>
   </div>
   <div class="not-found-container describe center full navbar-offset" v-else-if="notFound">
-    <icon :path="mdiHelpCircleOutline"/>
+    <icon :path="mdiHelpCircleOutline" />
     <h2>{{ t('collection.fourOfour.title') }}</h2>
     <p>{{ t('collection.fourOfour.text', collectionName) }}</p>
     <btn @click="useRouter().go(-1)" class="shadow" type="primary">
-      <icon :path="mdiArrowLeft"/>
+      <icon :path="mdiArrowLeft" />
       {{ t('collection.fourOfour.goBack') }}
     </btn>
   </div>
   <div class="loading-container center full flex-column gap-32 navbar-offset" v-else-if="initialLoading">
-    <circle-spinner/>
+    <circle-spinner />
     <span>{{ t('collection.loadingCollection', collectionName) }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  mdiArrowLeft,
-  mdiHelpCircleOutline,
-  mdiImage,
-  mdiLaunch,
-  mdiPackageVariant
-} from "@mdi/js";
-import {useElementVisibility} from "@vueuse/core";
-import get from "@/utils/get";
-import getCollectionByName from "@/utils/getCollectionByName";
-import {navigateTo} from "#app";
+  import {
+    mdiArrowLeft,
+    mdiHelpCircleOutline,
+    mdiImage,
+    mdiLaunch,
+    mdiPackageVariant
+  } from "@mdi/js";
+  import { useElementVisibility } from "@vueuse/core";
+  import get from "@/utils/get";
+  import getCollectionByName from "@/utils/getCollectionByName";
+  import { navigateTo } from "#app";
 
-const images = ref<any[]>([]);
-const hasNext = ref(true);
-const currentIndexCursor = ref(0);
-const limit = 20;
-const loadAttempts = ref(0);
+  const images = ref<any[]>([]);
+  const hasNext = ref(true);
+  const currentIndexCursor = ref(0);
+  const limit = 20;
+  const loadAttempts = ref(0);
 
-const lang = useLanguage();
+  const lang = useLanguage();
 
-const route = useRoute();
-const collectionName = route.params.collection as string;
-const collection = getCollectionByName(collectionName);
-const bottomIndicator = ref(null);
-const bottomIndicatorVisibility = useElementVisibility(bottomIndicator)
-const longTimeLoadingIndicator = ref(false);
+  const route = useRoute();
+  const collectionName = route.params.collection as string;
+  const collection = getCollectionByName(collectionName);
+  const bottomIndicator = ref(null);
+  const bottomIndicatorVisibility = useElementVisibility(bottomIndicator)
+  const longTimeLoadingIndicator = ref(false);
 
-const retrievingObjects = ref(false);
+  const retrievingObjects = ref(false);
 
-const notFound = ref(false);
-const initialLoading = ref(true);
+  const notFound = ref(false);
+  const initialLoading = ref(true);
 
-function toThumbnail(url: string) {
-  return url + '?x-oss-process=image/resize,h_400';
-}
+  function toThumbnail(url: string) {
+    return url + '?x-oss-process=image/resize,h_400';
+  }
 
-function startLongTimeDetection() {
-  setTimeout(() => {
-    if (retrievingObjects.value) longTimeLoadingIndicator.value = true;
-  }, 1000)
-}
+  function startLongTimeDetection() {
+    setTimeout(() => {
+      if (retrievingObjects.value) longTimeLoadingIndicator.value = true;
+    }, 1000)
+  }
 
-watch(bottomIndicatorVisibility, async v => {
-  if (v) await update();
-})
+  watch(bottomIndicatorVisibility, async v => {
+    if (v) await update();
+  })
 
-async function update() {
-  if (retrievingObjects.value) return;
+  async function update() {
+    if (retrievingObjects.value) return;
 
-  retrievingObjects.value = true;
-  startLongTimeDetection();
-  const objects = await getObjects(collectionName, currentIndexCursor.value, limit);
-  initialLoading.value = false;
-  retrievingObjects.value = false;
-  longTimeLoadingIndicator.value = false;
-  loadAttempts.value += 1;
-  if (objects.status === 200) {
-    if (objects.data.code === 'ok') {
-      images.value.push(...objects.data.data.images);
-      currentIndexCursor.value += limit;
-      hasNext.value = objects.data.data.hasNext;
-    } else if (objects.data.code === 'ng') {
-      if (objects.data.data === 'nothing') notFound.value = true;
+    retrievingObjects.value = true;
+    startLongTimeDetection();
+    const objects = await getObjects(collectionName, currentIndexCursor.value, limit);
+    initialLoading.value = false;
+    retrievingObjects.value = false;
+    longTimeLoadingIndicator.value = false;
+    loadAttempts.value += 1;
+    if (objects.status === 200) {
+      if (objects.data.code === 'ok') {
+        images.value.push(...objects.data.data.images);
+        currentIndexCursor.value += limit;
+        hasNext.value = objects.data.data.hasNext;
+      } else if (objects.data.code === 'ng') {
+        if (objects.data.data === 'nothing') notFound.value = true;
+      }
+    } else {
+      console.error(objects);
     }
-  } else {
-    console.error(objects);
   }
-}
 
-async function getObjects(tag: string, startIndex: number, limit: number) {
-  return await get(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
-}
-
-onMounted(() => {
-  if (collection === null) {
-    notFound.value = true;
-    return;
+  async function getObjects(tag: string, startIndex: number, limit: number) {
+    return await get(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
   }
-  update();
-})
+
+  onMounted(() => {
+    if (collection === null) {
+      notFound.value = true;
+      return;
+    }
+    update();
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -185,7 +188,7 @@ onMounted(() => {
   opacity: 0;
 }
 
-.loading + .image-loading-indicator {
+.loading+.image-loading-indicator {
   opacity: 1;
 }
 
@@ -253,7 +256,7 @@ onMounted(() => {
   position: relative;
 }
 
-.single-collection-container > .top {
+.single-collection-container>.top {
   padding: 32px;
   box-sizing: border-box;
   display: flex;
@@ -409,7 +412,7 @@ onMounted(() => {
   }
 }
 
-.single-collection-container > .top {
+.single-collection-container>.top {
   width: 100%;
 
   h2 {

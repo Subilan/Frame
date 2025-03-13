@@ -1,7 +1,7 @@
 <template>
   <Title>{{ lang === 'zh' ? '所有合集' : 'Collections' }}</Title>
   <div class="collection-container navbar-offset">
-    <div class="collection-outer" v-for="x in collections" @click="navigateTo(`/collection/${x.ossPrefix}`)">
+    <router-link class="collection-outer" v-for="x in collections" :to="`/collection/${x.ossPrefix}`">
       <div class="collection card">
         <div class="image">
           <img :src="buildObjectPath(x.ossPrefix, x.banner)" alt="alt" />
@@ -12,7 +12,7 @@
             x.totalAmount)}}</p>
         </div>
       </div>
-    </div>
+    </router-link>
   </div>
 </template>
 
@@ -25,6 +25,10 @@
 
 <style lang="scss">
 @use 'assets/global';
+
+.collection-outer {
+  text-decoration: none;
+}
 
 .collection-container {
   padding: 32px;
