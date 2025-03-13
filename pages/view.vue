@@ -235,8 +235,9 @@
 
   const route = useRoute();
   const category = route.params.category as string;
-  const name = route.params.name as string;
-  const remotePath = buildObjectPath(category, name, '', '', true);
+  const filename = route.params.filename as string;
+  const remotePath = buildObjectPath(category, filename, '', '', true);
+
 
   const currentImage = reactive<Delayed<CollectionDataBody>>({
     loading: true,
