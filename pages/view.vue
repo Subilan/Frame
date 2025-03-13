@@ -234,7 +234,9 @@
   const geoExtPathPrefix = computed(() => geoExtPath.value.replace(`${geoName.value}`, '').replace(', ', ''));
 
   const route = useRoute();
-  const remotePath = route.params.remotePath as string;
+  const category = route.params.category as string;
+  const name = route.params.name as string;
+  const remotePath = buildObjectPath(category, name, '', '', true);
 
   const currentImage = reactive<Delayed<CollectionDataBody>>({
     loading: true,
