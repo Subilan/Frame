@@ -257,7 +257,6 @@
   const nextImageName = ref('');
 
   const currentCollectionName = computed(() => getCollectionNameByRemotePath(remotePath));
-  const currentCollectionNameHuman = computed(() => getCollectionByName(currentCollectionName.value)?.name)
   const nextImageViewerPath = computed(() => buildViewerPath(currentCollectionName.value, getImageNameByRemotePath(nextImageName.value)));
   const prevImageViewerPath = computed(() => buildViewerPath(currentCollectionName.value, getImageNameByRemotePath(prevImageName.value)));
 
