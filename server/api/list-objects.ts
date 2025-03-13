@@ -5,6 +5,7 @@ export default defineEventHandler(e => {
     const tag = suspect(query.tag as string, '');
     const startIndex = suspect(query.startIndex as number, 0);
     const limit = suspect(query.limit as number, 20);
+    const all = suspect(query.all as number, 0);
 
     if (limit <= 0 || startIndex < 0) {
         return ng('invalid parameter');
@@ -12,6 +13,12 @@ export default defineEventHandler(e => {
 
     const collection = getCollection(tag);
     if (collection === null) return ng('nothing');
+    if (all > 0) {
+        return ok({
+            hasNext: false,
+            images: collection.files
+        })
+    }
 
     const afterStartIndex = collection.files.slice(startIndex);
 

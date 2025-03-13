@@ -82,7 +82,6 @@
   import { useElementVisibility } from "@vueuse/core";
   import get from "@/utils/get";
   import getCollectionByName from "@/utils/getCollectionByName";
-  import { navigateTo } from "#app";
 
   const images = ref<any[]>([]);
   const hasNext = ref(true);

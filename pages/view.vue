@@ -211,7 +211,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { CollectionDataBody, Delayed, Exif, FrameResp, Geo, NullableString, SpecialSpot } from "@/types";
+  import type { CollectionDataBody, Delayed, Exif, Geo, NullableString, SpecialSpot } from "@/types";
   import {
     mdiAirplane, mdiAlertOutline,
     mdiDownload, mdiFullscreen,
