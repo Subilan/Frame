@@ -106,7 +106,7 @@
     async function getRandomPhoto(scope: CollectionDataKeys | 'all') {
         randomResult.loading = true;
 
-        const res = await $fetch<FrameResp<CollectionDataBody>>(`/api/random?scope=${scope}`);
+        const res = await req<CollectionDataBody>(`/api/random?scope=${scope}`);
 
         if (res.code === 'ng') return;
 
