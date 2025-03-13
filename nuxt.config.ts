@@ -46,11 +46,5 @@ export default defineNuxtConfig({
 				{ rel: 'stylesheet', href: '/fonts/open-sans/font.css' }
 			]
 		}
-	},
-
-	runtimeConfig: {
-		public: {
-			LOCAL_BASE_URL: `http://localhost:${port}`
-		}
 	}
 });
