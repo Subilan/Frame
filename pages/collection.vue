@@ -80,8 +80,8 @@
     mdiPackageVariant
   } from "@mdi/js";
   import { useElementVisibility } from "@vueuse/core";
-  import get from "@/utils/get";
   import getCollectionByName from "@/utils/getCollectionByName";
+import type { CollectionDataBody } from "~/types";
 
   const images = ref<any[]>([]);
   const hasNext = ref(true);
@@ -127,21 +127,21 @@
     retrievingObjects.value = false;
     longTimeLoadingIndicator.value = false;
     loadAttempts.value += 1;
-    if (objects.status === 200) {
-      if (objects.data.code === 'ok') {
-        images.value.push(...objects.data.data.images);
-        currentIndexCursor.value += limit;
-        hasNext.value = objects.data.data.hasNext;
-      } else if (objects.data.code === 'ng') {
-        if (objects.data.data === 'nothing') notFound.value = true;
-      }
-    } else {
-      console.error(objects);
+
+    if (objects.code === 'ok') {
+      images.value.push(...objects.data.images);
+      currentIndexCursor.value += limit;
+      hasNext.value = objects.data.hasNext;
+    } else if (objects.code === 'ng') {
+      if (objects.data === 'nothing') notFound.value = true;
     }
   }
 
   async function getObjects(tag: string, startIndex: number, limit: number) {
-    return await get(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
+    return await req<{
+      hasNext: boolean,
+      images: CollectionDataBody[]
+    }>(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
   }
 
   onMounted(() => {
