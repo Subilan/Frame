@@ -18,7 +18,7 @@
     "@vueuse/core": "^11.0.3",
     "ali-oss": "^6.21.0",
     "ant-design-vue": "4.x",
-    "axios": "^1.7.7",
+    "axios": "^1.8.2",
     "dayjs": "^1.11.13",
     "nuxt": "^3.13.0",
     "nuxt-route-meta": "^5.0.3",
