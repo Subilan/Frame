@@ -1,4 +1,4 @@
-import getDayjs from "@/utils/getDayjs";
+import getDayjs from "~/utils/getDayjs";
 
 export default function (str: string) {
     const d = /(\d+):(\d+):(\d+) (\d+):(\d+):(\d+)/.exec(str);

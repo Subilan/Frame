@@ -1,3 +1,0 @@
-map.json filter=lfs diff=lfs merge=lfs -text
-exifs.json filter=lfs diff=lfs merge=lfs -text
-filetrees.json filter=lfs diff=lfs merge=lfs -text
