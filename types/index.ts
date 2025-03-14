@@ -358,6 +358,10 @@ export type I18n = {
 		viewImage: string;
 		seeCollections: string;
 	};
+	mobileNavigation: {
+		viewer: string;
+		home: string
+	};
 };
 
 type Leaves<T> = T extends object

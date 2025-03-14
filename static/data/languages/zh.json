@@ -63,5 +63,9 @@
     "nextImage": "换一张",
     "viewImage": "查看图片",
     "seeCollections": "所有合集"
+  },
+  "mobileNavigation": {
+    "viewer": "图片查看",
+    "home": "首页"
   }
 }

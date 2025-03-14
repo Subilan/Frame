@@ -63,5 +63,9 @@
     "nextImage": "Change",
     "viewImage": "View now",
     "seeCollections": "All collections"
+  },
+  "mobileNavigation": {
+    "viewer": "Viewer",
+    "home": "Home"
   }
 }

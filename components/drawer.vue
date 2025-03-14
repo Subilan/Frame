@@ -4,17 +4,17 @@
       <div class="drawer" v-if="model">
         <section class="drawer-links">
           <a @click="model = false" v-if="route.name === 'home'" class="router-link-exact-active">
-            Home
+            {{ t('mobileNavigation.home') }}
             <div class="spacer"/>
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </a>
           <a @click="model = false" v-if="route.name === 'imageview'" class="router-link-exact-active">
-            View
+            {{ t('mobileNavigation.viewer') }}
             <div class="spacer"/>
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </a>
           <a @click="model = false" v-if="route.name === 'collection'" class="router-link-exact-active">
-            Collection
+            {{ currentCollection?.name[lang] }}
             <div class="spacer"/>
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </a>
@@ -40,6 +40,8 @@ import {mdiArrowRight, mdiArrowTopRight, mdiCheck} from "@mdi/js";
 const route = useRoute();
 const model = defineModel();
 const lang = useLanguage();
+
+const currentCollection = computed(() => getCollectionByName(route.params.collection as string));
 </script>
 
 <style lang="scss">
