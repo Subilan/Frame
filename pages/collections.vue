@@ -4,7 +4,7 @@
     <router-link class="collection-outer" v-for="x in collections" :to="`/collection/${x.ossPrefix}`">
       <div class="collection card">
         <div class="image">
-          <img :src="buildObjectPath(x.ossPrefix, x.banner)" alt="alt" />
+          <nuxt-img loading="lazy" :src="buildObjectPath(x.ossPrefix, x.banner, '340')" alt="alt" />
         </div>
         <div class="texts">
           <h2><span>{{ x.name[lang] }}</span><small>{{ x.date[lang] }}</small></h2>
