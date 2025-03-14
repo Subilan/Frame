@@ -235,7 +235,7 @@
   const navigationPanelEnabled = ref(false);
 
   const geoName = computed(() => withFallback(lang.value, currentImage.data.geo?.en_name, currentImage.data.geo?.name));
-  const geoExtPath = computed(() => withFallback(lang.value, currentImage.data.geo?.en_ext_path, currentImage.data.geo?.en_name));
+  const geoExtPath = computed(() => withFallback(lang.value, currentImage.data.geo?.en_ext_path, currentImage.data.geo?.ext_path));
   const geoExtPathPrefix = computed(() => geoExtPath.value.replace(`${geoName.value}`, '').replace(', ', ''));
 
   const currentImage = reactive<Delayed<StoreItem>>({
