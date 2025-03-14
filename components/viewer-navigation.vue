@@ -26,11 +26,11 @@
                         </div>
                         <div class="text">
                             {{ t('view.navigationPanel.random') }}<br /><small>{{ t('view.navigationPanel.inAll')
-                            }}</small>
+                                }}</small>
                         </div>
                     </div>
                     <div class="navigation-block prev" v-if="prevName.length > 0"
-                        @click="navigateTo(prevImageViewerPath)">
+                        @click="navigateTo(buildViewerPathFromObjectPath(prevName))">
                         <div class="icon">
                             <icon :path="mdiArrowLeft" />
                         </div>
@@ -40,7 +40,7 @@
                     </div>
 
                     <div class="navigation-block next" v-if="nextName.length > 0"
-                        @click="navigateTo(nextImageViewerPath)">
+                        @click="navigateTo(buildViewerPathFromObjectPath(nextName))">
                         <div class="icon">
                             <icon :path="mdiArrowRight" />
                         </div>
@@ -57,8 +57,7 @@
 
 <script setup lang="ts">
     import { mdiApps, mdiArrowLeft, mdiArrowRight, mdiDice5, mdiDice5Outline } from '@mdi/js';
-    import type { Reactive } from 'vue';
-    import type { CollectionDataBody, CollectionDataKeys, Delayed } from '~/types';
+    import type { CollectionDataKeys, Delayed } from '~/types';
 
     const model = defineModel();
 
@@ -74,14 +73,6 @@
         currentCollectionName: {
             type: String,
             required: true
-        },
-        prevImageViewerPath: {
-            type: String,
-            required: true
-        },
-        nextImageViewerPath: {
-            type: String,
-            required: true
         }
     })
 
@@ -89,28 +80,19 @@
 
     const collection = computed(() => getCollectionByName(props.currentCollectionName));
 
-    const randomResult: Reactive<Delayed<CollectionDataBody>> = reactive({
-        loading: true,
-        data: {
-            name: '',
-            url: '',
-            lastModified: '',
-            etag: '',
-            type: '',
-            size: 0,
-            storageClass: '',
-            owner: undefined
-        }
+    const randomResult = reactive<Delayed<string>>({
+        loading: false,
+        data: ''
     });
 
     async function getRandomPhoto(scope: CollectionDataKeys | 'all') {
         randomResult.loading = true;
 
-        const res = await req<CollectionDataBody>(`/api/random?scope=${scope}`);
+        const res = await req<string>(`/api/random?scope=${scope}`);
 
         if (res.code === 'ng') return;
 
-        Object.assign(randomResult.data, res.data);
+        randomResult.data = res.data;
 
         randomResult.loading = false;
     }
@@ -118,7 +100,8 @@
     async function toRandom(scope: CollectionDataKeys | 'all') {
         await getRandomPhoto(scope);
 
-        navigateTo(buildViewerPath(getCollectionNameByRemotePath(randomResult.data.name), getImageNameByRemotePath(randomResult.data.name)));
+        console.log(buildViewerPathFromObjectPath(randomResult.data))
+        navigateTo(buildViewerPathFromObjectPath(randomResult.data));
     }
 
     const keydownEventHandler = (e: KeyboardEvent) => {
@@ -252,7 +235,7 @@
             height: 64px;
             width: 64px;
 
-            @media (max-width: 864px) or (max-height: 900px){
+            @media (max-width: 864px) or (max-height: 900px) {
                 height: 48px;
                 width: 48px;
             }

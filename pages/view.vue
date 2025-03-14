@@ -78,7 +78,9 @@
         </div>
         <div class="exif">
           <label>{{ t('view.details.timezone') }}</label>
-          <span>UTC{{ currentImage.data.meta.timeOffset }} <small>{{ getTimeOffsetName(currentImage.data.meta.timeOffset) }}</small></span>
+          <span>UTC{{ currentImage.data.meta.timeOffset }} <small>{{
+            getTimeOffsetName(currentImage.data.meta.timeOffset)
+              }}</small></span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.focalLength') }}</label>
@@ -119,7 +121,8 @@
                 <span v-else-if="isSpecial('subway-station')">
                   {{ getSubwayStationInfo()?.station }}
                 </span>
-                <span :style="{ 'font-size': isSpecial('road') || isSpecial('spot') || isSpecial('subway-station') ? '85%' : '' }">
+                <span
+                  :style="{ 'font-size': isSpecial('road') || isSpecial('spot') || isSpecial('subway-station') ? '85%' : '' }">
                   {{ geoName }}
                 </span>
                 <popup class="trigger-hover top p8 autowidth">
@@ -139,14 +142,14 @@
             <div>
               <label>{{ t('view.details.latitude') }}</label>
               <span>{{ currentImage.data.meta.coordinates.lat[0] }}°{{ currentImage.data.meta.coordinates.lat[1] }}'{{
-               currentImage.data.meta.coordinates.lat[2]
-              }}" <small>N</small></span>
+                currentImage.data.meta.coordinates.lat[2]
+                }}" <small>N</small></span>
             </div>
             <div>
               <label>{{ t('view.details.longitude') }}</label>
               <span>{{ currentImage.data.meta.coordinates.lng[0] }}°{{ currentImage.data.meta.coordinates.lng[1] }}'{{
                 currentImage.data.meta.coordinates.lng[2]
-              }}" <small>E</small></span>
+                }}" <small>E</small></span>
             </div>
             <div>
               <label>{{ t('view.details.altitude') }}</label>
@@ -154,8 +157,8 @@
             </div>
             <div>
               <label>{{ t('view.details.speed') }}</label>
-              <span>{{ currentImage.data.meta.gpsspeed > 0.1 ? currentImage.data.meta.gpsspeed.toFixed(2) : t('view.gpsSpeedZero') }} <small
-                  v-if="currentImage.data.meta.gpsspeed > 0.1">km/h</small></span>
+              <span>{{ currentImage.data.meta.gpsspeed > 0.1 ? currentImage.data.meta.gpsspeed.toFixed(2) :
+                t('view.gpsSpeedZero') }} <small v-if="currentImage.data.meta.gpsspeed > 0.1">km/h</small></span>
             </div>
           </div>
           <client-only>
@@ -203,9 +206,8 @@
     <icon :path="mdiPlus" />
   </div>
 
-  <viewer-navigation v-model="navigationPanelEnabled" :prev-name="currentImage.data.navigation.prev || ''" :next-name="currentImage.data.navigation.next || ''"
-    :current-collection-name="collectionName" :prev-image-viewer-path="prevImageViewerPath"
-    :next-image-viewer-path="nextImageViewerPath" />
+  <viewer-navigation v-model="navigationPanelEnabled" :prev-name="currentImage.data.navigation.prev || ''"
+    :next-name="currentImage.data.navigation.next || ''" :current-collection-name="collectionName" />
 </template>
 
 <script setup lang="ts">
@@ -219,7 +221,6 @@
     mdiPlus
   } from "@mdi/js";
   import Popup from "@/components/popup.vue";
-  import translateExifDate from "@/utils/translateExifDate";
   import ImageCopyright from "@/components/image-copyright.vue";
   import { useFullscreen } from "@vueuse/core";
   import type { StoreItem } from "~/types/store";
@@ -236,9 +237,6 @@
   const geoName = computed(() => withFallback(lang.value, currentImage.data.geo?.en_name, currentImage.data.geo?.name));
   const geoExtPath = computed(() => withFallback(lang.value, currentImage.data.geo?.en_ext_path, currentImage.data.geo?.en_name));
   const geoExtPathPrefix = computed(() => geoExtPath.value.replace(`${geoName.value}`, '').replace(', ', ''));
-
-  const prevImageViewerPath = computed(() => buildViewerPath(collectionName, currentImage.data.navigation.prev || ''));
-  const nextImageViewerPath = computed(() => buildViewerPath(collectionName, currentImage.data.navigation.next || ''));
 
   const currentImage = reactive<Delayed<StoreItem>>({
     loading: true,
