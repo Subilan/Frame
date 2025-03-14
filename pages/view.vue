@@ -6,7 +6,7 @@
   <div :lang="lang" class="viewer-container navbar-offset" v-if="!currentImage.loading">
     <div class="image-container full navbar-offset">
       <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading" draggable="false"
-        :src="finalURL" />
+        :src="finalURL" @load="imageLoaded" />
       <circle-spinner stroke="white" class="image-loading-spinner" />
       <div class="copyright-bar" v-if="currentImage.data.meta.date">
         <image-copyright :year="getDayjs()(currentImage.data.meta.date)?.format('YYYY')" />
@@ -208,6 +208,31 @@
 
   <viewer-navigation v-model="navigationPanelEnabled" :prev-name="currentImage.data.navigation.prev || ''"
     :next-name="currentImage.data.navigation.next || ''" :current-collection-name="collectionName" />
+
+  <div class="snack-wrapper" v-if="currentImage.data.geo">
+    <div class="snack" :class="{ active: showRandomExplorationSnack }">
+      <div class="random-exploration">
+        <div class="primary" :class="{bold: !isNotSpecial()}">
+          <template v-if="isSpecial('spot')">
+            {{ getSpecial('spot') }}
+          </template>
+          <template v-else-if="isSpecial('road')">
+            <img alt="svg" height="50px" :src="`/road-svg/${getSpecial('road').toLowerCase()}.svg`" draggable="false" />
+          </template>
+          <template v-else-if="isSpecial('subway-station')">
+            <img alt="svg" height="40px" :src="`/subway-svg/${getSubwayStationInfo()?.line}.svg`" draggable="false" />
+            {{ getSubwayStationInfo()?.station }}
+          </template>
+          <template v-else-if="isNotSpecial()">
+            {{ geoName }}
+          </template>
+        </div>
+        <div class="secondary">
+          {{ isNotSpecial() ? geoExtPathPrefix : geoExtPath }}
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -226,6 +251,9 @@
   import type { StoreItem } from "~/types/store";
 
   const lang = useLanguage();
+  const isExploring = useExploring();
+
+  const showRandomExplorationSnack = ref(false);
 
   const route = useRoute();
   const collectionName = route.params.collectionName as string;
@@ -237,6 +265,7 @@
   const geoName = computed(() => withFallback(lang.value, currentImage.data.geo?.en_name, currentImage.data.geo?.name));
   const geoExtPath = computed(() => withFallback(lang.value, currentImage.data.geo?.en_ext_path, currentImage.data.geo?.ext_path));
   const geoExtPathPrefix = computed(() => geoExtPath.value.replace(`${geoName.value}`, '').replace(', ', ''));
+
 
   const currentImage = reactive<Delayed<StoreItem>>({
     loading: true,
@@ -315,6 +344,10 @@
     return currentImage.data.special.some(x => x.type === type);
   }
 
+  function isNotSpecial() {
+    return currentImage.data.special.length === 0;
+  }
+
   function getSpecial(type: 'spot' | 'road') {
     const spotInfo = currentImage.data.special.filter(x => x.type === type);
     if (spotInfo.length === 0) return '';
@@ -335,6 +368,18 @@
   }
 
   await retrieveCurrentObject();
+
+  function imageLoaded() {
+    if (isExploring.value) {
+      setTimeout(() => {
+        showRandomExplorationSnack.value = true;
+        setTimeout(() => {
+          isExploring.value = false;
+          showRandomExplorationSnack.value = false;
+        }, 2500);
+      }, 200);
+    }
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -391,6 +436,44 @@
 
 <style lang="scss" scoped>
 @use "assets/global";
+
+.snack {
+  @media (min-width: 768px) {
+    padding: 16px;
+  }
+
+  .random-exploration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+      gap: 4px;
+    }
+
+    .primary {
+      font-size: 150%;
+      font-style: normal;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      @media (max-width: 768px) {
+        font-size: 120%;
+      }
+
+      &.bold {
+        font-weight: bold;
+      }
+    }
+
+    .secondary {
+      color: #aaa;
+    }
+  }
+}
 
 .main-image {
   @media (max-width: 768px) {

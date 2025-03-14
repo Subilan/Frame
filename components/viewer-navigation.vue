@@ -30,7 +30,7 @@
                         </div>
                     </div>
                     <div class="navigation-block prev" v-if="prevName.length > 0"
-                        @click="navigateTo(buildViewerPathFromObjectPath(prevName))">
+                        @click="isExploring = true; navigateTo(buildViewerPathFromObjectPath(prevName))">
                         <div class="icon">
                             <icon :path="mdiArrowLeft" />
                         </div>
@@ -40,7 +40,7 @@
                     </div>
 
                     <div class="navigation-block next" v-if="nextName.length > 0"
-                        @click="navigateTo(buildViewerPathFromObjectPath(nextName))">
+                        @click="isExploring = true; navigateTo(buildViewerPathFromObjectPath(nextName))">
                         <div class="icon">
                             <icon :path="mdiArrowRight" />
                         </div>
@@ -58,6 +58,8 @@
 <script setup lang="ts">
     import { mdiApps, mdiArrowLeft, mdiArrowRight, mdiDice5, mdiDice5Outline } from '@mdi/js';
     import type { CollectionDataKeys, Delayed } from '~/types';
+
+    const isExploring = useExploring();
 
     const model = defineModel();
 
@@ -100,7 +102,7 @@
     async function toRandom(scope: CollectionDataKeys | 'all') {
         await getRandomPhoto(scope);
 
-        console.log(buildViewerPathFromObjectPath(randomResult.data))
+        isExploring.value = true;
         navigateTo(buildViewerPathFromObjectPath(randomResult.data));
     }
 

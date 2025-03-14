@@ -49,8 +49,8 @@
       {{ t('collection.noContent') }}
     </div>
     <div class="bottom-indicator" ref="bottomIndicator" v-if="hasNext"></div>
-    <div class="long-time-loading-indicator-wrapper">
-      <div class="long-time-loading-indicator" :class="{ active: longTimeLoadingIndicator }">
+    <div class="snack-wrapper">
+      <div class="snack" :class="{ active: longTimeLoadingIndicator }">
         <circle-spinner size="16" />
         <span>{{ t('collection.loadingPhotos') }}</span>
       </div>
@@ -198,39 +198,6 @@ import type { CollectionDataBody } from "~/types";
 
   label {
     font-style: italic;
-  }
-}
-
-.long-time-loading-indicator-wrapper {
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  pointer-events: none;
-}
-
-.long-time-loading-indicator {
-  background: white;
-  color: black;
-  border-radius: 10px;
-  border: 2px solid global.$primaryd;
-  margin-bottom: 32px;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-style: italic;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
-
-  transform: translateY(150%);
-  opacity: 0;
-  transition: all .2s ease;
-
-  &.active {
-    transform: translateY(0);
-    opacity: 1;
   }
 }
 
