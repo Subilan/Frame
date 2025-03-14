@@ -272,16 +272,17 @@ interface SpecialSpotBase {
 	timeRange?: string[][];
 }
 
-interface SpecialSpotDefault extends SpecialSpotBase {
+export interface SpecialSpotDefault extends SpecialSpotBase {
 	type: 'spot' | 'road';
 	name: string;
+	en_name?: string;
 }
 
-interface SpecialSpotFlight extends SpecialSpotBase {
+export interface SpecialSpotFlight extends SpecialSpotBase {
 	type: 'flight';
 }
 
-interface SpecialSpotSubwayStation extends SpecialSpotBase {
+export interface SpecialSpotSubwayStation extends SpecialSpotBase {
 	type: 'subway-station';
 	line: string;
 	station: string;

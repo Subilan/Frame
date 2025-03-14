@@ -3,13 +3,13 @@
     {{ lang === 'zh' ? '查看' : 'View' }} {{ !currentImage.loading ? getImageNameByRemotePath(currentImage.data.name) : ''
     }}
   </Title>
-  <div :lang="lang" class="viewer-container navbar-offset" v-if="!currentImage.loading && !currentExif.loading">
+  <div :lang="lang" class="viewer-container navbar-offset" v-if="!currentImage.loading">
     <div class="image-container full navbar-offset">
       <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading" draggable="false"
         :src="finalURL" />
       <circle-spinner stroke="white" class="image-loading-spinner" />
-      <div class="copyright-bar">
-        <image-copyright :year="translateExifDate(currentExif.data.DateTime.value)?.format('YYYY')" />
+      <div class="copyright-bar" v-if="currentImage.data.meta.date">
+        <image-copyright :year="getDayjs()(currentImage.data.meta.date)?.format('YYYY')" />
       </div>
       <div class="center-bar">
         <popup class="p8 top inline trigger-hover autowidth">
@@ -49,83 +49,81 @@
         </popup>
       </div>
     </div>
-    <div class="exif-message-container" v-if="resolveExif !== null">
-      <div class="external-caption-container" v-if="captions.length > 0">
-        <label>{{ t('view.details.captions') }}</label>
-        <div class="caption-content" v-html="captions" />
-      </div>
-      <hr v-if="captions.length > 0">
+    <div class="exif-message-container" v-if="!currentImage.loading">
+      <template v-if="currentImage.data.captions.length > 0">
+        <div class="external-caption-container">
+          <label>{{ t('view.details.captions') }}</label>
+          <div class="caption-content" v-html="currentImage.data.captions" />
+        </div>
+        <hr />
+      </template>
       <div class="exifs">
-        <div class="exif">
+        <div class="exif" v-if="currentImage.data.meta.date">
           <label>{{ t('view.details.shotAt') }}</label>
-          <span>{{ resolvedExif.date }}</span>
+          <span>{{ getDayjs()(currentImage.data.meta.date)?.format('YYYY/MM/DD HH:mm:ss') }}</span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.shotOn') }}</label>
-          <div class="apple" v-if="resolvedExif.make === 'Apple'">
-            <div class="device">Apple {{ resolvedExif.model }}</div>
+          <div class="apple" v-if="currentImage.data.meta.device.startsWith('iP')">
+            <div class="device">Apple {{ currentImage.data.meta.device }}</div>
           </div>
         </div>
         <div class="exif">
           <label>{{ t('view.details.resolution') }}</label>
-          <span>{{ resolvedExif.x }}px*{{ resolvedExif.y }}px</span>
+          <span>{{ currentImage.data.meta.dimension.w }}px*{{ currentImage.data.meta.dimension.h }}px</span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.size') }}</label>
-          <span>{{ (resolvedExif.filesize / 1000000).toFixed(1) }}<small>MB</small></span>
+          <span>{{ (currentImage.data.size / 1000000).toFixed(1) }}<small>MB</small></span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.timezone') }}</label>
-          <span>UTC{{ resolvedExif.timeOffset }} <small>{{ getTimeOffsetName(resolvedExif.timeOffset) }}</small></span>
+          <span>UTC{{ currentImage.data.meta.timeOffset }} <small>{{ getTimeOffsetName(currentImage.data.meta.timeOffset) }}</small></span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.focalLength') }}</label>
-          <span>{{ resolvedExif.focalLength }}<small>mm</small></span>
+          <span>{{ currentImage.data.meta.lens.focalLength }}<small>mm</small></span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.aperature') }}</label>
-          <span><em>f</em>/{{ resolvedExif.aperature }}</span>
+          <span><em>f</em>/{{ currentImage.data.meta.lens.aperature }}</span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.exposureTime') }}</label>
-          <span>{{ resolvedExif.exposureTime }}<small>s</small></span>
+          <span>{{ currentImage.data.meta.exposureTime }}<small>s</small></span>
         </div>
       </div>
       <hr />
-      <div class="map-information-container" v-if="resolvedExif.latitudeN && resolvedExif.longitudeE">
+      <div class="map-information-container" v-if="currentImage.data.meta.wgs84.length > 0">
         <div class="map-container">
           <client-only>
-            <exif-map v-model="imageCoord" />
+            <exif-map v-model="currentImage.data.meta.wgs84" />
           </client-only>
         </div>
         <div class="right">
           <div class="location-container">
             <label>{{ t('view.details.location') }}</label>
-            <div v-if="currentGeo.loading" class="loading-location">
-              <circle-spinner size="15" />
-              {{ t('view.details.loadingLocation') }}
-            </div>
-            <div v-else class="location-contents">
+            <div class="location-contents">
               <div class="location-primary">
-                <span class="center" v-if="isRoad()">
-                  <img alt="svg" height="50px" :src="`/road-svg/${getSpecialSpotName('road').toLowerCase()}.svg`"
+                <span class="center" v-if="isSpecial('road')">
+                  <img alt="svg" height="50px" :src="`/road-svg/${getSpecial('road').toLowerCase()}.svg`"
                     draggable="false" />
                 </span>
-                <span class="center" v-if="isSubwayStation()">
+                <span class="center" v-if="isSpecial('subway-station')">
                   <img alt="svg" height="40px" :src="`/subway-svg/${getSubwayStationInfo()?.line}.svg`"
                     draggable="false" />
                 </span>
-                <span v-if="isSpot() && !isSubwayStation()">
-                  {{ getSpecialSpotName('spot') }}
+                <span v-if="isSpecial('spot')">
+                  {{ getSpecial('spot') }}
                 </span>
-                <span v-else-if="isSubwayStation()">
+                <span v-else-if="isSpecial('subway-station')">
                   {{ getSubwayStationInfo()?.station }}
                 </span>
-                <span :style="{ 'font-size': isRoad() || isSpot() || isSubwayStation() ? '85%' : '' }">
+                <span :style="{ 'font-size': isSpecial('road') || isSpecial('spot') || isSpecial('subway-station') ? '85%' : '' }">
                   {{ geoName }}
                 </span>
                 <popup class="trigger-hover top p8 autowidth">
-                  <badge class="light-blue" v-if="isInFlight()">
+                  <badge class="light-blue" v-if="isSpecial('flight')">
                     <icon :path="mdiAirplane" />
                     {{ t('view.details.inflight') }}
                   </badge>
@@ -140,24 +138,24 @@
           <div class="lagi-longi-information-container">
             <div>
               <label>{{ t('view.details.latitude') }}</label>
-              <span>{{ resolvedExif.latitudeN[0] }}°{{ resolvedExif.latitudeN[1] }}'{{
-                resolvedExif.latitudeN[2]
-                }}" <small>N</small></span>
+              <span>{{ currentImage.data.meta.coordinates.lat[0] }}°{{ currentImage.data.meta.coordinates.lat[1] }}'{{
+               currentImage.data.meta.coordinates.lat[2]
+              }}" <small>N</small></span>
             </div>
             <div>
               <label>{{ t('view.details.longitude') }}</label>
-              <span>{{ resolvedExif.longitudeE[0] }}°{{ resolvedExif.longitudeE[1] }}'{{
-                resolvedExif.longitudeE[2]
-                }}" <small>E</small></span>
+              <span>{{ currentImage.data.meta.coordinates.lng[0] }}°{{ currentImage.data.meta.coordinates.lng[1] }}'{{
+                currentImage.data.meta.coordinates.lng[2]
+              }}" <small>E</small></span>
             </div>
             <div>
               <label>{{ t('view.details.altitude') }}</label>
-              <span>{{ resolvedExif.altitude.toFixed(2) }} <small>m</small></span>
+              <span>{{ currentImage.data.meta.altitude.toFixed(2) }} <small>m</small></span>
             </div>
             <div>
               <label>{{ t('view.details.speed') }}</label>
-              <span>{{ resolvedExif.gpsspeed > 0 ? resolvedExif.gpsspeed.toFixed(2) : t('view.gpsSpeedZero') }} <small
-                  v-if="resolvedExif.gpsspeed > 0.1">km/h</small></span>
+              <span>{{ currentImage.data.meta.gpsspeed > 0.1 ? currentImage.data.meta.gpsspeed.toFixed(2) : t('view.gpsSpeedZero') }} <small
+                  v-if="currentImage.data.meta.gpsspeed > 0.1">km/h</small></span>
             </div>
           </div>
           <client-only>
@@ -205,13 +203,13 @@
     <icon :path="mdiPlus" />
   </div>
 
-  <viewer-navigation v-model="navigationPanelEnabled" :prev-name="prevImageName" :next-name="nextImageName"
-    :current-collection-name="currentCollectionName" :prev-image-viewer-path="prevImageViewerPath"
+  <viewer-navigation v-model="navigationPanelEnabled" :prev-name="currentImage.data.navigation.prev || ''" :next-name="currentImage.data.navigation.next || ''"
+    :current-collection-name="collectionName" :prev-image-viewer-path="prevImageViewerPath"
     :next-image-viewer-path="nextImageViewerPath" />
 </template>
 
 <script setup lang="ts">
-  import type { CollectionDataBody, Delayed, Exif, Geo, NullableString, SpecialSpot } from "@/types";
+  import type { Delayed, SpecialSpotDefault } from "@/types";
   import {
     mdiAirplane, mdiAlertOutline,
     mdiDownload, mdiFullscreen,
@@ -224,267 +222,61 @@
   import translateExifDate from "@/utils/translateExifDate";
   import ImageCopyright from "@/components/image-copyright.vue";
   import { useFullscreen } from "@vueuse/core";
+  import type { StoreItem } from "~/types/store";
 
   const lang = useLanguage();
 
+  const route = useRoute();
+  const collectionName = route.params.collectionName as string;
+  const filename = route.params.filename as string;
+  const remotePath = buildObjectPath(collectionName, filename, '', '', true);
+
   const navigationPanelEnabled = ref(false);
 
-  const geoName = computed(() => withFallback(lang.value, currentGeo.data.en_name, currentGeo.data.name));
-  const geoExtPath = computed(() => withFallback(lang.value, currentGeo.data.en_ext_path, currentGeo.data.ext_path));
+  const geoName = computed(() => withFallback(lang.value, currentImage.data.geo?.en_name, currentImage.data.geo?.name));
+  const geoExtPath = computed(() => withFallback(lang.value, currentImage.data.geo?.en_ext_path, currentImage.data.geo?.en_name));
   const geoExtPathPrefix = computed(() => geoExtPath.value.replace(`${geoName.value}`, '').replace(', ', ''));
 
-  const route = useRoute();
-  const category = route.params.category as string;
-  const filename = route.params.filename as string;
-  const remotePath = buildObjectPath(category, filename, '', '', true);
+  const prevImageViewerPath = computed(() => buildViewerPath(collectionName, currentImage.data.navigation.prev || ''));
+  const nextImageViewerPath = computed(() => buildViewerPath(collectionName, currentImage.data.navigation.next || ''));
 
-
-  const currentImage = reactive<Delayed<CollectionDataBody>>({
+  const currentImage = reactive<Delayed<StoreItem>>({
     loading: true,
     data: {
       name: "",
       url: "",
-      lastModified: "",
-      etag: "",
-      type: "",
       size: 0,
-      storageClass: "",
-      owner: null
+      collection: "",
+      navigation: {
+        prev: null,
+        next: null
+      },
+      meta: {
+        date: undefined,
+        timeOffset: "",
+        dimension: {
+          h: 0,
+          w: 0
+        },
+        device: "",
+        filesize: 0,
+        lens: {
+          focalLength: 0,
+          aperature: 0
+        },
+        gpsspeed: 0,
+        exposureTime: "",
+        altitude: 0,
+        coordinates: {
+          lng: [],
+          lat: []
+        },
+        wgs84: []
+      },
+      special: [],
+      captions: ""
     }
   });
-
-  const prevImageName = ref('');
-  const nextImageName = ref('');
-
-  const currentCollectionName = computed(() => getCollectionNameByRemotePath(remotePath));
-  const nextImageViewerPath = computed(() => buildViewerPath(currentCollectionName.value, getImageNameByRemotePath(nextImageName.value)));
-  const prevImageViewerPath = computed(() => buildViewerPath(currentCollectionName.value, getImageNameByRemotePath(prevImageName.value)));
-
-  const currentExif = reactive<Delayed<Exif>>({
-    loading: true,
-    data: {
-      ApertureValue: {
-        value: ""
-      },
-      BrightnessValue: {
-        value: ""
-      },
-      ColorSpace: {
-        value: ""
-      },
-      CompositeImage: {
-        value: ""
-      },
-      DateTime: {
-        value: ""
-      },
-      DateTimeDigitized: {
-        value: ""
-      },
-      DateTimeOriginal: {
-        value: ""
-      },
-      DigitalZoomRatio: {
-        value: ""
-      },
-      ExifTag: {
-        value: ""
-      },
-      ExifVersion: {
-        value: ""
-      },
-      ExposureBiasValue: {
-        value: ""
-      },
-      ExposureMode: {
-        value: ""
-      },
-      ExposureProgram: {
-        value: ""
-      },
-      ExposureTime: {
-        value: ""
-      },
-      FNumber: {
-        value: ""
-      },
-      FileSize: {
-        value: ""
-      },
-      Flash: {
-        value: ""
-      },
-      FocalLength: {
-        value: ""
-      },
-      FocalLengthIn35mmFilm: {
-        value: ""
-      },
-      Format: {
-        value: ""
-      },
-      FrameCount: {
-        value: ""
-      },
-      GPSAltitude: {
-        value: ""
-      },
-      GPSAltitudeRef: {
-        value: ""
-      },
-      GPSDateStamp: {
-        value: ""
-      },
-      GPSDestBearing: {
-        value: ""
-      },
-      GPSDestBearingRef: {
-        value: ""
-      },
-      GPSHPositioningError: {
-        value: ""
-      },
-      GPSImgDirection: {
-        value: ""
-      },
-      GPSImgDirectionRef: {
-        value: ""
-      },
-      GPSLatitude: {
-        value: ""
-      },
-      GPSLatitudeRef: {
-        value: ""
-      },
-      GPSLongitude: {
-        value: ""
-      },
-      GPSLongitudeRef: {
-        value: ""
-      },
-      GPSSpeed: {
-        value: ""
-      },
-      GPSSpeedRef: {
-        value: ""
-      },
-      GPSTag: {
-        value: ""
-      },
-      GPSTimeStamp: {
-        value: ""
-      },
-      HostComputer: {
-        value: ""
-      },
-      ISOSpeedRatings: {
-        value: ""
-      },
-      ImageHeight: {
-        value: ""
-      },
-      ImageWidth: {
-        value: ""
-      },
-      LensMake: {
-        value: ""
-      },
-      LensModel: {
-        value: ""
-      },
-      LensSpecification: {
-        value: ""
-      },
-      Make: {
-        value: ""
-      },
-      MakerNote: {
-        value: ""
-      },
-      MeteringMode: {
-        value: ""
-      },
-      Model: {
-        value: ""
-      },
-      OffsetTime: {
-        value: ""
-      },
-      OffsetTimeDigitized: {
-        value: ""
-      },
-      OffsetTimeOriginal: {
-        value: ""
-      },
-      Orientation: {
-        value: ""
-      },
-      PixelXDimension: {
-        value: ""
-      },
-      PixelYDimension: {
-        value: ""
-      },
-      ResolutionUnit: {
-        value: ""
-      },
-      SceneType: {
-        value: ""
-      },
-      SensingMethod: {
-        value: ""
-      },
-      ShutterSpeedValue: {
-        value: ""
-      },
-      Software: {
-        value: ""
-      },
-      SourceExposureTimesOfCompositeImage: {
-        value: ""
-      },
-      SourceImageNumberOfCompositeImage: {
-        value: ""
-      },
-      SubSecTimeDigitized: {
-        value: ""
-      },
-      SubSecTimeOriginal: {
-        value: ""
-      },
-      SubjectArea: {
-        value: ""
-      },
-      WhiteBalance: {
-        value: ""
-      },
-      XResolution: {
-        value: ""
-      },
-      YResolution: {
-        value: ""
-      }
-    }
-  });
-  const currentGeo = reactive<Delayed<Geo>>({
-    loading: true,
-    data: {
-      id: 0,
-      pid: 0,
-      deep: 0,
-      name: "",
-      ext_path: "",
-      geo: "",
-      polygon: []
-    }
-  })
-  const specialSpotLoading = ref(true);
-  const currentSpecialSpot = ref<SpecialSpot[]>([]);
-
-  const captions = ref('');
-
-  const resolvedExif = computed(() => resolveExif(currentExif.data as Exif));
-  const imageCoord = ref([0, 0]);
 
   const originalLoaded = ref(false);
 
@@ -497,33 +289,6 @@
     return url + '?x-oss-process=image/resize,h_1080';
   }
 
-  interface ResolvedExif {
-    date: string,
-    timeOffset: string,
-    model: string,
-    make: string,
-    altitude: number,
-    latitudeN: number[] | null,
-    longitudeE: number[] | null,
-    x: number,
-    y: number,
-    filesize: number,
-    format: string,
-    lensModel: string,
-    focalLength: number,
-    aperature: number,
-    gpsspeed: number,
-    gpsspeedref: string,
-    exposureTime: string
-  }
-
-  function getTimeOffsetName(offset: string) {
-    switch (offset) {
-      case '+08:00':
-        return 'Asia/Shanghai';
-    }
-  }
-
   function scrollToDetails() {
     window.scrollTo({
       top: window.innerHeight,
@@ -531,84 +296,8 @@
     })
   }
 
-  function toWGS84(latitudeArray: number[], longitudeArray: number[]) {
-    let lat = latitudeArray[0];
-    let lng = longitudeArray[0];
-
-    lat += latitudeArray[1] * (1 / 60);
-    lng += longitudeArray[1] * (1 / 60);
-
-    const latSec = Number(`${latitudeArray[2]}.${latitudeArray[3]}`);
-    const lonSec = Number(`${longitudeArray[2]}.${longitudeArray[3]}`);
-
-    lat += latSec * (1 / 3600);
-    lng += lonSec * (1 / 3600);
-
-    return [lng, lat];
-  }
-
-  function resolveExif(exif: Exif): ResolvedExif {
-    // @ts-ignore
-    if (!exif.ApertureValue.value) return null;
-
-    const date = translateExifDate(exif.DateTime.value);
-
-    if (date === null) throw new Error('cannot translate date');
-
-    const longiLatiRegex = /(\d+)deg (\d+)' (\d+)\.(\d+)"/;
-    let longiExecuted: RegExpExecArray | null = null;
-    let latiExecuted: RegExpExecArray | null = null;
-    if (exif.GPSLongitude) longiExecuted = longiLatiRegex.exec(exif.GPSLongitude.value);
-    if (exif.GPSLatitude) latiExecuted = longiLatiRegex.exec(exif.GPSLatitude.value);
-
-    const lensModelRegex = /([\d.]+)mm f\/([\d.]+)/;
-    const lensModelExecuted = lensModelRegex.exec(exif.LensModel.value);
-
-    if (!lensModelExecuted) throw new Error('cannot translate lens model');
-
-    let timeOffset = "+08:00";
-    // prevent empty
-    if (exif.OffsetTime) if (exif.OffsetTime.value) if (exif.OffsetTime.value.trim().length > 0) timeOffset = exif.OffsetTime.value;
-
-    const result = {
-      make: exif.Make.value,
-      date: date.format("YYYY/MM/DD HH:mm:ss"),
-      timeOffset,
-      model: exif.Model.value,
-      altitude: exif.GPSAltitude ? eval(exif.GPSAltitude.value) : -1,
-      latitudeN: latiExecuted ? [1, 2, 3, 4].map(x => Number(latiExecuted?.[x])) : null,
-      longitudeE: longiExecuted ? [1, 2, 3, 4].map(x => Number(longiExecuted?.[x])) : null,
-      x: Number(exif.PixelXDimension.value),
-      y: Number(exif.PixelYDimension.value),
-      filesize: Number(exif.FileSize.value),
-      format: exif.Format.value,
-      lensModel: exif.LensModel.value,
-      focalLength: Number(`${lensModelExecuted[1]}`),
-      aperature: Number(`${lensModelExecuted[2]}`),
-      gpsspeed: exif.GPSSpeed ? eval(exif.GPSSpeed.value) : -1,
-      gpsspeedref: exif.GPSSpeedRef ? exif.GPSSpeedRef.value : '',
-      exposureTime: exif.ExposureTime.value
-    }
-
-    if (result.latitudeN && result.longitudeE) imageCoord.value = toWGS84(result.latitudeN, result.longitudeE);
-
-    return result;
-  }
-
-  async function retrieveCurrentExif() {
-    const res = await req<Exif>(`/api/get-exif?remotePath=${btoa(remotePath)}`)
-
-    if (res.code === 'ng') {
-      console.error(res);
-      return;
-    }
-
-    Object.assign(currentExif.data, res);
-    currentExif.loading = false;
-  }
-
   async function retrieveCurrentObject() {
-    const res = await req<CollectionDataBody>(`/api/get-object?remotePath=${btoa(remotePath)}`);
+    const res = await req<StoreItem>(`/api/get-object?name=${btoa(remotePath)}`);
 
     if (res.code === 'ng') {
       console.error(res);
@@ -619,98 +308,35 @@
     currentImage.loading = false;
   }
 
-  async function retrieveGeo(name: string, coord: number[]) {
-    const res = await req<Geo>(`/api/get-geo?name=${btoa(name)}&x=${coord[0]}&y=${coord[1]}&depth=2`);
-
-    if (res.code === 'ng') {
-      console.error(res);
-      return;
-    }
-
-    Object.assign(currentGeo.data, res);
-    currentGeo.loading = false;
-  }
-
-  async function retrieveSpecialSpotInfo(name: string) {
-    const res = await req<SpecialSpot[]>(`/api/get-special-spot?name=${btoa(name)}`);
-
-    specialSpotLoading.value = false;
-
-    if (res.code === 'ng') {
-      console.error(res);
-      return;
-    }
-
-    currentSpecialSpot.value.push(...res.data);
-  }
-
-  async function retrieveCaptions(name: string) {
-    const res = await req<string>(`/api/get-captions?name=${btoa(name)}`);
-
-    if (res.code === 'ng') {
-      console.error(res);
-      return;
-    }
-
-    captions.value = res.data;
-  }
-
-  async function retrievePrevNext(name: string) {
-    const res = await req<{ prev: NullableString, next: NullableString }>(`/api/get-prev-next?remotePath=${btoa(name)}`);
-
-    if (res.code === 'ng') {
-      console.error(res);
-      return;
-    }
-
-    if (res.data.prev !== null) prevImageName.value = res.data.prev;
-    if (res.data.next !== null) nextImageName.value = res.data.next;
-  }
 
   function downloadPhoto() {
     alert('Download is not available at present.');
   }
 
-  function isInFlight() {
-    return currentSpecialSpot.value.some(x => x.type === 'flight');
+  function isSpecial(type: 'spot' | 'flight' | 'subway-station' | 'road') {
+    return currentImage.data.special.some(x => x.type === type);
   }
 
-  function isSubwayStation() {
-    return currentSpecialSpot.value.some(x => x.type === 'subway-station');
-  }
-
-  function isRoad() {
-    return currentSpecialSpot.value.some(x => x.type === 'road');
-  }
-
-  function isSpot() {
-    return currentSpecialSpot.value.some(x => x.type === 'spot');
-  }
-
-  function getSpecialSpotName(type: 'spot' | 'road') {
-    const spotInfo = currentSpecialSpot.value.filter(x => x.type === type);
+  function getSpecial(type: 'spot' | 'road') {
+    const spotInfo = currentImage.data.special.filter(x => x.type === type);
     if (spotInfo.length === 0) return '';
-    // @ts-ignore
-    return spotInfo[0].name;
+    return (spotInfo[0] as SpecialSpotDefault).name;
+  }
+
+  function getTimeOffsetName(offset: string) {
+    switch (offset) {
+      case '+08:00':
+        return 'Asia/Shanghai';
+    }
   }
 
   function getSubwayStationInfo() {
-    const spotInfo = currentSpecialSpot.value.filter(x => x.type === 'subway-station');
+    const spotInfo = currentImage.data.special.filter(x => x.type === 'subway-station');
     if (spotInfo.length === 0) return null;
     return spotInfo[0];
   }
 
   await retrieveCurrentObject();
-  await retrieveCurrentExif();
-  await retrieveSpecialSpotInfo(currentImage.data.name);
-  await retrieveCaptions(currentImage.data.name);
-  await retrievePrevNext(currentImage.data.name)
-
-  watch(imageCoord, async x => {
-    if (x[0] !== 0 && x[1] !== 0) {
-      await retrieveGeo(currentImage.data.name, imageCoord.value);
-    }
-  })
 </script>
 
 <style lang="scss" scoped>

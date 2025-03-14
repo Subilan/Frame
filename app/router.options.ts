@@ -26,7 +26,7 @@ export default {
         },
         {
             name: 'imageview',
-            path: '/view/:category/:filename',
+            path: '/view/:collectionName/:filename',
             component: () => import('@/pages/view.vue')
         }
     ],

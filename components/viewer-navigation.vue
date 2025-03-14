@@ -58,7 +58,7 @@
 <script setup lang="ts">
     import { mdiApps, mdiArrowLeft, mdiArrowRight, mdiDice5, mdiDice5Outline } from '@mdi/js';
     import type { Reactive } from 'vue';
-    import type { CollectionDataBody, FrameResp, CollectionDataKeys, Delayed } from '~/types';
+    import type { CollectionDataBody, CollectionDataKeys, Delayed } from '~/types';
 
     const model = defineModel();
 
