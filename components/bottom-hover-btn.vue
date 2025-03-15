@@ -1,6 +1,6 @@
 <template>
   <div class="bottom-hover-btn-container">
-    <btn class="shadow" @click="$emit('click')">
+    <btn class="shadow" @click="$emit('c')">
       <slot />
     </btn>
   </div>

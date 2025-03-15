@@ -14,10 +14,15 @@
       </div>
     </router-link>
   </div>
+
+  <bottom-hover-btn @c="navigateTo('/categories')">
+    <icon :path="mdiShape"/>按分类查看
+  </bottom-hover-btn>
 </template>
 
 <script setup>
-  import collections from "~/static/data/collections.json";
+  import { mdiShape } from "@mdi/js";
+import collections from "~/static/data/collections.json";
   import buildObjectPath from "~/utils/client/buildObjectPath";
   import t from "~/utils/client/t";
 

@@ -158,7 +158,7 @@
           rel="license noopener noreferrer">CC BY-SA 4.0</a>.</p>
     </template>
 
-    <bottom-hover-btn @click="suggestionLayer = true">
+    <bottom-hover-btn @c="suggestionLayer = true">
       <icon :path="mdiCommentOutline" />{{ lang === 'zh' ? '提出建议' : 'Give advice' }}
     </bottom-hover-btn>
 
