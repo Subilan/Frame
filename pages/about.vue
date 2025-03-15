@@ -106,7 +106,8 @@
           <em>Load original</em> button in the toolbar.
         </li>
         <li>GPS details are present if available. Along with the longitude & latitude numbers, there's an complete name
-          of that place and an interactive map built with <a target="_blank" href="https://openlayers.org/">OpenLayers</a>. The name of the place is in
+          of that place and an interactive map built with <a target="_blank"
+            href="https://openlayers.org/">OpenLayers</a>. The name of the place is in
           Chinese most of the time, but it can be in English if there's any authentic translations.
         </li>
         <li>The name of related scenic spot, subway station or road where the photos were taken is shown if any.</li>
@@ -152,11 +153,9 @@
           rel="license noopener noreferrer">CC BY-SA 4.0</a>.</p>
     </template>
 
-    <div class="suggestion-btn">
-      <btn class="shadow" @click="suggestionLayer = true">
-        <icon :path="mdiCommentOutline" />{{ lang === 'zh' ? '提出建议' : 'Give advice' }}
-      </btn>
-    </div>
+    <bottom-hover-btn @click="suggestionLayer = true">
+      <icon :path="mdiCommentOutline" />{{ lang === 'zh' ? '提出建议' : 'Give advice' }}
+    </bottom-hover-btn>
 
     <about-suggestion-layer v-model="suggestionLayer" />
   </div>
@@ -232,20 +231,6 @@
 .about-title {
   margin-top: 64px;
   margin-bottom: 16px;
-}
-
-.suggestion-btn {
-  bottom: 0;
-  left: 0;
-  position: fixed;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  padding-bottom: 32px;
-
-  .button {
-    font-size: 18px;
-  }
 }
 
 .about-container {
