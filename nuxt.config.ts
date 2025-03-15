@@ -35,6 +35,10 @@ export default defineNuxtConfig({
 		{
 			src: '@/plugins/openlayer',
 			mode: 'client'
+		},
+		{
+			src: '@/plugins/nprogress',
+			mode: 'client'
 		}
 	],
 
