@@ -35,8 +35,8 @@
       </div>
     </div>
     <div class="images" v-if="images.length > 0">
-      <router-link class="image" :to="buildViewerPathFromObjectPath(x.name) || '#'" v-for="x in images">
-        <nuxt-img draggable="false" :src="toThumbnail(x.url)" loading="lazy" placeholder placeholder-class="loading" />
+      <router-link class="image" :to="buildViewerPathFromObjectPath(x) || '#'" v-for="x in images">
+        <nuxt-img draggable="false" :src="toURL(x, '480')" loading="lazy" placeholder placeholder-class="loading" />
         <circle-spinner class="image-loading-indicator" />
         <div class="layer">
           <p>{{ t('collection.viewNow') }}
@@ -79,24 +79,29 @@
     mdiLaunch,
     mdiPackageVariant
   } from "@mdi/js";
-  import { useElementVisibility } from "@vueuse/core";
+  import { useElementVisibility, useLocalStorage } from "@vueuse/core";
   import getCollectionByName from "~/utils/client/getCollectionByName";
-  import type { CollectionDataBody } from "~/types/common/objects";
   import req from "~/utils/client/req";
   import t from "~/utils/client/t";
   import buildViewerPathFromObjectPath from "~/utils/client/buildViewerPathFromObjectPath";
-  
-  const images = ref<any[]>([]);
+  import { OSSEndpoint } from "~/consts";
+
+  const route = useRoute();
+  const collectionName = route.params.collection as string;
+  const collection = getCollectionByName(collectionName);
+
+  const cacheImages = useLocalStorage(`frame-collection-${collectionName}-cached-images`, () => '');
+  const cacheImagesExpiration = useLocalStorage(`frame-collection-${collectionName}-cached-images-expiration`, () => new Date().getTime() + 3600000);
+  const cacheImagesParsed = Number(cacheImagesExpiration.value) > new Date().getTime() ? (cacheImages.value.length > 0 ? JSON.parse(cacheImages.value) as string[] : []) : [];
+  const images = reactive<string[]>(cacheImagesParsed);
   const hasNext = ref(true);
-  const currentIndexCursor = ref(0);
+  const currentIndexCursor = ref(cacheImagesParsed.length);
   const limit = 20;
   const loadAttempts = ref(0);
 
   const lang = useLanguage();
 
-  const route = useRoute();
-  const collectionName = route.params.collection as string;
-  const collection = getCollectionByName(collectionName);
+
   const bottomIndicator = ref(null);
   const bottomIndicatorVisibility = useElementVisibility(bottomIndicator)
   const longTimeLoadingIndicator = ref(false);
@@ -106,8 +111,8 @@
   const notFound = ref(false);
   const initialLoading = ref(true);
 
-  function toThumbnail(url: string) {
-    return url + '?x-oss-process=image/resize,h_400';
+  function toURL(withoutEndpoint: string, quality = '') {
+    return OSSEndpoint + `${withoutEndpoint.startsWith('/') ? '' : '/'}${withoutEndpoint}${quality.length > 0 ? '?x-oss-process=image/resize,h_' + quality : ''}`;
   }
 
   function startLongTimeDetection() {
@@ -132,7 +137,7 @@
     loadAttempts.value += 1;
 
     if (objects.code === 'ok') {
-      images.value.push(...objects.data.images);
+      images.push(...objects.data.images);
       currentIndexCursor.value += limit;
       hasNext.value = objects.data.hasNext;
     } else if (objects.code === 'ng') {
@@ -143,7 +148,7 @@
   async function getObjects(tag: string, startIndex: number, limit: number) {
     return await req<{
       hasNext: boolean,
-      images: CollectionDataBody[]
+      images: string[]
     }>(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
   }
 
@@ -153,6 +158,11 @@
       return;
     }
     update();
+  });
+
+  watch(images, v => {
+    cacheImages.value = JSON.stringify(v);
+    cacheImagesExpiration.value = new Date().getTime() + 3600000;
   })
 </script>
 

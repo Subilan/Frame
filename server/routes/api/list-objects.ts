@@ -24,15 +24,16 @@ export default defineEventHandler(async e => {
 		});
 	}
 
-    store = store.filter(x => x.collection === tag);
+    const urls = store.filter(x => x.collection === tag).map(x => x.name);
 
-	const afterStartIndex = store.slice(startIndex);
+	const afterStartIndex = urls.slice(startIndex);
 
 	if (afterStartIndex.length <= limit)
 		return ok({
 			hasNext: false,
 			images: afterStartIndex
 		});
+
 	return ok({
 		hasNext: true,
 		images: afterStartIndex.slice(0, limit)
