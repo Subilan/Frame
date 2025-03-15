@@ -1,6 +1,6 @@
 <template>
   <Title>
-    {{ lang === 'zh' ? '查看' : 'View' }} {{ !currentImage.loading ? getImageNameByRemotePath(currentImage.data.name) : ''
+    {{ lang === 'zh' ? '查看' : 'View' }} {{ !currentImage.loading ? getImageNameByRemotePath(currentImage.data.result.name) : ''
     }}
   </Title>
   <div :lang="lang" class="viewer-container navbar-offset" v-if="!currentImage.loading">
@@ -8,8 +8,8 @@
       <NuxtImg ref="mainImage" class="main-image" placeholder placeholder-class="loading" draggable="false"
         :src="finalURL" @load="imageLoaded" />
       <circle-spinner stroke="white" class="image-loading-spinner" />
-      <div class="copyright-bar" v-if="currentImage.data.meta.date">
-        <image-copyright :year="getDayjs()(currentImage.data.meta.date)?.format('YYYY')" />
+      <div class="copyright-bar" v-if="currentImage.data.result.meta.date">
+        <image-copyright :year="getDayjs()(currentImage.data.result.meta.date)?.format('YYYY')" />
       </div>
       <div class="center-bar">
         <popup class="p8 top inline trigger-hover autowidth">
@@ -50,56 +50,56 @@
       </div>
     </div>
     <div class="exif-message-container" v-if="!currentImage.loading">
-      <template v-if="currentImage.data.captions.length > 0">
+      <template v-if="currentImage.data.result.captions.length > 0">
         <div class="external-caption-container">
           <label>{{ t('view.details.captions') }}</label>
-          <div class="caption-content" v-html="currentImage.data.captions" />
+          <div class="caption-content" v-html="currentImage.data.result.captions" />
         </div>
         <hr />
       </template>
       <div class="exifs">
-        <div class="exif" v-if="currentImage.data.meta.date">
+        <div class="exif" v-if="currentImage.data.result.meta.date">
           <label>{{ t('view.details.shotAt') }}</label>
-          <span>{{ getDayjs()(currentImage.data.meta.date)?.format('YYYY/MM/DD HH:mm:ss') }}</span>
+          <span>{{ getDayjs()(currentImage.data.result.meta.date)?.format('YYYY/MM/DD HH:mm:ss') }}</span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.shotOn') }}</label>
-          <div class="apple" v-if="currentImage.data.meta.device.startsWith('iP')">
-            <div class="device">Apple {{ currentImage.data.meta.device }}</div>
+          <div class="apple" v-if="currentImage.data.result.meta.device.startsWith('iP')">
+            <div class="device">Apple {{ currentImage.data.result.meta.device }}</div>
           </div>
         </div>
         <div class="exif">
           <label>{{ t('view.details.resolution') }}</label>
-          <span>{{ currentImage.data.meta.dimension.w }}px*{{ currentImage.data.meta.dimension.h }}px</span>
+          <span>{{ currentImage.data.result.meta.dimension.w }}px*{{ currentImage.data.result.meta.dimension.h }}px</span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.size') }}</label>
-          <span>{{ (currentImage.data.size / 1000000).toFixed(1) }}<small>MB</small></span>
+          <span>{{ (currentImage.data.result.size / 1000000).toFixed(1) }}<small>MB</small></span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.timezone') }}</label>
-          <span>UTC{{ currentImage.data.meta.timeOffset }} <small>{{
-            getTimeOffsetName(currentImage.data.meta.timeOffset)
+          <span>UTC{{ currentImage.data.result.meta.timeOffset }} <small>{{
+            getTimeOffsetName(currentImage.data.result.meta.timeOffset)
               }}</small></span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.focalLength') }}</label>
-          <span>{{ currentImage.data.meta.lens.focalLength }}<small>mm</small></span>
+          <span>{{ currentImage.data.result.meta.lens.focalLength }}<small>mm</small></span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.aperature') }}</label>
-          <span><em>f</em>/{{ currentImage.data.meta.lens.aperature }}</span>
+          <span><em>f</em>/{{ currentImage.data.result.meta.lens.aperature }}</span>
         </div>
         <div class="exif">
           <label>{{ t('view.details.exposureTime') }}</label>
-          <span>{{ currentImage.data.meta.exposureTime }}<small>s</small></span>
+          <span>{{ currentImage.data.result.meta.exposureTime }}<small>s</small></span>
         </div>
       </div>
       <hr />
-      <div class="map-information-container" v-if="currentImage.data.meta.wgs84.length > 0">
+      <div class="map-information-container" v-if="currentImage.data.result.meta.wgs84.length > 0">
         <div class="map-container">
           <client-only>
-            <exif-map v-model="currentImage.data.meta.wgs84" />
+            <exif-map v-model="currentImage.data.result.meta.wgs84" />
           </client-only>
         </div>
         <div class="right">
@@ -141,24 +141,24 @@
           <div class="lagi-longi-information-container">
             <div>
               <label>{{ t('view.details.latitude') }}</label>
-              <span>{{ currentImage.data.meta.coordinates.lat[0] }}°{{ currentImage.data.meta.coordinates.lat[1] }}'{{
-                currentImage.data.meta.coordinates.lat[2]
-              }}" <small>N</small></span>
+              <span>{{ currentImage.data.result.meta.coordinates.lat[0] }}°{{ currentImage.data.result.meta.coordinates.lat[1] }}'{{
+                currentImage.data.result.meta.coordinates.lat[2]
+                }}" <small>N</small></span>
             </div>
             <div>
               <label>{{ t('view.details.longitude') }}</label>
-              <span>{{ currentImage.data.meta.coordinates.lng[0] }}°{{ currentImage.data.meta.coordinates.lng[1] }}'{{
-                currentImage.data.meta.coordinates.lng[2]
-              }}" <small>E</small></span>
+              <span>{{ currentImage.data.result.meta.coordinates.lng[0] }}°{{ currentImage.data.result.meta.coordinates.lng[1] }}'{{
+                currentImage.data.result.meta.coordinates.lng[2]
+                }}" <small>E</small></span>
             </div>
             <div>
               <label>{{ t('view.details.altitude') }}</label>
-              <span>{{ currentImage.data.meta.altitude.toFixed(2) }} <small>m</small></span>
+              <span>{{ currentImage.data.result.meta.altitude.toFixed(2) }} <small>m</small></span>
             </div>
             <div>
               <label>{{ t('view.details.speed') }}</label>
-              <span>{{ currentImage.data.meta.gpsspeed > 0.1 ? currentImage.data.meta.gpsspeed.toFixed(2) :
-                t('view.gpsSpeedZero') }} <small v-if="currentImage.data.meta.gpsspeed > 0.1">km/h</small></span>
+              <span>{{ currentImage.data.result.meta.gpsspeed > 0.1 ? currentImage.data.result.meta.gpsspeed.toFixed(2) :
+                t('view.gpsSpeedZero') }} <small v-if="currentImage.data.result.meta.gpsspeed > 0.1">km/h</small></span>
             </div>
           </div>
           <client-only>
@@ -206,10 +206,10 @@
     <icon :path="mdiPlus" />
   </div>
 
-  <viewer-navigation v-model="navigationPanelEnabled" :prev-name="currentImage.data.navigation.prev || ''"
-    :next-name="currentImage.data.navigation.next || ''" :current-collection-name="collectionName" />
+  <viewer-navigation v-model="navigationPanelEnabled" :prev-name="currentImage.data.result.navigation.prev || ''"
+    :next-name="currentImage.data.result.navigation.next || ''" :current-collection-name="collectionName" :random="currentImage.data.random"/>
 
-  <div class="snack-wrapper" v-if="currentImage.data.geo">
+  <div class="snack-wrapper" v-if="currentImage.data.result.geo">
     <div class="snack" :class="{ active: showRandomExplorationSnack }">
       <div class="random-exploration">
         <div class="primary" :class="{ bold: !isNotSpecial() }">
@@ -236,7 +236,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { Delayed } from "~/types/client";
+  import type { Delayed, ResponseStoreItem } from "~/types/client";
   import {
     mdiAirplane, mdiAlertOutline,
     mdiDownload, mdiFullscreen,
@@ -270,52 +270,58 @@
 
   const navigationPanelEnabled = ref(false);
 
-  const geoName = computed(() => withFallback(lang.value, currentImage.data.geo?.en_name, currentImage.data.geo?.name));
-  const geoExtPath = computed(() => withFallback(lang.value, currentImage.data.geo?.en_ext_path, currentImage.data.geo?.ext_path));
+  const geoName = computed(() => withFallback(lang.value, currentImage.data.result.geo?.en_name, currentImage.data.result.geo?.name));
+  const geoExtPath = computed(() => withFallback(lang.value, currentImage.data.result.geo?.en_ext_path, currentImage.data.result.geo?.ext_path));
   const geoExtPathPrefix = computed(() => geoExtPath.value.replace(`${geoName.value}`, '').replace(', ', ''));
 
-
-  const currentImage = reactive<Delayed<StoreItem>>({
-    loading: true,
+  const currentImage = reactive<Delayed<ResponseStoreItem>>({
+    loading: false,
     data: {
-      name: "",
-      url: "",
-      size: 0,
-      collection: "",
-      navigation: {
-        prev: null,
-        next: null
+      result: {
+        name: "",
+        url: "",
+        size: 0,
+        collection: "",
+        navigation: {
+          prev: null,
+          next: null
+        },
+        meta: {
+          date: undefined,
+          coordinates: {
+            lng: [],
+            lat: []
+          },
+          wgs84: [],
+          timeOffset: "",
+          dimension: {
+            h: 0,
+            w: 0
+          },
+          device: "",
+          filesize: 0,
+          lens: {
+            focalLength: 0,
+            aperature: 0
+          },
+          gpsspeed: 0,
+          exposureTime: "",
+          altitude: 0
+        },
+        special: [],
+        captions: "",
+        geo: undefined
       },
-      meta: {
-        date: undefined,
-        timeOffset: "",
-        dimension: {
-          h: 0,
-          w: 0
-        },
-        device: "",
-        filesize: 0,
-        lens: {
-          focalLength: 0,
-          aperature: 0
-        },
-        gpsspeed: 0,
-        exposureTime: "",
-        altitude: 0,
-        coordinates: {
-          lng: [],
-          lat: []
-        },
-        wgs84: []
-      },
-      special: [],
-      captions: ""
+      random: {
+        current: "",
+        all: ""
+      }
     }
   });
 
   const originalLoaded = ref(false);
 
-  const finalURL = computed(() => originalLoaded.value ? currentImage.data.url : toThumbnail1080p(currentImage.data.url));
+  const finalURL = computed(() => originalLoaded.value ? currentImage.data.result.url : toThumbnail1080p(currentImage.data.result.url));
 
   const mainImage = ref<HTMLElement | null>(null);
   const { isFullscreen, enter, exit, toggle } = useFullscreen(mainImage);
@@ -349,15 +355,15 @@
   }
 
   function isSpecial(type: 'spot' | 'flight' | 'subway-station' | 'road') {
-    return currentImage.data.special.some(x => x.type === type);
+    return currentImage.data.result.special.some(x => x.type === type);
   }
 
   function isNotSpecial() {
-    return currentImage.data.special.length === 0;
+    return currentImage.data.result.special.length === 0;
   }
 
   function getSpecial(type: 'spot' | 'road') {
-    const spotInfo = currentImage.data.special.filter(x => x.type === type);
+    const spotInfo = currentImage.data.result.special.filter(x => x.type === type);
     if (spotInfo.length === 0) return '';
     return (spotInfo[0] as SpecialSpotDefault).name;
   }
@@ -370,7 +376,7 @@
   }
 
   function getSubwayStationInfo() {
-    const spotInfo = currentImage.data.special.filter(x => x.type === 'subway-station');
+    const spotInfo = currentImage.data.result.special.filter(x => x.type === 'subway-station');
     if (spotInfo.length === 0) return null;
     return spotInfo[0];
   }

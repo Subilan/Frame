@@ -1,7 +1,9 @@
 
+import { CollectionKeys } from "~/server/consts";
 import type { Store } from "~/types/server";
 import getJson from "~/utils/server/getJson";
 import ng from "~/utils/server/ng";
+import pick from "~/utils/server/pick";
 import suspect from "~/utils/server/suspect";
 
 export default defineEventHandler(async e => {
@@ -18,5 +20,11 @@ export default defineEventHandler(async e => {
 
     if (res.length === 0) return ng("nothing");
 
-    return res[0];
+    return {
+        result: res[0],
+        random: {
+            current: pick(store.filter(x => x.collection === res[0].collection)).name,
+            all: pick(store.filter(x => x.collection === pick(CollectionKeys))).name
+        }
+    }
 })

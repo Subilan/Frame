@@ -1,4 +1,4 @@
-import type { NGReason } from "../server";
+import type { NGReason, StoreItem } from "../server";
 
 interface RespOK<T = any> {
 	code: 'ok';
@@ -137,3 +137,11 @@ export type NavigationItem = {
 };
 
 export type Langs = 'en' | 'zh';
+
+export type ResponseStoreItem = {
+	result: StoreItem,
+	random: {
+		current: string,
+		all: string
+	}
+}

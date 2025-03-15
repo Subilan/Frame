@@ -11,7 +11,7 @@
                             {{ t('view.navigationPanel.backToCollection') }}
                         </div>
                     </div>
-                    <div class="navigation-block" @click="toRandom(currentCollectionName as CollectionName)">
+                    <div class="navigation-block" @click="isExploring = true; navigateTo(buildViewerPathFromObjectPath(random.current))">
                         <div class="icon">
                             <icon :path="mdiDice5" />
                         </div>
@@ -20,7 +20,7 @@
                                 collection.name[lang]) }}</small>
                         </div>
                     </div>
-                    <div class="navigation-block" @click="toRandom('all')">
+                    <div class="navigation-block" @click="isExploring = true; navigateTo(buildViewerPathFromObjectPath(random.all))">
                         <div class="icon">
                             <icon :path="mdiDice5Outline" />
                         </div>
@@ -80,36 +80,16 @@ import t from '~/utils/client/t';
         currentCollectionName: {
             type: String,
             required: true
+        },
+        random: {
+            type: Object,
+            required: true
         }
     })
 
     const lang = useLanguage();
 
     const collection = computed(() => getCollectionByName(props.currentCollectionName));
-
-    const randomResult = reactive<Delayed<string>>({
-        loading: false,
-        data: ''
-    });
-
-    async function getRandomPhoto(scope: CollectionName | 'all') {
-        randomResult.loading = true;
-
-        const res = await req<string>(`/api/random?scope=${scope}`);
-
-        if (res.code === 'ng') return;
-
-        randomResult.data = res.data;
-
-        randomResult.loading = false;
-    }
-
-    async function toRandom(scope: CollectionName | 'all') {
-        await getRandomPhoto(scope);
-
-        isExploring.value = true;
-        navigateTo(buildViewerPathFromObjectPath(randomResult.data));
-    }
 
     const keydownEventHandler = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
