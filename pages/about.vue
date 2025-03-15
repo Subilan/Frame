@@ -47,18 +47,19 @@
       <hr />
       <h1>网站设计</h1>
       <h2>照片查看器的设计</h2>
-      <p>本站中用于展示照片的专用页面称为照片查看器，其具体的一些特性说明如下：</p>
+      <p>本站中用于展示照片的专用页面称为照片查看器，它的一些特性具体说明如下：</p>
       <ul>
-        <li>每个照片具有两种质量等级：原图和压缩，压缩后的图片高度固定为 1080px。可点击工具栏中的
+        <li>每个照片具有两种质量等级：原图和压缩，压缩后的图片高度固定为 1080px，按等比例方式进行缩放。可点击工具栏中的
           <icon :path="mdiImage" style="vertical-align: middle; margin-right: 4px" />
           <em>加载原图</em> 按钮切换图片的质量。
         </li>
-        <li>照片中如果存有 GPS 信息会直接呈现出来。同时，根据 GPS 信息中的经纬度，会显示相关图片的具体拍摄地点名称，还会在可交互的世界地图上标出拍摄的地点。这一地图是基于
+        <li>照片中如果存有 GPS 信息，会在查看器页面的靠下部分呈现出来。同时，根据 GPS 信息中的经纬度，会显示相关图片的具体拍摄地点名称，还会在可交互的世界地图上标出拍摄的地点。这一地图是基于
           <a target="_blank" href="https://openlayers.org/">OpenLayers</a> 构建的。拍摄地点的名称一般是中文，如果存在官方的英文翻译也会套用。
         </li>
         <li>如果照片的拍摄地点是景区、地铁站或者公路旁，也会按照实际将它们的名称（标志）标注在经纬度获取的地点旁边。
         </li>
       </ul>
+      <p>图片查看器中还附带了一个拓展菜单（右下角的加号按钮），可用于快速切换页面或随机浏览。</p>
       <h2>图片存储服务与质量</h2>
       <p>目前所采用的云服务是阿里云的对象存储（OSS）。</p>
       <p>图片大部分都是用非专业的拍照设备（手机）拍摄的。为了节省云服务的流量，以及使用 iPhone 拍摄的照片大部分为 HEIF 格式，本站的所有照片在上传之前都利用 <a
@@ -105,9 +106,7 @@
           <em>Load original</em> button in the toolbar.
         </li>
         <li>GPS details are present if available. Along with the longitude & latitude numbers, there's an complete name
-          of that place and an
-          interactive map
-          built with <a target="_blank" href="https://openlayers.org/">OpenLayers</a>. The name of the place is in
+          of that place and an interactive map built with <a target="_blank" href="https://openlayers.org/">OpenLayers</a>. The name of the place is in
           Chinese most of the time, but it can be in English if there's any authentic translations.
         </li>
         <li>The name of related scenic spot, subway station or road where the photos were taken is shown if any.</li>
@@ -153,8 +152,8 @@
           rel="license noopener noreferrer">CC BY-SA 4.0</a>.</p>
     </template>
 
-    <div class="suggestion-btn" @click="suggestionLayer = true">
-      <btn class="shadow">
+    <div class="suggestion-btn">
+      <btn class="shadow" @click="suggestionLayer = true">
         <icon :path="mdiCommentOutline" />{{ lang === 'zh' ? '提出建议' : 'Give advice' }}
       </btn>
     </div>
@@ -163,7 +162,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { mdiArrowRight, mdiCommentOutline, mdiImage } from "@mdi/js";
+  import { mdiArrowRight, mdiCommentOutline, mdiImage, mdiPlus } from "@mdi/js";
   import buildObjectPath from "~/utils/client/buildObjectPath";
 
   const lang = useLanguage();
@@ -462,10 +461,11 @@
 
 h2 {
   margin: 16px 0;
+  font-size: 28px;
 }
 
 h1 {
-  font-size: 38px;
+  font-size: 34px;
 }
 
 p,
