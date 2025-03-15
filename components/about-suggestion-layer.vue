@@ -10,9 +10,9 @@
                 <template v-else-if="lang === 'en'">
                     <h2>Give advice</h2>
                     <p>This site is built from scratch (i.e. no UI lib used and the design is in parallel with dev)
-                        during January and Feburary in 2025, and released in March.</p>
-                    <p>There could be some mistakes on location names and English translation. The layout and functions
-                        can also be buggy. Any suggestion is welcome and appreciated.
+                        during January and February in 2025, and released in March.</p>
+                    <p>You might spot some typos in English translations, and the location names can be inaccurate sometimes. The layout and functions
+                        could also be buggy. Feel free to share your suggestions — I'd love to hear them.
                     </p>
                 </template>
                 <div class="actions">
