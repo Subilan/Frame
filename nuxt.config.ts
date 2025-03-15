@@ -46,5 +46,9 @@ export default defineNuxtConfig({
 				{ rel: 'stylesheet', href: '/fonts/open-sans/font.css' }
 			]
 		}
+	},
+
+	nitro: {
+		srcDir: 'server'
 	}
 });

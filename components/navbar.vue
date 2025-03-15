@@ -30,7 +30,7 @@
 import SiteTitle from "@/components/site-title.vue";
 import {mdiArrowLeft, mdiMenu, mdiTranslate} from "@mdi/js";
 import navigationsImport from './navigations.json';
-import type {NavigationItem} from "~/types";
+import type {NavigationItem} from "~/types/client";
 
 const route = useRoute();
 const drawerModel = ref(false);

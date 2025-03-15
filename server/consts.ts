@@ -1,0 +1,1 @@
+export const CollectionKeys = ['dawanqu', 'nanjing', 'yunnan', 'journey-to-the-north-xinjiang', 'qingdao-2023', 'sichuan-chongqing-2023'] as const;

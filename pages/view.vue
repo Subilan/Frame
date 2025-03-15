@@ -143,13 +143,13 @@
               <label>{{ t('view.details.latitude') }}</label>
               <span>{{ currentImage.data.meta.coordinates.lat[0] }}°{{ currentImage.data.meta.coordinates.lat[1] }}'{{
                 currentImage.data.meta.coordinates.lat[2]
-                }}" <small>N</small></span>
+              }}" <small>N</small></span>
             </div>
             <div>
               <label>{{ t('view.details.longitude') }}</label>
               <span>{{ currentImage.data.meta.coordinates.lng[0] }}°{{ currentImage.data.meta.coordinates.lng[1] }}'{{
                 currentImage.data.meta.coordinates.lng[2]
-                }}" <small>E</small></span>
+              }}" <small>E</small></span>
             </div>
             <div>
               <label>{{ t('view.details.altitude') }}</label>
@@ -212,7 +212,7 @@
   <div class="snack-wrapper" v-if="currentImage.data.geo">
     <div class="snack" :class="{ active: showRandomExplorationSnack }">
       <div class="random-exploration">
-        <div class="primary" :class="{bold: !isNotSpecial()}">
+        <div class="primary" :class="{ bold: !isNotSpecial() }">
           <template v-if="isSpecial('spot')">
             {{ getSpecial('spot') }}
           </template>
@@ -236,7 +236,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { Delayed, SpecialSpotDefault } from "@/types";
+  import type { Delayed } from "~/types/client";
   import {
     mdiAirplane, mdiAlertOutline,
     mdiDownload, mdiFullscreen,
@@ -248,7 +248,15 @@
   import Popup from "@/components/popup.vue";
   import ImageCopyright from "@/components/image-copyright.vue";
   import { useFullscreen } from "@vueuse/core";
-  import type { StoreItem } from "~/types/store";
+  import type { StoreItem } from "~/types/server";
+  import buildObjectPath from "~/utils/client/buildObjectPath";
+  import withFallback from "~/utils/client/withFallback";
+  import req from "~/utils/client/req";
+  import type { SpecialSpotDefault } from "~/types/common/objects";
+  import t from "~/utils/client/t";
+  import getDayjs from "~/utils/common/getDayjs";
+  import hasHWA from "~/utils/client/hasHWA";
+  import getImageNameByRemotePath from "~/utils/client/getImageNameByRemotePath";
 
   const lang = useLanguage();
   const isExploring = useExploring();

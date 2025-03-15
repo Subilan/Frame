@@ -80,9 +80,12 @@
     mdiPackageVariant
   } from "@mdi/js";
   import { useElementVisibility } from "@vueuse/core";
-  import getCollectionByName from "@/utils/getCollectionByName";
-import type { CollectionDataBody } from "~/types";
-
+  import getCollectionByName from "~/utils/client/getCollectionByName";
+  import type { CollectionDataBody } from "~/types/common/objects";
+  import req from "~/utils/client/req";
+  import t from "~/utils/client/t";
+  import buildViewerPathFromObjectPath from "~/utils/client/buildViewerPathFromObjectPath";
+  
   const images = ref<any[]>([]);
   const hasNext = ref(true);
   const currentIndexCursor = ref(0);

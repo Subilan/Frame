@@ -54,11 +54,12 @@
 <script setup lang="ts">
   import { mdiArrowRight, mdiArrowTopRight, mdiRefresh } from '@mdi/js';
   import bannersImport from '~/static/data/banners.json';
-  import type { HomeBannerItem } from "~/types";
-  import buildObjectPath from "~/utils/buildObjectPath";
-  import formatDate from '~/utils/formatDate';
-  import buildViewerPath from "~/utils/buildViewerPath";
-  import randomArrayIndex from '~/utils/randomArrayIndex';
+  import type { HomeBannerItem } from "~/types/client";
+  import buildObjectPath from "~/utils/client/buildObjectPath";
+  import formatDate from '~/utils/client/formatDate';
+  import buildViewerPath from "~/utils/client/buildViewerPath";
+  import randomArrayIndex from '~/utils/common/randomArrayIndex';
+  import t from '~/utils/client/t';
 
   const banners: HomeBannerItem[] = bannersImport;
 

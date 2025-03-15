@@ -20,6 +20,7 @@
     "ant-design-vue": "4.x",
     "axios": "^1.7.7",
     "dayjs": "^1.11.13",
+    "nitro-cors": "^0.7.1",
     "nuxt": "^3.13.0",
     "nuxt-route-meta": "^5.0.3",
     "ol": "^10.1.0",

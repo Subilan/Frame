@@ -18,7 +18,8 @@
 
 <script setup>
   import collections from "~/static/data/collections.json";
-  import buildObjectPath from "@/utils/buildObjectPath";
+  import buildObjectPath from "~/utils/client/buildObjectPath";
+  import t from "~/utils/client/t";
 
   const lang = useLanguage();
 </script>

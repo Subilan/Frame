@@ -30,6 +30,7 @@
 
 <script lang="ts" setup>
     import { mdiEmailOutline, mdiGithub } from '@mdi/js';
+    import open from '~/utils/client/open';
 
     const model = defineModel();
     const lang = useLanguage();

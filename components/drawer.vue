@@ -36,6 +36,8 @@
 <script setup lang="ts">
 import navigations from "~/components/navigations.json";
 import {mdiArrowRight, mdiArrowTopRight, mdiCheck} from "@mdi/js";
+import getCollectionByName from "~/utils/client/getCollectionByName";
+import t from "~/utils/client/t";
 
 const route = useRoute();
 const model = defineModel();

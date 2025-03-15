@@ -162,7 +162,7 @@
 </template>
 <script setup lang="ts">
   import { mdiArrowRight, mdiCommentOutline, mdiImage } from "@mdi/js";
-  import { buildObjectPath } from "#imports";
+  import buildObjectPath from "~/utils/client/buildObjectPath";
 
   const lang = useLanguage();
   const aboutGalleryControl = ref([true, false, false]);

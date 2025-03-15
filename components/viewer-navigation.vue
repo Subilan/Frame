@@ -11,7 +11,7 @@
                             {{ t('view.navigationPanel.backToCollection') }}
                         </div>
                     </div>
-                    <div class="navigation-block" @click="toRandom(currentCollectionName as CollectionDataKeys)">
+                    <div class="navigation-block" @click="toRandom(currentCollectionName as CollectionName)">
                         <div class="icon">
                             <icon :path="mdiDice5" />
                         </div>
@@ -57,7 +57,12 @@
 
 <script setup lang="ts">
     import { mdiApps, mdiArrowLeft, mdiArrowRight, mdiDice5, mdiDice5Outline } from '@mdi/js';
-    import type { CollectionDataKeys, Delayed } from '~/types';
+    import type {Delayed } from '~/types/client';
+import type { CollectionName } from '~/types/common/objects';
+import buildViewerPathFromObjectPath from '~/utils/client/buildViewerPathFromObjectPath';
+import getCollectionByName from '~/utils/client/getCollectionByName';
+import req from '~/utils/client/req';
+import t from '~/utils/client/t';
 
     const isExploring = useExploring();
 
@@ -87,7 +92,7 @@
         data: ''
     });
 
-    async function getRandomPhoto(scope: CollectionDataKeys | 'all') {
+    async function getRandomPhoto(scope: CollectionName | 'all') {
         randomResult.loading = true;
 
         const res = await req<string>(`/api/random?scope=${scope}`);
@@ -99,7 +104,7 @@
         randomResult.loading = false;
     }
 
-    async function toRandom(scope: CollectionDataKeys | 'all') {
+    async function toRandom(scope: CollectionName | 'all') {
         await getRandomPhoto(scope);
 
         isExploring.value = true;
