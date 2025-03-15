@@ -234,6 +234,7 @@
 
   @media (max-width: 1200px) {
     max-width: 80%;
+    margin-bottom: 15%;
   }
 
   @media (max-width: 768px) {
@@ -254,6 +255,10 @@
 
     .road {
       height: 78px;
+
+      @media (max-width: 768px) {
+        height: 58px;
+      }
 
       img {
         height: 100%;

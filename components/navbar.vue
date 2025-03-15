@@ -1,42 +1,43 @@
 <template>
   <nav class="navbar">
     <transition name="x">
-      <button style="margin-right: 10px;" @click="useRouter().go(-1)" class="icon-btn" v-if="route.name === 'imageview' || route.name === 'collection'">
-        <icon color="white" :path="mdiArrowLeft"/>
+      <button @click="useRouter().go(-1)" class="icon-btn back"
+        v-if="route.name === 'imageview' || route.name === 'collection'">
+        <icon color="white" :path="mdiArrowLeft" />
       </button>
     </transition>
     <div class="site-title" @click="navigateTo('/')">
-      <site-title/>
+      <site-title />
     </div>
-    <div class="spacer"/>
+    <div class="spacer" />
     <div class="nav-links">
       <router-link v-for="x in navigations.filter(x => !x.external)" :to="x.to">{{ x.text[lang] }}</router-link>
       <a target="_blank" v-for="x in navigations.filter(x => x.external)" :href="x.to">{{ x.text[lang] }}</a>
     </div>
     <div class="nav-buttons">
       <button class="icon-btn lang-btn" @click="languageChooserModel = !languageChooserModel">
-        <icon color="white" :path="mdiTranslate"/>
+        <icon color="white" :path="mdiTranslate" />
       </button>
       <button @click="drawerModel = !drawerModel" class="icon-btn drawer-btn">
-        <icon color="white" :path="mdiMenu"/>
+        <icon color="white" :path="mdiMenu" />
       </button>
     </div>
   </nav>
-  <drawer v-model="drawerModel"/>
-  <language-chooser v-model="languageChooserModel"/>
+  <drawer v-model="drawerModel" />
+  <language-chooser v-model="languageChooserModel" />
 </template>
 
 <script setup lang="ts">
-import SiteTitle from "@/components/site-title.vue";
-import {mdiArrowLeft, mdiMenu, mdiTranslate} from "@mdi/js";
-import navigationsImport from './navigations.json';
-import type {NavigationItem} from "~/types/client";
+  import SiteTitle from "@/components/site-title.vue";
+  import { mdiArrowLeft, mdiMenu, mdiTranslate } from "@mdi/js";
+  import navigationsImport from './navigations.json';
+  import type { NavigationItem } from "~/types/client";
 
-const route = useRoute();
-const drawerModel = ref(false);
-const languageChooserModel = ref(false);
-const lang = useLanguage();
-const navigations = navigationsImport as NavigationItem[];
+  const route = useRoute();
+  const drawerModel = ref(false);
+  const languageChooserModel = ref(false);
+  const lang = useLanguage();
+  const navigations = navigationsImport as NavigationItem[];
 </script>
 
 <style lang="scss">
@@ -56,6 +57,7 @@ const navigations = navigationsImport as NavigationItem[];
 .nav-buttons {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .navbar .drawer-btn {
@@ -80,12 +82,28 @@ const navigations = navigationsImport as NavigationItem[];
   background: transparent;
   border: none;
 
-  &:active {
-    background: rgba(255, 255, 255, .1);
+  &.back {
+    margin-right: 10px;
+    
+    @media (max-width: 768px) {
+      margin-right: 4px;
+    }
   }
 
-  &:hover {
-    background: rgba(255, 255, 255, .2);
+  @media (max-width: 768px) {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+
+  @media (min-width: 768px) {
+    &:active {
+      background: rgba(255, 255, 255, .1);
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, .2);
+    }
   }
 }
 
@@ -112,6 +130,10 @@ const navigations = navigationsImport as NavigationItem[];
   .site-title {
     font-size: 30px;
     cursor: pointer;
+
+    @media (max-width: 768px) {
+      font-size: 26px;
+    }
   }
 
   .nav-links {
