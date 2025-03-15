@@ -89,6 +89,7 @@
     padding: 32px;
     line-height: 1.5;
     box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba($color: #000000, $alpha: .3);
 
     @media (max-width: 1500px){
         max-width: 50%;

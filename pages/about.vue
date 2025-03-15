@@ -154,10 +154,12 @@
     </template>
 
     <div class="suggestion-btn" @click="suggestionLayer = true">
-      <btn class="shadow"><icon :path="mdiCommentOutline"/>{{  lang === 'zh' ? '提出建议' : 'Give advice' }}</btn>
+      <btn class="shadow">
+        <icon :path="mdiCommentOutline" />{{ lang === 'zh' ? '提出建议' : 'Give advice' }}
+      </btn>
     </div>
 
-    <about-suggestion-layer v-model="suggestionLayer"/>
+    <about-suggestion-layer v-model="suggestionLayer" />
   </div>
 </template>
 <script setup lang="ts">
@@ -214,8 +216,16 @@
 </script>
 
 <style lang="scss">
-.about-container p {
-  font-size: 18px;
+.about-container {
+
+  p,
+  li {
+    font-size: 18px;
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
+  }
 }
 </style>
 
