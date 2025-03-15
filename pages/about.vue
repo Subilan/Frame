@@ -1,10 +1,10 @@
 <template>
   <Title>{{ lang === 'zh' ? '关于' : 'About' }}</Title>
-  <div class="about-container navbar-offset">
+  <div class="about-container common-container navbar-offset">
     <template v-if="lang === 'zh'">
-      <h1 class="about-title">关于</h1>
+      <h1 class="about-title">关于 <site-title /></h1>
       <h2>这是一个什么样的网站</h2>
-      <p>本网站本质上是一个称为 Frame（风格化拼写：<site-title />）的网站程序，它基于 Nuxt 3 构建，用于展示我在旅行中的不同地点拍摄的照片。</p>
+      <p>这个网站本身是一个名为 Frame（此处意为“相框”）的网页程序，它基于 Nuxt 3 构建，用于展示我在旅行中的不同地点拍摄的照片。</p>
       <p>做出这一网站，是因为我希望能够通过它来记录自己过往的生活与走过的地方，并保留这些照片背后的故事和当时的想法。</p>
       <h2>旅行是...</h2>
       <p>
@@ -44,6 +44,8 @@
       </div>
     </div>
     <template v-if="lang === 'zh'">
+      <h2>为什么不用 Chevereto 或者...？</h2>
+      <p>与一般的图床程序不同，开发 Frame 的本意并非图片的统一存储、分类和管理，而是对一些与旅游高度绑定的相片及其背后故事的客观记载。另外，个人按需编写、按需部署的整体灵活性也是直接使用三方图床无法比拟的。</p>
       <hr />
       <h1>网站设计</h1>
       <h2>照片查看器的设计</h2>
@@ -94,6 +96,8 @@
           rel="license noopener noreferrer">CC BY-SA 4.0</a> 协议授权。</p>
     </template>
     <template v-if="lang === 'en'">
+      <h2>Why not Chevereto or other available options?</h2>
+      <p>Instead of just image hosting & managing, <em>recording</em> is what drives me to build this site, which includes many minutiae that come from personal needs and cannot be described generally. DIY is always my first option as it brings far greater flexibility.</p>
       <hr />
       <h1>Site Design</h1>
       <h2>Photo viewer design</h2>
@@ -112,6 +116,7 @@
         </li>
         <li>The name of related scenic spot, subway station or road where the photos were taken is shown if any.</li>
       </ul>
+      <p>You might notice a plus button (+) in the bottom-right corner of the photo viewer. It offers handy navigation features to help you quickly browse through the photos.</p>
       <h2>Photo storage & quality</h2>
       <p>Aliyun OSS is the current cloud storage service. The photos are mostly taken with unprofessional devices such
         as mobile phones, mildly JPEG-compressed using <a href="https://imagemagick.org/index.php"
@@ -231,13 +236,12 @@
 .about-title {
   margin-top: 64px;
   margin-bottom: 16px;
-}
+  font-size: 250%;
+  font-weight: bold;
 
-.about-container {
-  max-width: 1200px;
-  padding: 16px;
-  margin-left: auto;
-  margin-right: auto;
+  >div {
+    font-weight: normal;
+  }
 }
 
 .fade-enter-active,
@@ -447,10 +451,12 @@
 h2 {
   margin: 16px 0;
   font-size: 28px;
+  font-weight: normal;
 }
 
 h1 {
   font-size: 34px;
+  font-weight: normal;
 }
 
 p,
