@@ -2,12 +2,15 @@
   <Title>{{ lang === 'zh' ? '首页' : 'Main Page' }}</Title>
   <div class="index-background navbar-offset">
     <img :src="indexImagePath" @load="backgroundLoaded" :class="{ backgroundNotLoad, loaded: imageLoaded }"
-      loading="lazy" alt="background" class="index-background-image" />
-    <div class="overlay" :class="{ dark: selected ? selected.dark : false }" />
+      loading="lazy" alt="background" class="index-background-image primary" />
+    <img v-if="!isFirst" :class="{ backgroundNotLoad, loaded: imageLoaded }" :src="indexPrevImagePath" loading="lazy"
+      alt="background-secondary" class="index-background-image secondary" />
+    <div class="overlay" :class="{ dark: layerDark }" />
     <div class="+overlay">
       <transition name="scale-bottom" mode="out-in">
         <div class="hero-text" v-if="textLoaded">
-          <div class="hero-text-head" :class="{ withRoad: typeof selected.name === 'string' && selected.name.startsWith('road-') }">
+          <div class="hero-text-head"
+            :class="{ withRoad: typeof selected.name === 'string' && selected.name.startsWith('road-') }">
             <div class="road" v-if="typeof selected.name === 'string' && selected.name.startsWith('road-')">
               <img :alt="selected.name" :src="`/road-svg/${selected.name.replace('road-', '')}.svg`" />&nbsp;
             </div>
@@ -60,53 +63,70 @@
   import buildViewerPath from "~/utils/client/buildViewerPath";
   import randomArrayIndex from '~/utils/common/randomArrayIndex';
   import t from '~/utils/client/t';
+  import pick from '~/utils/server/pick';
 
   const banners: HomeBannerItem[] = bannersImport;
 
   const lang = useLanguage();
 
   const indexImagePath = ref('');
+  const indexPrevImagePath = ref('');
+  const isFirst = ref(true);
   const imageLoaded = ref(false);
   const textLoaded = ref(false);
+  const layerDark = ref(false);
 
   let selected: HomeBannerItem;
   let prevSelected: number[] = [];
-  let exactPrevSelected: number;
+  let directPrevSelected = -1;
   let selectedIndex = 0;
 
   const backgroundNotLoad = ref(true);
 
   onMounted(() => {
-    refreshBackgroundImage();
+    refreshBackgroundImage(true);
   })
 
   function backgroundLoaded() {
     imageLoaded.value = true;
-    backgroundNotLoad.value = false;
-    setTimeout(() => textLoaded.value = true, 150);
+    layerDark.value = selected.dark || false;
+    // 主图淡入之后
+    setTimeout(() => {
+      indexPrevImagePath.value = indexImagePath.value;
+      textLoaded.value = true;
+      // 防止出现首次 indexPrevImagePath 为空导致裂图被显示出来
+      isFirst.value = false;
+    }, 300);
   }
 
-  function refreshBackgroundImage() {
-    selectedIndex = randomArrayIndex(banners);
-    selected = banners[selectedIndex];
-
-    if (prevSelected.length === banners.length) prevSelected = [];
-
-    while (prevSelected.includes(selectedIndex) || exactPrevSelected === selectedIndex) {
-      selectedIndex = randomArrayIndex(banners);
-      selected = banners[selectedIndex];
-    }
-
-    prevSelected.push(selectedIndex);
-
-    exactPrevSelected = selectedIndex;
-    backgroundNotLoad.value = true;
+  function refreshBackgroundImage(first = false) {
     imageLoaded.value = false;
     textLoaded.value = false;
-    backgroundNotLoad.value = true;
+
+    // 主图淡出之后
     setTimeout(() => {
-      indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '2000');
-    }, 1000);
+      selected = pick(banners);
+
+      if (prevSelected.length === banners.length) prevSelected = [];
+
+      while (prevSelected.includes(selectedIndex) || directPrevSelected === selectedIndex) {
+        selectedIndex = randomArrayIndex(banners);
+        selected = banners[selectedIndex];
+      }
+
+      prevSelected.push(selectedIndex);
+
+      directPrevSelected = selectedIndex;
+
+      // 如果是首次，就不设置视觉效果延迟
+      if (first) {
+        indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '1500');
+      } else {
+        setTimeout(() => {
+          indexImagePath.value = buildObjectPath(selected.ossPrefix, selected.image, '1500');
+        }, 1000);
+      }
+    }, 300);
   }
 </script>
 
@@ -170,7 +190,7 @@
 }
 
 .\+overlay {
-  z-index: 2;
+  z-index: 20;
   flex-direction: column;
   display: flex;
   align-items: center;
@@ -194,17 +214,23 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
     object-fit: cover;
-    opacity: 0;
     transition: all .3s ease;
 
-    &.loaded {
-      opacity: 1;
+    &.primary {
+      z-index: 5;
+
+      &:not(.loaded) {
+        opacity: 0;
+      }
+
+      &.loaded {
+        opacity: 1;
+      }
     }
 
-    &.backgroundNotLoad {
-      opacity: 0 !important;
+    &.secondary {
+      z-index: 0;
     }
   }
 
@@ -214,11 +240,12 @@
     position: absolute;
     top: 0;
     left: 0;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, .1), rgba(0, 0, 0, .5));
-    z-index: 1;
+    background-color: rgba($color: #000, $alpha: .3);
+    z-index: 10;
+    transition: all .3s ease;
 
     &.dark {
-      background: linear-gradient(to bottom, rgba(0, 0, 0, .3), rgba(0, 0, 0, .6));
+      background: rgba($color: #000000, $alpha: .5)
     }
   }
 }
