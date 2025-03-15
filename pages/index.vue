@@ -238,7 +238,7 @@
 
   @media (max-width: 768px) {
     max-width: 100%;
-    font-size: 30px;
+    font-size: 28px;
     padding: 0 32px;
   }
 

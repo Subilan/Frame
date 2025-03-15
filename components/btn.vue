@@ -22,6 +22,10 @@
   font-family: global.$fontFamilySet;
   border: 1px solid transparent;
 
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
   svg {
     height: 18px;
     width: 18px;

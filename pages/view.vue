@@ -710,6 +710,10 @@ label {
   padding: 32px;
   overflow: hidden;
 
+  @media (max-width: 768px) {
+    padding: 18px;
+  }
+
   .exifs {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
