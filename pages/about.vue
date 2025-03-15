@@ -13,10 +13,10 @@
         而拍照是记录旅行最为简单的方式，它是一种视角的记录。拍照并不是简单地留下印记——这些照片在旅行过后也将化身为故事的阐述者。通过重新查看这些照片，或许就可以与当时的心境和感受重新链接。</p>
     </template>
     <template v-if="lang === 'en'">
-      <h1 class="about-title">About</h1>
+      <h1 class="about-title">About <site-title /></h1>
       <h2>What's this website about?</h2>
       <p>It's about the photos <em>I took</em> during my travels to different places.</p>
-      <p>The website is based on Frame (stylizedly displayed as <site-title />), a simple web application built with
+      <p>The website is based on Frame (stands for photo frames), a simple web application built with
         Nuxt 3, which enables me to share the wonderful scenery and the
         underlying stories & experiences that impressed me.</p>
       <h2>A travel is... (IMO)</h2>
@@ -234,7 +234,6 @@
 
 <style lang="scss" scoped>
 .about-title {
-  margin-top: 64px;
   margin-bottom: 16px;
   font-size: 250%;
   font-weight: bold;
