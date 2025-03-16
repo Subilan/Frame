@@ -23,12 +23,12 @@ function getRoadLoc(road) {
 }
 
 const result = {
-	dates: [],
-	regions: [],
-	spots: [],
+	date: [],
+	region: [],
+	spot: [],
 	transportation: {
 		road: [],
-		subwayStations: []
+		subway: []
 	}
 };
 
@@ -134,10 +134,10 @@ for (let item of store) {
 	}
 }
 
-result.dates = categoryDates.sort((a, b) => a.c.year === b.c.year ? (a.c.month === b.c.month ? 0 : b.c.month - a.c.month) : b.c.year - a.c.year);
-result.regions = categoryRegions;
-result.spots = categorySpots;
+result.date = categoryDates.sort((a, b) => a.c.year === b.c.year ? (a.c.month === b.c.month ? 0 : b.c.month - a.c.month) : b.c.year - a.c.year);
+result.region = categoryRegions;
+result.spot = categorySpots;
 result.transportation.road = categoryRoads;
-result.transportation.subwayStations = categorySubwayStations;
+result.transportation.subway = categorySubwayStations;
 
 await fs.writeFile('category.json', JSON.stringify(result));

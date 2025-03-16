@@ -37,6 +37,11 @@ export default function (categoryType: CategoryType): Lang<string> {
             obj.en = 'subway station';
             break;
         }
+
+        case 'transportation': {
+            obj.zh = '交通设施';
+            obj.en = 'transportation infrasture';
+        }
     }
 
     return obj;

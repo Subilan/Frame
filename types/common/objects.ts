@@ -262,13 +262,13 @@ export type CategoryItem<T> = {
 };
 
 export interface Categories {
-	dates: CategoryItem<{ year: number; month: number }>[];
-	spots: CategoryItem<string>[];
-	regions: CategoryItem<{ geo: GeoBasic; isFlying: boolean }>[];
+	date: CategoryItem<{ year: number; month: number }>[];
+	spot: CategoryItem<string>[];
+	region: CategoryItem<{ geo: GeoBasic; isFlying: boolean }>[];
 	transportation: {
 		road: CategoryItem<{ name: string; loc: string }>[];
-		subwayStations: CategoryItem<{ line: string; station: string; ext_path: string }>[];
+		subway: CategoryItem<{ line: string; station: string; ext_path: string }>[];
 	};
 }
 
-export type CategoryType = 'date' | 'road' | 'spot' | 'subway' | 'region';
+export type CategoryType = 'date' | 'road' | 'spot' | 'subway' | 'region' | 'transportation';
