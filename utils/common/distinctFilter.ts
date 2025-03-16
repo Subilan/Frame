@@ -1,0 +1,1 @@
+export default <T>(x: T, i: number, a: T[]) => a.indexOf(x) === i;
