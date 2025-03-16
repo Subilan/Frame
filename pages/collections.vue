@@ -9,20 +9,20 @@
         <div class="texts">
           <h2><span>{{ x.name[lang] }}</span><small>{{ x.date[lang] }}</small></h2>
           <p class="basic-info">{{ t('collections.photoShownNum', x.pickedAmount) }} · {{ t('collections.photoTotalNum',
-            x.totalAmount)}}</p>
+            x.totalAmount) }}</p>
         </div>
       </div>
     </router-link>
   </div>
 
   <bottom-hover-btn @c="navigateTo('/categories')">
-    <icon :path="mdiShape"/>按分类查看
+    <icon :path="mdiShape" />按分类查看
   </bottom-hover-btn>
 </template>
 
 <script setup>
   import { mdiShape } from "@mdi/js";
-import collections from "~/static/collections.json";
+  import collections from "~/static/collections.json";
   import buildObjectPath from "~/utils/client/buildObjectPath";
   import t from "~/utils/client/t";
 
