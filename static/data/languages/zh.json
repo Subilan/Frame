@@ -2,6 +2,8 @@
   "collectionView": {
     "externalLinks": "外部链接",
     "viewNow": "立即查看",
+    "photoNumSimple": "$1 张",
+    "categorizeBy": "按$1",
     "noContent": "暂无更多内容",
     "loading": "正在加载$1 “$2”...",
     "loadingPhotos": "正在加载图片，请稍等...",

@@ -1,3 +1,9 @@
+/**
+ * @name compileStore
+ * @description 用于从 filetrees、exifs、speicalSpots、manualGeo、geo 这些数据中整合出每一张图片所需信息，以图片为单位写入 store.json 形成网站的基本数据。
+ */
+
+// TODO: 该文件中逻辑可优化为按需而非重复写入的模式 2025.03.15
 import fs from 'fs/promises';
 import translateExifDate from './utils/exif/translateExifDate.mjs';
 import translateExifCoords from './utils/exif/translateExifCoords.mjs';

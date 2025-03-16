@@ -4,14 +4,14 @@
         <div class="top">
             <div class="left">
                 <h2>
-                    <template v-if="title">{{ title }}</template>
+                    <template v-if="title && !useSlots()['title']">{{ title }}</template>
                     <slot name="title" />&nbsp;&nbsp;<small>{{ subtitle }}</small>
                 </h2>
                 <div class="meta">
                     <slot name="meta" />
                 </div>
-                <slot name="description"/>
-                <div class="section external-links">
+                <slot name="description" />
+                <div class="section external-links" v-if="useSlots()['externalLinks']">
                     <label>{{ t('collectionView.externalLinks') }} &raquo;</label>
                     <slot name="externalLinks" />
                 </div>
@@ -72,15 +72,14 @@
     import toURL from "~/utils/client/toURL";
     import type { Lang } from "~/types/client";
     import tagIs from "~/utils/common/tagIs";
-import tagName from "~/utils/common/tagName";
+    import tagName from "~/utils/common/tagName";
+
+    const totalCount = defineModel('totalCount');
 
     const props = defineProps({
         tag: {
             type: String,
             required: true
-        },
-        extra: {
-            type: String,
         },
         title: {
             type: String,
@@ -90,6 +89,10 @@ import tagName from "~/utils/common/tagName";
         },
         themeImage: {
             type: String
+        },
+        bindCount: {
+            type: Boolean,
+            default: false
         }
     })
 
@@ -128,7 +131,7 @@ import tagName from "~/utils/common/tagName";
 
         retrievingObjects.value = true;
         startLongTimeDetection();
-        const objects = await getObjects(props.tag, currentIndexCursor.value, limit, props.extra);
+        const objects = await getObjects(props.tag, currentIndexCursor.value, limit);
         initialLoading.value = false;
         retrievingObjects.value = false;
         longTimeLoadingIndicator.value = false;
@@ -143,15 +146,28 @@ import tagName from "~/utils/common/tagName";
         }
     }
 
-    async function getObjects(tag: string, startIndex: number, limit: number, extra: string = '') {
+    async function getObjects(tag: string, startIndex: number, limit: number) {
         return await req<{
             hasNext: boolean,
             images: string[]
-        }>(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}&extra=${extra}`);
+        }>(`/api/list-objects?tag=${tag}&startIndex=${startIndex}&limit=${limit}`);
+    }
+
+    async function getCount(tag: string) {
+        const res = await req<{
+            hasNext: boolean,
+            images: string[]
+        }>(`/api/list-objects?tag=${tag}`);
+        
+        if (res.code === 'ok') {
+            totalCount.value = res.data.images.length;
+        }
     }
 
     onMounted(() => {
         update();
+
+        if (props.bindCount) getCount(props.tag);
     });
 
     watch(images, v => {
@@ -271,7 +287,7 @@ import tagName from "~/utils/common/tagName";
             height: 200px;
         }
     }
-    
+
     h2 {
         font-size: 48px;
         margin-bottom: 10px;

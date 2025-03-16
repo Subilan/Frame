@@ -28,6 +28,16 @@ export default {
             name: 'imageview',
             path: '/view/:collectionName/:filename',
             component: () => import('@/pages/view.vue')
+        },
+        {
+            name: 'categories',
+            path: '/categories',
+            component: () => import('@/pages/categories.vue')
+        },
+        {
+            name: 'category',
+            path: '/category/:categoryType/:categoryName',
+            component: () => import('@/pages/category.vue')
         }
     ],
 } satisfies RouterConfig

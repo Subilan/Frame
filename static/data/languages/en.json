@@ -2,6 +2,8 @@
   "collectionView": {
     "externalLinks": "EXTERNAL LINKS",
     "viewNow": "View Now",
+    "photoNumSimple": "$1 photos",
+    "categorizeBy": "Categorize by $1",
     "noContent": "There's no content at this time.",
     "loading": "Loading $1 “$2”...",
     "loadingPhotos": "Loading more photos, just a moment...",

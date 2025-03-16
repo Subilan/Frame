@@ -39,6 +39,8 @@ export type I18n = {
 		viewNow: string;
 		noContent: string;
 		loading: string;
+		photoNumSimple: string;
+		categorizeBy: string;
 		loadingPhotos: string;
 		fourOfour: {
 			title: string;

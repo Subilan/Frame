@@ -2,7 +2,7 @@
   <nav class="navbar">
     <transition name="x">
       <button @click="useRouter().go(-1)" class="icon-btn back"
-        v-if="route.name === 'imageview' || route.name === 'collection'">
+        v-if="route.name === 'imageview' || route.name === 'collection' || route.name === 'category'">
         <icon color="white" :path="mdiArrowLeft" />
       </button>
     </transition>
