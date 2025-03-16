@@ -22,7 +22,7 @@
 
 <script setup>
   import { mdiShape } from "@mdi/js";
-import collections from "~/static/data/collections.json";
+import collections from "~/static/collections.json";
   import buildObjectPath from "~/utils/client/buildObjectPath";
   import t from "~/utils/client/t";
 

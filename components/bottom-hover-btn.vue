@@ -15,6 +15,7 @@
   display: flex;
   justify-content: center;
   padding-bottom: 32px;
+  z-index: 50;
 
   .button {
     font-size: 18px;
