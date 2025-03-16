@@ -1,4 +1,4 @@
-import type { CollectionKeys } from "~/server/consts";
+import type { CollectionKeys } from '~/server/consts';
 
 export interface Exif {
 	ApertureValue: {
@@ -204,14 +204,17 @@ export interface Exif {
 	};
 }
 
-export interface Geo {
-	id: number;
-	pid: number;
-	deep: number;
+export interface GeoBasic {
 	name: string;
 	en_name?: string;
 	ext_path: string;
 	en_ext_path?: string;
+}
+
+export interface Geo extends GeoBasic {
+	id: number;
+	pid: number;
+	deep: number;
 	geo: string;
 	polygon: number[][][];
 }
@@ -227,40 +230,45 @@ export type CollectionDataBody = {
 	owner: any;
 };
 
-export type CollectionName = typeof CollectionKeys[number];
+export type CollectionName = (typeof CollectionKeys)[number];
 
 export interface Filetrees {
 	collections: Record<CollectionName, { files: CollectionDataBody[]; totalSize: number }>;
 	totalSize: number;
 }
 
-interface SpecialSpotBase {
-	includes?: string[];
-	timeRange?: string[][];
-}
-
-export interface SpecialSpotDefault extends SpecialSpotBase {
-	type: 'spot' | 'road';
+export type SpecialSpot = {
+	type: 'spot' | 'road' | 'flight' | 'subway-station';
 	name: string;
 	en_name?: string;
-}
-
-export interface SpecialSpotFlight extends SpecialSpotBase {
-	type: 'flight';
-}
-
-export interface SpecialSpotSubwayStation extends SpecialSpotBase {
-	type: 'subway-station';
-	line: string;
-	station: string;
-}
-
-export type SpecialSpot = SpecialSpotDefault | SpecialSpotFlight | SpecialSpotSubwayStation;
+	line?: string;
+	station?: string;
+	includes?: string[];
+	timeRange?: string[][];
+};
 
 export type Captions = { [prop: string]: string[] | string };
 
 export type ManualGeo = {
-	name: string,
-	ext_path: string,
-	includes: string[]
+	name: string;
+	ext_path: string;
+	includes: string[];
+};
+
+export type CategoryItem<T> = {
+	c: T;
+	firstImage: string;
+	count: number;
+};
+
+export interface Categories {
+	dates: CategoryItem<{ year: number; month: number }>[];
+	spots: CategoryItem<string>[];
+	regions: CategoryItem<{ geo: GeoBasic; isFlying: boolean }>[];
+	transportation: {
+		road: CategoryItem<{ name: string; loc: string }>[];
+		subwayStations: CategoryItem<{ line: string; station: string; ext_path: string }>[];
+	};
 }
+
+export type CategoryType = 'date' | 'road' | 'spot' | 'subway' | 'region';

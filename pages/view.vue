@@ -252,11 +252,11 @@
   import buildObjectPath from "~/utils/client/buildObjectPath";
   import withFallback from "~/utils/client/withFallback";
   import req from "~/utils/client/req";
-  import type { SpecialSpotDefault } from "~/types/common/objects";
   import t from "~/utils/client/t";
   import getDayjs from "~/utils/common/getDayjs";
   import hasHWA from "~/utils/client/hasHWA";
   import getImageNameByRemotePath from "~/utils/client/getImageNameByRemotePath";
+import removeGeoExtPathPrefix from "~/utils/client/removeGeoExtPathPrefix";
 
   const lang = useLanguage();
   const isExploring = useExploring();
@@ -272,7 +272,7 @@
 
   const geoName = computed(() => withFallback(lang.value, currentImage.data.result.geo?.en_name, currentImage.data.result.geo?.name));
   const geoExtPath = computed(() => withFallback(lang.value, currentImage.data.result.geo?.en_ext_path, currentImage.data.result.geo?.ext_path));
-  const geoExtPathPrefix = computed(() => geoExtPath.value.replace(`${geoName.value}`, '').replace(', ', ''));
+  const geoExtPathPrefix = computed(() => removeGeoExtPathPrefix(geoExtPath.value, geoName.value));
 
   const currentImage = reactive<Delayed<ResponseStoreItem>>({
     loading: false,
@@ -365,7 +365,7 @@
   function getSpecial(type: 'spot' | 'road') {
     const spotInfo = currentImage.data.result.special.filter(x => x.type === type);
     if (spotInfo.length === 0) return '';
-    return (spotInfo[0] as SpecialSpotDefault).name;
+    return spotInfo[0].name;
   }
 
   function getTimeOffsetName(offset: string) {
