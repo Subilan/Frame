@@ -34,19 +34,21 @@ export interface CollectionInfo {
 }
 
 export type I18n = {
-	collection: {
-		photoNum: string;
-		photoIsPicked: string;
+	collectionView: {
 		externalLinks: string;
 		viewNow: string;
 		noContent: string;
-		loadingCollection: string;
+		loading: string;
 		loadingPhotos: string;
 		fourOfour: {
 			title: string;
 			text: string;
 			goBack: string;
 		};
+	};
+	collection: {
+		photoNum: string;
+		photoIsPicked: string;
 		readExternal: string;
 		watchExternal: string;
 	};
