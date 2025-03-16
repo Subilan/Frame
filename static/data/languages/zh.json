@@ -1,17 +1,19 @@
 {
-  "collection": {
-    "photoNum": "$1/$2 张",
-    "photoIsPicked": "合集中展示了从 $2 张图中选出的 $1 张",
+  "collectionView": {
     "externalLinks": "外部链接",
     "viewNow": "立即查看",
     "noContent": "暂无更多内容",
-    "loadingCollection": "正在加载合集 “$1”...",
+    "loading": "正在加载$1 “$2”...",
     "loadingPhotos": "正在加载图片，请稍等...",
     "fourOfour": {
       "title": "FOUR-O-FOUR",
       "text": "无法找到合集 “$1”，请检查是否有拼写错误。",
       "goBack": "返回"
-    },
+    }
+  },
+  "collection": {
+    "photoNum": "$1/$2 张",
+    "photoIsPicked": "合集中展示了从 $2 张图中选出的 $1 张",
     "readExternal": "在 subilan.win 上阅读“$1”",
     "watchExternal": "在哔哩哔哩上观看“$1”"
   },

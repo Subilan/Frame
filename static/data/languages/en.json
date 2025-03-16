@@ -1,17 +1,19 @@
 {
-  "collection": {
-    "photoNum": "$1/$2 photos",
-    "photoIsPicked": "$1 photos are picked out of $2 in total.",
+  "collectionView": {
     "externalLinks": "EXTERNAL LINKS",
     "viewNow": "View Now",
     "noContent": "There's no content at this time.",
-    "loadingCollection": "Loading collection “$1”...",
+    "loading": "Loading $1 “$2”...",
     "loadingPhotos": "Loading more photos, just a moment...",
     "fourOfour": {
       "title": "FOUR-O-FOUR",
       "text": "Collection “$1” cannot be found, maybe there's some misspelling?",
       "goBack": "Go back"
-    },
+    }
+  },
+  "collection": {
+    "photoNum": "$1/$2 photos",
+    "photoIsPicked": "$1 photos are picked out of $2 in total.",
     "readExternal": "Read “$1” on subilan.win",
     "watchExternal": "Watch “$1” on bilibili.com"
   },
