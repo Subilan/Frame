@@ -1,5 +1,5 @@
-import Zh from '~/static/data/languages/zh.json';
-import En from '~/static/data/languages/en.json';
+import Zh from '~/static/languages/zh.json';
+import En from '~/static/languages/en.json';
 import type {I18n, I18nKeys} from "~/types/client";
 
 export default function (key: I18nKeys, ...params: any[]) {

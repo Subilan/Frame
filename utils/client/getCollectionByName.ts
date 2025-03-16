@@ -1,4 +1,4 @@
-import collections from '~/static/data/collections.json';
+import collections from '~/static/collections.json';
 import type {CollectionInfo} from "~/types/client";
 
 export default function (name: string): CollectionInfo | null {
