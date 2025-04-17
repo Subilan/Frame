@@ -13,6 +13,11 @@
             <div class="spacer"/>
             <span class="active-icon"><icon :path="mdiCheck"/></span>
           </a>
+          <a @click="model = false" v-if="route.name === 'categories'" class="router-link-exact-active">
+            {{ t('mobileNavigation.categories') }}
+            <div class="spacer"/>
+            <span class="active-icon"><icon :path="mdiCheck"/></span>
+          </a>
           <a @click="model = false" v-if="route.name === 'collection'" class="router-link-exact-active">
             {{ currentCollection?.name[lang] }}
             <div class="spacer"/>

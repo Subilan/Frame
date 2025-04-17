@@ -15,9 +15,7 @@
             </span>
         </template>
         <template #description>
-            <template v-if="type === 'date'">
-                <p>这里列出了已上传的拍摄于 {{ name.split('.').join(' 年 ') }} 月的照片。</p>
-            </template>
+
         </template>
     </collection-view>
 </template>

@@ -13,6 +13,7 @@ $fontFamilyMonospaceSet: 'Consolas', 'Menlo', monospace;
 body {
 	margin: 0;
 	font-family: $fontFamilySet;
+	background: #fafafa;
 }
 
 .spacer {
@@ -135,10 +136,12 @@ h6 {
 	cursor: pointer;
 	overflow: hidden;
 
-	&:hover {
-		border-color: $primaryd;
-		box-shadow: 0 15px 18px rgba(0, 0, 0, 0.2);
-		transform: translateY(-5px);
+	@media (min-width: 768px) {
+		&:hover {
+			border-color: $primaryd;
+			box-shadow: 0 15px 18px rgba(0, 0, 0, 0.2);
+			transform: translateY(-5px);
+		}
 	}
 }
 

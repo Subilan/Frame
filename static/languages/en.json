@@ -70,6 +70,7 @@
   },
   "mobileNavigation": {
     "viewer": "Viewer",
-    "home": "Home"
+    "home": "Home",
+    "categories": "Categories"
   }
 }

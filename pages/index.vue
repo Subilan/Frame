@@ -202,7 +202,7 @@
 
 .index-background {
   width: 100vw;
-  height: calc(100vh - #{global.$navbarHeight});
+  height: calc(100dvh - #{global.$navbarHeight});
   background-size: cover;
   background-position: center;
   position: relative;

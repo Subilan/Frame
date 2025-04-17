@@ -105,7 +105,8 @@ export type I18n = {
 	};
 	mobileNavigation: {
 		viewer: string;
-		home: string
+		home: string;
+		categories: string;
 	};
 };
 

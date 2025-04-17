@@ -6,17 +6,18 @@
         <h1>按分类查看</h1>
         <p>根据照片本身存储和人工标记的数据，这里列出了几个分类维度，以便快速查阅满足相关条件的图片。</p>
         <div class="available-categories">
-          <div class="available-category" v-for="x in availableCategories">
+          <div class="available-category" v-for="x in availableCategories" @click="scrollToSection(x)">
             <h3>{{ getCategoryTypeName(x)[lang] }} <small>{{ t('collectionView.photoNumSimple', x === 'transportation' ?
               (getTotalCount(categories.transportation.road) +
                 getTotalCount(categories.transportation.subway)) : getTotalCount(categories[x])) }}</small></h3>
             <span>{{ availableCategoryDescriptions[x] }}</span>
+            <icon :path="availableCategoryIcons[x]" />
           </div>
         </div>
       </div>
     </section>
-    <section>
-      <h2>按时间</h2>
+    <section id="by-date">
+      <h2>按日期</h2>
       <div class="categories">
         <div class="category" v-for="x in categories.date"
           @click="navigateTo(`/category/date/${x.c.year}.${x.c.month}`)"
@@ -28,7 +29,7 @@
         </div>
       </div>
     </section>
-    <section>
+    <section id="by-region">
       <h2>按地区</h2>
       <select v-model="regionLevel">
         <option value="2">三级（区）</option>
@@ -55,7 +56,7 @@
         </div>
       </div>
     </section>
-    <section>
+    <section id="by-spot">
       <h2>按特定地点</h2>
       <div class="categories">
         <div class="category" v-for="x in categories.spot"
@@ -70,7 +71,7 @@
         </div>
       </div>
     </section>
-    <section>
+    <section id="by-transportation">
       <h2>按交通设施</h2>
       <div class="categories">
         <div class="category" v-for="x in categories.transportation.road"
@@ -78,7 +79,7 @@
           @click="navigateTo(`/category/road/${x.c.name}`)">
           <div class="text">
             <div class="primary">
-              <img alt="svg" height="45px" :src="`/road-svg/${x.c.name}.svg`" draggable="false" />
+              <img alt="svg" :src="`/road-svg/${x.c.name}.svg`" draggable="false" />
               {{ getRoadName(x.c.name) }} · {{ x.c.loc }}
             </div>
             <div class="secondary">
@@ -91,7 +92,7 @@
           @click="navigateTo(`/category/subway/${x.c.line}@${x.c.station}`)">
           <div class="text">
             <div class="primary">
-              <img alt="svg" height="45px" :src="`/subway-svg/${x.c.line}.svg`" draggable="false" />
+              <img alt="svg" :src="`/subway-svg/${x.c.line === 'chongqing-2-3' ? 'chongqing-2-3-white' : x.c.line}.svg`" draggable="false" />
               {{ x.c.station }}
             </div>
             <div class="secondary">
@@ -104,12 +105,12 @@
   </div>
 
   <bottom-hover-btn @c="navigateTo('/collections')">
-    <icon :path="mdiFile" />按合集查看
+    <icon :path="mdiImageMultiple" />按合集查看
   </bottom-hover-btn>
 </template>
 
 <script lang="ts" setup>
-  import { mdiAirplane, mdiArchive, mdiFile } from '@mdi/js';
+  import { mdiAirplane, mdiCalendar, mdiCreationOutline, mdiFile, mdiImageMultiple, mdiMapMarker, mdiTrain } from '@mdi/js';
   import Category from '~/static/category.json';
   import type { Categories, CategoryType } from '~/types/common/objects';
   import removeGeoExtPathPrefix from '~/utils/client/removeGeoExtPathPrefix';
@@ -196,6 +197,12 @@
     return '';
   }
 
+  function scrollToSection(category: string) {
+    document.getElementById(`by-${category}`)?.scrollIntoView({
+      behavior: 'smooth'
+    });
+  }
+
   const availableCategories: (keyof Categories)[] = ['date', 'region', 'spot', 'transportation'];
   const availableCategoryDescriptions: { [key in CategoryType]: string } = {
     road: '',
@@ -205,16 +212,27 @@
     region: '根据图片拍摄时记录的 GPS 信息，按拍摄地点的三级行政区划（香港特别行政区只有两级数据）进行分类，如“深圳市”。',
     transportation: '根据图片拍摄所处位置附近的交通设施进行分类，例如公路，包括国道、省道和高速公路，或者某个城市具体的地铁站，如“G217”或“深圳 3 号线草埔”。'
   }
+  const availableCategoryIcons: { [key in CategoryType]: string } = {
+    road: '',
+    date: mdiCalendar,
+    spot: mdiCreationOutline,
+    region: mdiMapMarker,
+    transportation: mdiTrain,
+    subway: ''
+  }
 </script>
 
 <style lang="scss" scoped>
 @use '@/assets/global';
 
 .hero {
-  height: calc(100vh - global.$navbarHeight);
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (min-width: 768px) {
+    height: calc(100dvh - global.$navbarHeight);
+  }
 
   p {
     text-align: center;
@@ -241,12 +259,43 @@
     @extend .card;
     padding: 16px;
 
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
+
     h3 {
       font-size: 28px;
       margin-top: 0;
 
+      @media (max-width: 768px) {
+        font-size: 20px;
+      }
+
       small {
         font-weight: normal;
+      }
+    }
+
+    svg {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      opacity: .05;
+      height: 100px;
+      width: 100px;
+      transition: all .2s ease;
+
+      @media (max-width: 768px) {
+        height: 70px;
+        width: 70px;
+        bottom: unset;
+        top: 16px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      &:hover svg {
+        opacity: .1;
       }
     }
   }
@@ -269,7 +318,10 @@ select {
 .categories-container {
   font-size: 18px;
   line-height: 1.5;
-  margin-top: 0;
+
+  @media (min-width: 768px) {
+    margin-top: 0;
+  }
 
   h1 {
     font-size: 250%;
@@ -287,10 +339,10 @@ select {
     text-align: center;
   }
 
-  section {
+  section:not(:first-of-type) {
     margin: 32px 0;
 
-    > p {
+    >p {
       text-align: center;
     }
   }
@@ -317,16 +369,17 @@ select {
     background-position: center;
     position: relative;
 
-    &:hover {
-
-      &::after {
-        background: rgba($color: #000000, $alpha: .1);
+    @media (min-width: 768px) {
+      &:hover {
+        &::after {
+          background: rgba($color: #000000, $alpha: .1);
+        }
       }
     }
 
     &::after {
       content: '';
-      background: rgba($color: #000000, $alpha: .3);
+      background: rgba($color: #000000, $alpha: .5);
       transition: all .2s ease;
       position: absolute;
       top: 0;
@@ -350,10 +403,31 @@ select {
         display: flex;
         align-items: center;
         gap: 10px;
+        margin-bottom: 8px;
+
+        @media (max-width: 768px) {
+          flex-wrap: wrap;
+        }
+
+        img {
+          height: 45px;
+
+          @media (max-width: 768px) {
+            height: 38px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          font-size: 24px;
+        }
       }
 
       .secondary {
         color: #ddd;
+
+        @media (max-width: 768px) {
+          font-size: 14px;
+        }
       }
     }
   }
