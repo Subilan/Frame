@@ -204,3 +204,24 @@ kbd {
 	padding: 32px 16px;
 	max-width: 1200px;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all .2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fadeup-enter-active,
+.fadeup-leave-active {
+  transition: all .2s ease;
+}
+
+.fadeup-enter-from,
+.fadeup-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}

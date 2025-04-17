@@ -54,27 +54,6 @@ const currentCollection = computed(() => getCollectionByName(route.params.collec
 <style lang="scss">
 @use "assets/global";
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: all .2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fadeup-enter-active,
-.fadeup-leave-active {
-  transition: all .2s ease;
-}
-
-.fadeup-enter-from,
-.fadeup-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
 .drawer-layer {
   height: 100%;
   width: 100%;

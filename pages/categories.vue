@@ -104,7 +104,7 @@
     </section>
   </div>
 
-  <bottom-hover-btn @c="navigateTo('/collections')">
+  <bottom-hover-btn :default-toggle="true" @c="navigateTo('/collections')">
     <icon :path="mdiImageMultiple" />按合集查看
   </bottom-hover-btn>
 </template>

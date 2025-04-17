@@ -15,7 +15,7 @@
     </router-link>
   </div>
 
-  <bottom-hover-btn @c="navigateTo('/categories')">
+  <bottom-hover-btn :default-toggle="true" @c="navigateTo('/categories')">
     <icon :path="mdiShape" />按分类查看
   </bottom-hover-btn>
 </template>
