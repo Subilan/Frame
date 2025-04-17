@@ -223,6 +223,9 @@
             <img alt="svg" height="40px" :src="`/subway-svg/${getSubwayStationInfo()?.line}.svg`" draggable="false" />
             {{ getSubwayStationInfo()?.station }}
           </template>
+          <template v-else-if="isSpecial('flight')">
+            <icon :path="mdiAirplane"/> 飞行中
+          </template>
           <template v-else-if="isNotSpecial()">
             {{ geoName }}
           </template>
@@ -485,6 +488,7 @@ import removeGeoExtPathPrefix from "~/utils/client/removeGeoExtPathPrefix";
 
     .secondary {
       color: #aaa;
+      font-style: normal;
     }
   }
 }

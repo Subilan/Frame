@@ -16,7 +16,7 @@
           <icon :path="mdiPackageVariant" /> {{ (collection.totalSize / 1024 / 1024 / 1024).toFixed(2) }} GB
         </span>
       </template>
-      <template #externalLinks>
+      <template #externalLinks v-if="collection.external">
         <a target="_blank" :href="x.href" v-for="x in collection.external.filter(x => x.type === 'article')">
           {{ t('collection.readExternal', x.name) }}
         </a>

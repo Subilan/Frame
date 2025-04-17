@@ -5,7 +5,7 @@
             <div class="left">
                 <h2>
                     <template v-if="title && !useSlots()['title']">{{ title }}</template>
-                    <slot name="title" />&nbsp;&nbsp;<small>{{ subtitle }}</small>
+                    <slot name="title" /><small>{{ subtitle }}</small>
                 </h2>
                 <div class="meta">
                     <slot name="meta" />
@@ -93,6 +93,9 @@
         bindCount: {
             type: Boolean,
             default: false
+        },
+        description: {
+            type: String
         }
     })
 
@@ -293,7 +296,7 @@
         margin-bottom: 10px;
         display: flex;
         gap: 16px;
-        align-content: center;
+        align-items: baseline;
 
         @media (max-width: 768px) {
             font-size: 40px;

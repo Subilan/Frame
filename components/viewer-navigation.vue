@@ -35,7 +35,7 @@
                             <icon :path="mdiArrowLeft" />
                         </div>
                         <div class="text">
-                            {{ t('view.navigationPanel.prev') }}
+                            {{ t('view.navigationPanel.prev') }}<br/><small>{{ t('view.navigationPanel.inCollection', collection.name[lang]) }}</small>
                         </div>
                     </div>
 
@@ -45,7 +45,7 @@
                             <icon :path="mdiArrowRight" />
                         </div>
                         <div class="text">
-                            {{ t('view.navigationPanel.next') }}
+                            {{ t('view.navigationPanel.next') }}<br/><small>{{ t('view.navigationPanel.inCollection', collection.name[lang]) }}</small>
                         </div>
                     </div>
                 </div>
