@@ -9,28 +9,32 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps({
-  showOnScroll: {
-    type: Boolean,
-    default: true
-  },
-  defaultToggle: {
-    type: Boolean,
-    default: false
-  }
-})
+  import isMobile from '~/utils/client/isMobile';
 
-const toggle = ref(props.defaultToggle);
-
-let prevScrollTop = 0;
-
-onMounted(() => {
-  window.addEventListener('scroll', e => {
-    const delta =  prevScrollTop - (document.scrollingElement?.scrollTop || 0);
-    toggle.value = delta < 0;
-    prevScrollTop = document.scrollingElement?.scrollTop || 0;
+  const props = defineProps({
+    showOnScroll: {
+      type: Boolean,
+      default: true
+    },
+    defaultToggle: {
+      type: Boolean,
+      default: false
+    }
   })
-})
+
+  const toggle = ref(props.defaultToggle);
+
+  let prevScrollTop = 0;
+
+  onMounted(() => {
+    if (!isMobile()) {
+      window.addEventListener('scroll', e => {
+        const delta = prevScrollTop - (document.scrollingElement?.scrollTop || 0);
+        toggle.value = delta < 0;
+        prevScrollTop = document.scrollingElement?.scrollTop || 0;
+      })
+    }
+  })
 </script>
 
 <style lang="scss">
