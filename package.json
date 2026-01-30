@@ -1,0 +1,39 @@
+{
+  "name": "frame2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "@react-router/node": "^7.9.2",
+    "@react-router/serve": "^7.9.2",
+    "@types/react-transition-group": "^4.4.12",
+    "ali-oss": "^6.23.0",
+    "isbot": "^5.1.31",
+    "lucide-react": "^0.555.0",
+    "lucide-static": "^0.556.0",
+    "photoswipe": "^5.4.4",
+    "photoswipe-dynamic-caption-plugin": "^1.2.7",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-remove-scroll": "^2.7.2",
+    "react-router": "^7.9.2",
+    "react-transition-group": "^4.4.5"
+  },
+  "devDependencies": {
+    "@ltd/j-toml": "^1.38.0",
+    "@react-router/dev": "^7.9.2",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^22",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}
