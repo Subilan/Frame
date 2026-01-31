@@ -7,8 +7,11 @@ export type ModalProps = {
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	children: ReactNode;
+	overlayChildren?: ReactNode;
 	width?: string;
 };
+
+export type ModalControl = Pick<ModalProps, 'open' | 'setOpen'>;
 
 export default function Modal(props: ModalProps) {
 	const handleKeydown = useCallback(
@@ -30,7 +33,13 @@ export default function Modal(props: ModalProps) {
 	const targetRef = useRef(null);
 
 	return (
-		<CSSTransition unmountOnExit in={props.open} nodeRef={targetRef} timeout={200} classNames={'fade'}>
+		<CSSTransition
+			unmountOnExit
+			in={props.open}
+			nodeRef={targetRef}
+			timeout={200}
+			classNames={'fade'}
+		>
 			<RemoveScroll>
 				<div
 					ref={targetRef}
@@ -39,12 +48,20 @@ export default function Modal(props: ModalProps) {
 						props.setOpen(false);
 					}}
 				>
-					<div className="rounded-3xl relative shadow-2xl p-8 bg-neutral-800 mx-5 xl:mx-0" style={{ width: props.width || '400px' }} onClick={e => e.stopPropagation()}>
-						<div onClick={() => props.setOpen(false)} className="rounded-full cursor-pointer hover:opacity-60 active:opacity-30 absolute top-8 right-8">
+					<div
+						className="rounded-3xl relative shadow-2xl p-8 bg-neutral-800 mx-5 xl:mx-0"
+						style={{ width: props.width || '400px' }}
+						onClick={e => e.stopPropagation()}
+					>
+						<div
+							onClick={() => props.setOpen(false)}
+							className="rounded-full cursor-pointer hover:opacity-60 active:opacity-30 absolute top-8 right-8"
+						>
 							<XIcon />
 						</div>
 						{props.children}
 					</div>
+					{props.overlayChildren}
 				</div>
 			</RemoveScroll>
 		</CSSTransition>

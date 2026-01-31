@@ -1,7 +1,7 @@
 export default function FooterEl() {
 	return (
 		<div className="p-5">
-			<div className="flex items-center text-neutral-500">
+			<div className="flex lg:flex-row flex-col gap-1 lg:gap-0 lg:items-center text-neutral-500">
 				<p>the frame</p>
 				<div className="flex-1 h-px mx-3 bg-neutral-800" />
 				<p>

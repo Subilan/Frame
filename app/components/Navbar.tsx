@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import Modal from './Modal';
 import collections from '~/data/collections.json';
+import SearchModal from '~/components/SearchModal';
 
 export type NavbarProps = {};
 
@@ -26,6 +27,8 @@ export default function Navbar(props: NavbarProps) {
 		[collectionName]
 	);
 
+	const [searchModalOpen, setSearchModalOpen] = useState(false);
+
 	return (
 		<>
 			<nav className="p-5 h-[68px] fixed top-0 w-full flex items-center gap-3 bg-neutral-900/90 backdrop-blur-xs z-20">
@@ -35,7 +38,7 @@ export default function Navbar(props: NavbarProps) {
 				</div>
 				<div className="flex-1" />
 				<div className="flex gap-5">
-					<SearchIcon className="cursor-pointer" size={'20'} />
+					<SearchIcon onClick={() => setSearchModalOpen(true)} className="cursor-pointer" size={'20'} />
 					{isIndexPage && (
 						<>
 							<InfoIcon
@@ -56,6 +59,8 @@ export default function Navbar(props: NavbarProps) {
 					)}
 				</div>
 			</nav>
+
+			<SearchModal open={searchModalOpen} setOpen={setSearchModalOpen}/>
 
 			{currentCollection?.story && (
 				<Modal
