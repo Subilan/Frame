@@ -1,18 +1,18 @@
-import { Fragment, useEffect, useState } from 'react';
-import { data, useParams } from 'react-router';
+import { useEffect, useState } from 'react';
+import { data, useLoaderData, useParams } from 'react-router';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/photoswipe.css';
 // @ts-ignore
 import PhotoSwipeDynamicCaption from 'photoswipe-dynamic-caption-plugin';
 import 'photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.css';
 import Card from '~/components/Card';
-import useFiletree, { getFiletree } from '~/hooks/useFiletree';
-import useCollection from '~/hooks/useCollection';
-import useCaptions from '~/hooks/useCaptions';
 import InfoIcon from 'lucide-static/icons/info.svg?raw';
 import Modal from '~/components/Modal';
-import type { Exif } from '~/data/exifs';
 import './collection.css';
+import type { Exif } from '~/data/exifs';
+import type { Route } from './+types/collection';
+import type { CollectionItem, CollectionMeta } from '~/data/types';
+import { DataPath, SlashSubstitute } from '~/consts';
 
 const exifDisplay: {
 	cond?: (exif: Exif, ...extra: any[]) => boolean;
@@ -88,24 +88,44 @@ const exifDisplay: {
 	}
 ];
 
-export default function Collection() {
-	const routeName = useParams()['*'];
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+	// @ts-ignore
+	const collectionName = params['*'] as string | undefined;
 
-	if (!routeName) {
-		throw data('Not Found', { status: 404 });
+	if (!collectionName) throw data('Not Found', { status: 404 });
+
+	const collectionNameNormalized = collectionName.replace('/', SlashSubstitute);
+
+	let meta, filetree;
+	let metaData: CollectionMeta;
+	try {
+		meta = await fetch(DataPath + `/collections/${collectionNameNormalized}.json`);
+		if (meta.status !== 200) throw data(meta.statusText, meta.status);
+
+		metaData = (await meta.json()) as CollectionMeta;
+
+		// 如果这是一个叶子目录，就获取其filetree信息，否则不获取。
+		if (!metaData.parent) {
+			filetree = await fetch(DataPath + `/filetrees/${collectionNameNormalized}.json`);
+			if (filetree.status !== 200) throw data(filetree.statusText, filetree.status);
+		} else {
+			filetree = null;
+		}
+	} catch (e) {
+		throw data('Cannot fetch', { status: 500 });
 	}
 
-	const collection = useCollection(routeName);
+	return {
+		meta: metaData,
+		filetree: filetree && ((await filetree.json()) as CollectionItem[])
+	};
+}
 
-	if (!collection) {
-		throw data('Not Found', { status: 404 });
-	}
-
-	const filetree = useFiletree(routeName);
-	const captions = useCaptions(routeName);
+export default function Collection({ loaderData }: Route.ComponentProps) {
+	const { meta, filetree } = loaderData;
 
 	useEffect(() => {
-		if (collection.parent) {
+		if (meta.parent) {
 			return;
 		}
 
@@ -128,32 +148,14 @@ export default function Collection() {
 				isButton: true,
 				html: `<div class="lightbox-custom-button">${InfoIcon}</div>`,
 				onClick(e, element, pswp) {
-					fetch('/exifs_indexed.json')
-						.then(r => r.json())
-						.then(j => {
-							const ossName = element.getAttribute('data-oss-name');
-							if (ossName !== null) {
-								const exif = j[ossName];
-								if (exif !== undefined && exif.exif !== undefined) {
-									setCurrentExif(exif.exif);
-									setExifModalOpen(true);
-								}
-							}
-						});
+					const ossName = element.getAttribute('data-oss-name');
+					const current = filetree?.find(x => x.name === ossName);
 
-					fetch('/regeo.json')
-						.then(r => r.json())
-						.then(j => {
-							const ossName = element.getAttribute('data-oss-name');
-							if (ossName !== null) {
-								const geo = j[ossName];
-
-								if (geo !== undefined) {
-									const c = geo.addressComponent;
-									setCurrentExifGPSAddr(c.province + c.city + c.district);
-								}
-							}
-						});
+					if (current?.exif) {
+						setCurrentExif(current.exif);
+						setCurrentExifGPSAddr(current.addr);
+						setExifModalOpen(true);
+					}
 				},
 				onInit(element, pswp) {
 					pswp.on('change', () => {
@@ -175,11 +177,11 @@ export default function Collection() {
 		return () => {
 			lightbox.destroy();
 		};
-	}, [routeName]);
+	}, [meta]);
 
 	const [exifModalOpen, setExifModalOpen] = useState(false);
-	const [currentExif, setCurrentExif] = useState<Exif | undefined>();
-	const [currentExifGPSAddr, setCurrentExifGPSAddr] = useState<string | undefined>();
+	const [currentExif, setCurrentExif] = useState<Exif>();
+	const [currentExifGPSAddr, setCurrentExifGPSAddr] = useState<string>();
 
 	return (
 		<>
@@ -187,7 +189,7 @@ export default function Collection() {
 			<div className="max-w-[1200px] mx-auto my-16">
 				<section className="mb-10 flex flex-col gap-5 items-center text-center">
 					<div className="flex flex-col gap-3 items-center">
-						<h1 className="font-bold text-5xl">{collection.title}</h1>
+						<h1 className="font-bold text-5xl">{meta.title}</h1>
 						{/* {collection.locations && (
 							<div className="flex items-center gap-2">
 								{Array.isArray(collection.locations)
@@ -203,19 +205,22 @@ export default function Collection() {
 							</div>
 						)} */}
 					</div>
-					<p className="text-neutral-400 max-w-[350px]">{collection.description}</p>
+					<p className="text-neutral-400 max-w-[350px]">{meta.description}</p>
 				</section>
 			</div>
 
 			{/* 照片部分 */}
-			{!collection.parent && (
-				<div className="w-full grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 pswp-gallery" id="gallery">
-					{filetree?.files.map((f, i) => (
+			{!meta.parent && filetree && (
+				<div
+					className="w-full grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 pswp-gallery"
+					id="gallery"
+				>
+					{filetree.map((f, i) => (
 						<a
 							data-cropped={true}
 							data-oss-name={f.name}
-							data-pswp-height={f.height}
-							data-pswp-width={f.width}
+							data-pswp-height={f.exif?.ImageHeight.value}
+							data-pswp-width={f.exif?.ImageWidth.value}
 							href={`${f.url}`}
 							key={`gallery-${i}`}
 							target="_blank"
@@ -226,17 +231,15 @@ export default function Collection() {
 								src={`${f.url}?x-oss-process=image/resize,h_500`}
 								className="object-cover object-center h-[250px] xl:h-[350px] w-full"
 							/>
-							{captions[f.name] && (
+							{f.caption && (
 								<>
 									<div className="absolute right-4 bottom-4 bg-black/60 z-10 rounded-lg px-3 font-bold">
 										ALT
 									</div>
 									<div className="pswp-caption-content">
-										{captions[f.name].title && (
-											<strong>{captions[f.name].title}</strong>
-										)}
+										{f.caption.title && <strong>{f.caption.title}</strong>}
 										<div className="whitespace-pre-wrap">
-											{captions[f.name].content.trimEnd()}
+											{f.caption.content.trimEnd()}
 										</div>
 									</div>
 								</>
@@ -247,20 +250,18 @@ export default function Collection() {
 			)}
 
 			{/* 子相册卡片 */}
-			{collection.parent && (
+			{meta.parent && meta.children && (
 				<div className="max-w-[1200px] mx-5 xl:mx-auto grid grid-cols-1 xl:grid-cols-3 gap-8">
-					{collection.children.map(c => {
-						const path = `${collection.name}/${c.name}`;
-						const filetreeLength = getFiletree(path)?.files.length;
-
-						if (filetreeLength) {
+					{meta.children.map(c => {
+						if (meta.childSizes[c.name] > 0) {
+							const childPath = meta.name + '/' + c.name;
 							return (
 								<Card.Medium
-									key={path}
+									key={childPath}
 									bg={c.image + '?x-oss-process=resize,h_500'}
-									to={`/collection/${path}`}
+									to={`/collection/${childPath}`}
 									title={c.title}
-									count={filetreeLength}
+									count={meta.childSizes[c.name]}
 								/>
 							);
 						}
