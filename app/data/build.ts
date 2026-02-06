@@ -7,12 +7,16 @@ import type { Exif } from './exifs';
 import * as Toml from '@ltd/j-toml';
 import type {
 	CaptionItem,
+	Category,
+	CategoryMeta,
+	CityCategoryMeta,
 	CollectionItem,
 	CollectionMeta,
 	RegeoItem
 } from '~/data/types';
 import path from 'path';
 import { SlashSubstitute } from '../consts';
+import parseExifTime from '~/data/utils/parseExifTime';
 
 const METRICS_START_TIME = Date.now();
 const SCRIPT_PATH = import.meta.dirname;
@@ -145,11 +149,34 @@ console.log(`✅ 读取到 ${parseTomlCaptionTasks.length} 个注解文件，共
 
 // const searchIndex: Record<string, Pick<CollectionItem, 'name' | 'url'>> = {};
 
+const categoryCity: Category = {};
+const categoryCityMetas: CategoryMeta<CityCategoryMeta> = {};
+const categoryYear: Category = {};
+const categoryYearMetas: CategoryMeta = {};
+
 const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 	// 获取exif字段
 	await Promise.all(
 		collectionFiletrees[k].map(async item => {
 			item.exif = await retrieveExifForName(item.name);
+
+			if (item.exif) {
+				const time = parseExifTime(item.exif.DateTime.value);
+				if (time) {
+					const year = time.getFullYear();
+					if (categoryYear[year] === undefined) {
+						categoryYear[year] = [{ name: item.name, url: item.url }];
+						categoryYearMetas[year] = { total: 1 };
+					} else {
+						if (categoryYear[year].length < 3)
+							categoryYear[year].push({
+								name: item.name,
+								url: item.url
+							});
+						categoryYearMetas[year].total++;
+					}
+				}
+			}
 
 			// if (item.exif) {
 			// 	const time = parseExifTime(item.exif.DateTime.value);
@@ -202,6 +229,37 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 	// 获取addr字段
 	collectionFiletrees[k].forEach(item => {
 		const regeoItem = regeo[item.name];
+		if (regeoItem) {
+			item.addr =
+				regeoItem.addressComponent.province +
+				regeoItem.addressComponent.city +
+				regeoItem.addressComponent.district +
+				regeoItem.addressComponent.township;
+
+			if (
+				regeoItem.addressComponent.city.length > 0 ||
+				regeoItem.addressComponent.province.length > 0
+			) {
+				const city =
+					regeoItem.addressComponent.city.length > 0
+						? regeoItem.addressComponent.city
+						: regeoItem.addressComponent.province;
+				if (categoryCity[city] === undefined) {
+					categoryCityMetas[city] = {
+						province:
+							regeoItem.addressComponent.province.length > 0
+								? regeoItem.addressComponent.province
+								: city,
+						total: 1
+					};
+					categoryCity[city] = [{ name: item.name, url: item.url }];
+				} else {
+					if (categoryCity[city].length < 3)
+						categoryCity[city].push({ name: item.name, url: item.url });
+					categoryCityMetas[city].total++;
+				}
+			}
+		}
 	});
 
 	// 写入单独的文件
@@ -214,6 +272,12 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 });
 
 await Promise.all(writeFiletreeTasks);
+
+await mkdir(DIST_PATH + '/categories');
+await fs.writeFile(DIST_PATH + '/categories/city-meta.json', JSON.stringify(categoryCityMetas));
+await fs.writeFile(DIST_PATH + '/categories/city.json', JSON.stringify(categoryCity));
+await fs.writeFile(DIST_PATH + '/categories/year.json', JSON.stringify(categoryYear));
+await fs.writeFile(DIST_PATH + '/categories/year-meta.json', JSON.stringify(categoryYearMetas));
 
 console.log(`☂️ 构建集合元信息...`);
 

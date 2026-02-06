@@ -21,6 +21,8 @@ export type CollectionItem = OSS.ObjectMeta & {
 	addr?: string;
 };
 
+export type SimpleCollectionItem = Pick<CollectionItem, 'name' | 'url'>;
+
 // 单个注解的结构
 export type CaptionItem = { title?: string; content: string };
 
@@ -54,3 +56,11 @@ export type RegeoItem = {
 	};
 	formatted_address: string;
 };
+
+export type CityCategoryMeta = {
+	province?: string;
+};
+
+export type CategoryMeta<T extends Record<string, any> = {}> = Record<string, T & { total: number }>;
+
+export type Category = Record<string, SimpleCollectionItem[]>;

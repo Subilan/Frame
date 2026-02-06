@@ -1,9 +1,7 @@
 import Card from '~/components/Card';
 import type { Route } from './+types/index';
 import { useMemo } from 'react';
-import { data, useOutletContext } from 'react-router';
-import type { CollectionMeta } from '~/data/types';
-import { DataPath } from '~/consts';
+import { useOutletContext } from 'react-router';
 import type { NavLayoutOutletContext } from '~/layouts/NavLayout';
 
 export function meta({}: Route.MetaArgs) {
@@ -26,10 +24,12 @@ export default function Index({}: Route.ComponentProps) {
 		() => Object.values(allCollections).find(x => x.featured === true),
 		[allCollections]
 	);
+
 	const nonFeaturedTopCollections = useMemo(
 		() => Object.values(allCollections).filter(x => !x.featured && x.level === 0),
 		[allCollections]
 	);
+
 	return (
 		<div className="max-w-[1200px] mx-5 xl:mx-auto my-16">
 			<section className="mb-10 flex flex-col gap-3 align-center text-center">
@@ -43,7 +43,7 @@ export default function Index({}: Route.ComponentProps) {
 						title={featuredCollection.title}
 						featured
 						count={featuredCollection.size}
-						bg={featuredCollection.image + '?x-oss-process=resize,h_1080'}
+						bg={featuredCollection.image + '?x-oss-process=image/resize,h_1080'}
 					/>
 				)}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -53,7 +53,7 @@ export default function Index({}: Route.ComponentProps) {
 							to={cpath(c.name)}
 							title={c.title}
 							count={c.size}
-							bg={c.image + '?x-oss-process=resize,h_500'}
+							bg={c.image + '?x-oss-process=image/resize,h_500'}
 						/>
 					))}
 				</div>

@@ -3,8 +3,8 @@ import { Link } from 'react-router';
 export type CardProps = {
 	bg: string;
 	featured?: boolean;
-	title: string;
-	count: number | string;
+	title?: string;
+	count?: number | string;
 	to: string;
 };
 
@@ -36,12 +36,14 @@ export function Medium(props: CardProps) {
 				className="card h-[200px]"
 				style={{ backgroundImage: `url(${props.bg})` }}
 			/>
-			<div className="flex flex-col gap-3 leading-loose">
-				<h2 className="text-xl">{props.title}</h2>
-				<div className="text-sm flex gap-2">
-					<span>{props.count} 张照片</span>
+			{props.title && props.count && (
+				<div className="flex flex-col gap-3 leading-loose">
+					<h2 className="text-xl">{props.title}</h2>
+					<div className="text-sm flex gap-2">
+						<span>{props.count} 张照片</span>
+					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 }
