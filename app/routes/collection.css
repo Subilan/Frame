@@ -1,3 +1,5 @@
+@reference 'tailwindcss';
+
 .lightbox-custom-button {
 	display: flex;
 	align-items: center;
@@ -7,4 +9,12 @@
 .lightbox-custom-button svg {
 	width: 16px;
 	height: 16px;
+}
+
+a.inpage-link {
+	@apply text-sky-500 hover:underline cursor-pointer;
+}
+
+a.inpage-link svg {
+	@apply inline align-sub mr-1;
 }
