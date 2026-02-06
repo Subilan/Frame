@@ -264,7 +264,7 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 							return (
 								<Card.Medium
 									key={childPath}
-									bg={c.image + '?x-oss-process=resize,h_500'}
+									bg={c.image + '?x-oss-process=image/resize,h_500'}
 									to={`/collection/${childPath}`}
 									title={c.title}
 									count={meta.childSizes[c.name]}

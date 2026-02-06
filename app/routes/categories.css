@@ -1,0 +1,9 @@
+@reference 'tailwindcss';
+
+.category-button {
+	@apply flex items-center border gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer bg-neutral-800/50 border-neutral-700 hover:bg-neutral-800 active:bg-neutral-700 rounded-full py-1 px-3;
+}
+
+.category-button.active {
+	@apply bg-sky-600 text-white border-white/20;
+}

@@ -13,3 +13,11 @@ html,
 body {
 	@apply bg-neutral-900 text-white;
 }
+
+a.inpage-link {
+	@apply text-sky-500 hover:underline cursor-pointer;
+}
+
+a.inpage-link svg {
+	@apply inline align-sub mr-1;
+}
