@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { data, useLoaderData, useParams } from 'react-router';
+import { data, useNavigate } from 'react-router';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/photoswipe.css';
 // @ts-ignore
@@ -13,6 +13,7 @@ import type { Exif } from '~/data/exifs';
 import type { Route } from './+types/collection';
 import type { CollectionItem, CollectionMeta } from '~/data/types';
 import { DataPath, SlashSubstitute } from '~/consts';
+import { ArrowLeftIcon } from 'lucide-react';
 
 const exifDisplay: {
 	cond?: (exif: Exif, ...extra: any[]) => boolean;
@@ -183,12 +184,17 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 	const [currentExif, setCurrentExif] = useState<Exif>();
 	const [currentExifGPSAddr, setCurrentExifGPSAddr] = useState<string>();
 
+	const navigate = useNavigate();
 	return (
 		<>
 			{/* 标题部分 */}
 			<div className="max-w-[1200px] mx-auto my-16">
 				<section className="mb-10 flex flex-col gap-5 items-center text-center">
 					<div className="flex flex-col gap-3 items-center">
+						<a className="inpage-link" onClick={() => navigate(-1)}>
+							<ArrowLeftIcon size={20} />
+							返回上一页
+						</a>
 						<h1 className="font-bold text-5xl">{meta.title}</h1>
 						{/* {collection.locations && (
 							<div className="flex items-center gap-2">

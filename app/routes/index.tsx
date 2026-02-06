@@ -1,9 +1,10 @@
 import Card from '~/components/Card';
 import type { Route } from './+types/index';
 import { useMemo } from 'react';
-import { data } from 'react-router';
+import { data, useOutletContext } from 'react-router';
 import type { CollectionMeta } from '~/data/types';
 import { DataPath } from '~/consts';
+import type { NavLayoutOutletContext } from '~/layouts/NavLayout';
 
 export function meta({}: Route.MetaArgs) {
 	return [
@@ -16,18 +17,11 @@ function cpath(name: string) {
 	return `/collection/${name}`;
 }
 
-export async function clientLoader() {
-	const allCollections = await fetch(DataPath + '/collections/__all.json');
-
-	if (allCollections.status !== 200) throw data(allCollections.statusText, allCollections.status);
-
-	return {
-		allCollections: (await allCollections.json()) as Record<string, CollectionMeta>
-	};
-}
-
-export default function Index({ loaderData }: Route.ComponentProps) {
-	const { allCollections } = loaderData;
+export default function Index({}: Route.ComponentProps) {
+	const {
+		navLoaderData: { allCollections }
+	} = useOutletContext<NavLayoutOutletContext>();
+	
 	const featuredCollection = useMemo(
 		() => Object.values(allCollections).find(x => x.featured === true),
 		[allCollections]

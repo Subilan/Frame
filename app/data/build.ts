@@ -5,7 +5,12 @@ import fs from 'fs/promises';
 import mkdir from './utils/mkdir';
 import type { Exif } from './exifs';
 import * as Toml from '@ltd/j-toml';
-import type { CaptionItem, CollectionItem, CollectionMeta, TraverseTarget } from '~/data/types';
+import type {
+	CaptionItem,
+	CollectionItem,
+	CollectionMeta,
+	RegeoItem
+} from '~/data/types';
 import path from 'path';
 import { SlashSubstitute } from '../consts';
 
@@ -116,9 +121,7 @@ console.log(`📖 读取注解中...`);
 // 读取captions文件夹下所有的文件名
 const allCaptionFiles = await fs.readdir(SCRIPT_PATH + '/captions');
 // 读取逆地理位置编码信息
-const regeo: Record<string, { formatted_address: string }> = (
-	await import(SCRIPT_PATH + '/regeo.json')
-).default;
+const regeo: Record<string, RegeoItem> = (await import(SCRIPT_PATH + '/regeo.json')).default;
 
 // 分集合记录每张照片上的注解信息，第一层键为集合名，如dawanqu/2023；第二层键为图片文件名，如1970.01.01_00:00:00.jpg
 const collectionCaptionMap: Record<string, Record<string, CaptionItem>> = {};
@@ -140,11 +143,48 @@ await Promise.all(parseTomlCaptionTasks);
 
 console.log(`✅ 读取到 ${parseTomlCaptionTasks.length} 个注解文件，共 ${totalCaptions} 个注解`);
 
+// const searchIndex: Record<string, Pick<CollectionItem, 'name' | 'url'>> = {};
+
 const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 	// 获取exif字段
 	await Promise.all(
 		collectionFiletrees[k].map(async item => {
 			item.exif = await retrieveExifForName(item.name);
+
+			// if (item.exif) {
+			// 	const time = parseExifTime(item.exif.DateTime.value);
+			// 	if (time) {
+			// 		const [y, m, d] = [time.getFullYear(), time.getMonth() + 1, time.getDate()];
+			// 		const keywords = [
+			// 			`${y}年`,
+			// 			`${m}月`,
+			// 			`${y}年${m}月`,
+			// 			`${y}-${m}`,
+			// 			`${y}.${m}`,
+			// 			`${y}-${m}-${d}`,
+			// 			`${y}.${m}.${d}`
+			// 		];
+			// 		const zm = m < 10 ? `0${m}` : undefined;
+			// 		if (zm) {
+			// 			keywords.push(
+			// 				...[
+			// 					`${y}年${zm}月`,
+			// 					`${y}-${zm}`,
+			// 					`${y}.${zm}`,
+			// 					`${y}-${zm}-${d}`,
+			// 					`${y}.${zm}.${d}`
+			// 				]
+			// 			);
+			// 		}
+
+			// 		for (let keyword of keywords) {
+			// 			searchIndex[keyword] = {
+			// 				name: item.name,
+			// 				url: item.url
+			// 			};
+			// 		}
+			// 	}
+			// }
 		})
 	);
 
@@ -152,7 +192,7 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 	const collectionCaptions = collectionCaptionMap[k];
 
 	collectionFiletrees[k].forEach(item => {
-		// '.../abc_efg.jpg' -> 'abc_efg.jpg'
+		// 'xxx/xxx/xxx/abc_efg.jpg' -> 'abc_efg.jpg'
 		const filename = /.*\/((.*?)\.(\w+))$/.exec(item.name);
 		if (filename !== null && collectionCaptions) {
 			item.caption = collectionCaptions[filename[1]];
@@ -162,9 +202,6 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 	// 获取addr字段
 	collectionFiletrees[k].forEach(item => {
 		const regeoItem = regeo[item.name];
-		if (regeoItem) {
-			item.addr = regeoItem.formatted_address;
-		}
 	});
 
 	// 写入单独的文件
