@@ -20,7 +20,7 @@ const navItems = [
 		text: '分类'
 	},
 	{
-		to: '/featuring',
+		to: '/highlights',
 		text: '精选集'
 	}
 ];
