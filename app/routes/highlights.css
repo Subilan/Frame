@@ -1,0 +1,5 @@
+@reference 'tailwindcss';
+
+.swiper-nav-button {
+	@apply rounded-full absolute top-[50%] translate-y-[-50%] z-10 bg-black/50 p-2.5 opacity-50 hover:opacity-100 hover:bg-black/60 active:bg-black/70 hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-xl  cursor-pointer;
+}

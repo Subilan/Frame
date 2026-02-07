@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, type LinksFunction } from 'react-router';
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, type LinksFunction } from 'react-router';
 
 import './app.css';
 import FooterEl from './components/FooterEl';
@@ -17,6 +17,8 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+	const location = useLocation();
+
 	return (
 		<html lang="en">
 			<head>
@@ -29,7 +31,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				{children}
 				<ScrollRestoration />
 				<Scripts />
-				<FooterEl />
+				{location.pathname !== '/highlights' && <FooterEl />}
 			</body>
 		</html>
 	);
