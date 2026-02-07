@@ -209,12 +209,12 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 			{/* 标题部分 */}
 			<div className="max-w-[1200px] mx-auto my-16">
 				<section className="mb-10 flex flex-col gap-5 items-center text-center">
-					<div className="flex flex-col gap-3 items-center">
+					<div className="flex flex-col gap-4 items-center">
 						<a className="inpage-link" onClick={() => navigate(-1)}>
 							<ArrowLeftIcon size={20} />
 							返回上一页
 						</a>
-						<h1 className="font-bold text-5xl">{meta.title}</h1>
+						<h1 className="font-bold leading-snug text-5xl">{meta.title}</h1>
 						{/* {collection.locations && (
 							<div className="flex items-center gap-2">
 								{Array.isArray(collection.locations)
