@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { data, useNavigate } from 'react-router';
+import { useEffect, useMemo, useState } from 'react';
+import { data, useLocation, useNavigate } from 'react-router';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/photoswipe.css';
 // @ts-ignore
@@ -90,30 +90,30 @@ const exifDisplay: {
 ];
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-	// @ts-ignore
 	const collectionName = params['*'] as string | undefined;
 
 	if (!collectionName) throw data('Not Found', { status: 404 });
 
-	const collectionNameNormalized = collectionName.replace('/', SlashSubstitute);
+	const collectionNameNormalized = collectionName.replace(/\//g, SlashSubstitute);
 
 	let meta, filetree;
 	let metaData: CollectionMeta;
+
 	try {
 		meta = await fetch(DataPath + `/collections/${collectionNameNormalized}.json`);
-		if (meta.status !== 200) throw data(meta.statusText, meta.status);
+		if (meta.status !== 200) throw data(null, { status: meta.status });
 
 		metaData = (await meta.json()) as CollectionMeta;
 
 		// 如果这是一个叶子目录，就获取其filetree信息，否则不获取。
 		if (!metaData.parent) {
 			filetree = await fetch(DataPath + `/filetrees/${collectionNameNormalized}.json`);
-			if (filetree.status !== 200) throw data(filetree.statusText, filetree.status);
+			if (filetree.status !== 200) throw data(null, { status: filetree.status });
 		} else {
 			filetree = null;
 		}
 	} catch (e) {
-		throw data('Cannot fetch', { status: 500 });
+		throw data(null, { status: 404 });
 	}
 
 	return {
@@ -125,58 +125,77 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 export default function Collection({ loaderData }: Route.ComponentProps) {
 	const { meta, filetree } = loaderData;
 
+	const location = useLocation();
+	const imageName = useMemo(() => location.hash.substring(1), [location]);
+
+	const [lightbox, setLightbox] = useState<PhotoSwipeLightbox>();
+
+	useEffect(() => {
+		if (lightbox && imageName && filetree) {
+			console.log(imageName);
+			const targetIndex = filetree.findIndex(x => x.name.endsWith(imageName));
+			if (targetIndex >= 0) lightbox.loadAndOpen(targetIndex);
+		}
+	}, [imageName, lightbox]);
+
+	useEffect(() => {
+		if (lightbox) {
+			lightbox.on('uiRegister', () => {
+				lightbox.pswp?.ui?.registerElement({
+					name: 'info-button',
+					order: 8,
+					isButton: true,
+					html: `<div class="lightbox-custom-button">${InfoIcon}</div>`,
+					onClick(e, element, pswp) {
+						const ossName = element.getAttribute('data-oss-name');
+						const current = filetree?.find(x => x.name === ossName);
+
+						if (current?.exif) {
+							setCurrentExif(current.exif);
+							setCurrentExifGPSAddr(current.addr);
+							setExifModalOpen(true);
+						}
+					},
+					onInit(element, pswp) {
+						pswp.on('change', () => {
+							element.setAttribute(
+								'data-oss-name',
+								pswp.currSlide?.data.element?.getAttribute('data-oss-name') || ''
+							);
+						});
+					}
+				});
+			});
+
+			new PhotoSwipeDynamicCaption(lightbox, {
+				type: 'auto'
+			});
+
+			lightbox.init();
+		}
+	}, [lightbox]);
+
 	useEffect(() => {
 		if (meta.parent) {
 			return;
 		}
 
-		let lightbox = new PhotoSwipeLightbox({
-			gallery: '#gallery',
-			children: 'a',
-			showHideAnimationType: 'zoom',
-			pswpModule: () => import('photoswipe'),
-			closeTitle: '关闭',
-			zoomTitle: '缩放',
-			arrowPrevTitle: '上一张',
-			arrowNextTitle: '下一张',
-			errorMsg: '加载这张照片时出现了问题'
-		});
-
-		lightbox.on('uiRegister', () => {
-			lightbox.pswp?.ui?.registerElement({
-				name: 'info-button',
-				order: 8,
-				isButton: true,
-				html: `<div class="lightbox-custom-button">${InfoIcon}</div>`,
-				onClick(e, element, pswp) {
-					const ossName = element.getAttribute('data-oss-name');
-					const current = filetree?.find(x => x.name === ossName);
-
-					if (current?.exif) {
-						setCurrentExif(current.exif);
-						setCurrentExifGPSAddr(current.addr);
-						setExifModalOpen(true);
-					}
-				},
-				onInit(element, pswp) {
-					pswp.on('change', () => {
-						element.setAttribute(
-							'data-oss-name',
-							pswp.currSlide?.data.element?.getAttribute('data-oss-name') || ''
-						);
-					});
-				}
-			});
-		});
-
-		new PhotoSwipeDynamicCaption(lightbox, {
-			type: 'auto'
-		});
-
-		lightbox.init();
+		setLightbox(
+			new PhotoSwipeLightbox({
+				gallery: '#gallery',
+				children: 'a',
+				showHideAnimationType: 'zoom',
+				pswpModule: () => import('photoswipe'),
+				closeTitle: '关闭',
+				zoomTitle: '缩放',
+				arrowPrevTitle: '上一张',
+				arrowNextTitle: '下一张',
+				errorMsg: '加载这张照片时出现了问题'
+			})
+		);
 
 		return () => {
-			lightbox.destroy();
+			lightbox?.destroy();
 		};
 	}, [meta]);
 

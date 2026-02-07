@@ -168,11 +168,11 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 						categoryYear[year] = [{ name: item.name, url: item.url }];
 						categoryYearMetas[year] = { total: 1 };
 					} else {
-						if (categoryYear[year].length < 3)
-							categoryYear[year].push({
-								name: item.name,
-								url: item.url
-							});
+						// if (categoryYear[year].length < 3)
+						categoryYear[year].push({
+							name: item.name,
+							url: item.url
+						});
 						categoryYearMetas[year].total++;
 					}
 				}
@@ -254,8 +254,8 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 					};
 					categoryCity[city] = [{ name: item.name, url: item.url }];
 				} else {
-					if (categoryCity[city].length < 3)
-						categoryCity[city].push({ name: item.name, url: item.url });
+					// if (categoryCity[city].length < 3)
+					categoryCity[city].push({ name: item.name, url: item.url });
 					categoryCityMetas[city].total++;
 				}
 			}
