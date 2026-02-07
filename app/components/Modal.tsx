@@ -49,7 +49,7 @@ export default function Modal(props: ModalProps) {
 					}}
 				>
 					<div
-						className="rounded-3xl relative shadow-2xl p-8 bg-neutral-800 mx-5 xl:mx-0"
+						className="rounded-3xl relative shadow-2xl p-8 bg-neutral-800 mx-5 xl:mx-0 w-full md:w-auto"
 						style={{ width: props.width || '400px' }}
 						onClick={e => e.stopPropagation()}
 					>
