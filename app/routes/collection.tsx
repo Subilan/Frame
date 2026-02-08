@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { data, useLocation, useNavigate } from 'react-router';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/photoswipe.css';
@@ -14,6 +14,10 @@ import type { Route } from './+types/collection';
 import type { CollectionItem, CollectionMeta } from '~/data/types';
 import { DataPath, SlashSubstitute } from '~/consts';
 import { ArrowLeftIcon } from 'lucide-react';
+import parseExifTime from '~/data/utils/parseExifTime';
+import { CSSTransition } from 'react-transition-group';
+import useOutsideAlerter from '~/hooks/useOutsideAlerter';
+import Dropdown from '~/components/Dropdown';
 
 const exifDisplay: {
 	cond?: (exif: Exif, ...extra: any[]) => boolean;
@@ -204,6 +208,38 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 	const [currentExifGPSAddr, setCurrentExifGPSAddr] = useState<string>();
 
 	const navigate = useNavigate();
+
+	const [date, setDate] = useState<Date>();
+
+	const photoRefs = useRef<Record<string, HTMLImageElement>>({});
+
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			entries => {
+				const entry = entries
+					.map(entry => ({
+						intersecting: entry.isIntersecting,
+						exif: (entry.target as HTMLImageElement).dataset.exif as string | undefined
+					}))
+					.filter(e => e.intersecting && e.exif)[0];
+				if (!entry) return;
+				const exifData = JSON.parse(entry.exif!) as Exif;
+				setDate(parseExifTime(exifData.DateTime.value));
+			},
+			{ threshold: 0.1 }
+		);
+
+		Object.values(photoRefs.current).forEach(ref => {
+			ref.dataset.key = ref.getAttribute('data-oss-name') ?? undefined;
+			observer.observe(ref);
+		});
+
+		return () => observer.disconnect();
+	}, [meta]);
+
+	const [sortBy, setSortBy] = useState('date');
+	const [orderBy, setOrderBy] = useState('asc');
+
 	return (
 		<>
 			{/* 标题部分 */}
@@ -236,41 +272,101 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 
 			{/* 照片部分 */}
 			{!meta.parent && filetree && (
-				<div
-					className="w-full grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 pswp-gallery"
-					id="gallery"
-				>
-					{filetree.map((f, i) => (
-						<a
-							data-cropped={true}
-							data-oss-name={f.name}
-							data-pswp-height={f.exif?.ImageHeight.value}
-							data-pswp-width={f.exif?.ImageWidth.value}
-							href={`${f.url}`}
-							key={`gallery-${i}`}
-							target="_blank"
-							className="relative hover:opacity-80 active:opacity-50"
-						>
-							<img
-								loading="lazy"
-								src={`${f.url}?x-oss-process=image/resize,h_500`}
-								className="object-cover object-center h-[250px] xl:h-[350px] w-full"
-							/>
-							{f.caption && (
-								<>
-									<div className="absolute right-4 bottom-4 bg-black/60 z-10 rounded-lg px-3 font-bold">
-										ALT
-									</div>
-									<div className="pswp-caption-content">
-										{f.caption.title && <strong>{f.caption.title}</strong>}
-										<div className="whitespace-pre-wrap">
-											{f.caption.content.trimEnd()}
-										</div>
-									</div>
-								</>
-							)}
-						</a>
-					))}
+				<div className="flex flex-col">
+					<div className="flex items-center gap-3 py-2.5 px-5 mb-2.5 bg-neutral-900/70 sticky top-[68px] z-40">
+						{date && (
+							<h2 className="text-xl">
+								{date.getFullYear()} 年 {date.getMonth()} 月 {date.getDate()} 日
+							</h2>
+						)}
+						<div className="flex-1" />
+						<Dropdown
+							title="排序"
+							value={sortBy}
+							setValue={setSortBy}
+							items={[{ label: '拍摄时间', value: 'date' }]}
+						/>
+						<Dropdown
+							title="顺序"
+							value={orderBy}
+							setValue={setOrderBy}
+							items={[
+								{ label: '升序', value: 'asc' },
+								{ label: '降序', value: 'desc' }
+							]}
+						/>
+					</div>
+					<div
+						className="w-full grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 pswp-gallery"
+						id="gallery"
+					>
+						{filetree
+							.sort((a, b) => {
+								if (sortBy === 'date') {
+									const [aTime, bTime] = [
+										a.exif?.DateTime.value,
+										b.exif?.DateTime.value
+									];
+
+									if (!aTime || !bTime) return 0;
+
+									const [aDate, bDate] = [
+										parseExifTime(aTime),
+										parseExifTime(bTime)
+									];
+
+									if (!aDate || !bDate) return 0;
+
+									return orderBy === 'asc' ? +aDate - +bDate : +bDate - +aDate;
+								}
+
+								return 0;
+							})
+							.map(f => (
+								<a
+									data-cropped={true}
+									data-oss-name={f.name}
+									data-pswp-height={f.exif?.ImageHeight.value}
+									data-pswp-width={f.exif?.ImageWidth.value}
+									href={`${f.url}`}
+									key={f.name}
+									target="_blank"
+									className="relative hover:opacity-80 active:opacity-50"
+								>
+									<img
+										ref={el => {
+											if (el) {
+												el.dataset.exif = f.exif
+													? JSON.stringify(f.exif)
+													: undefined;
+												photoRefs.current[f.name] = el;
+											} else {
+												delete photoRefs.current[f.name];
+											}
+										}}
+										data-oss-name={f.name}
+										loading="lazy"
+										src={`${f.url}?x-oss-process=image/resize,h_500`}
+										className="object-cover object-center h-[250px] xl:h-[350px] w-full"
+									/>
+									{f.caption && (
+										<>
+											<div className="absolute right-4 bottom-4 bg-black/60 z-10 rounded-lg px-3 font-bold">
+												ALT
+											</div>
+											<div className="pswp-caption-content">
+												{f.caption.title && (
+													<strong>{f.caption.title}</strong>
+												)}
+												<div className="whitespace-pre-wrap">
+													{f.caption.content.trimEnd()}
+												</div>
+											</div>
+										</>
+									)}
+								</a>
+							))}
+					</div>
 				</div>
 			)}
 

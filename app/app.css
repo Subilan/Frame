@@ -2,11 +2,13 @@
 @import './transition.css';
 
 @theme {
-	--font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	--font-sans:
+		'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+		'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 .card {
-    @apply rounded-3xl relative overflow-hidden flex flex-col justify-end cursor-pointer hover:opacity-90 active:opacity-70 bg-center bg-cover bg-no-repeat;
+	@apply rounded-3xl relative overflow-hidden flex flex-col justify-end cursor-pointer hover:opacity-90 active:opacity-70 bg-center bg-cover bg-no-repeat;
 }
 
 html,
@@ -20,4 +22,12 @@ a.inpage-link {
 
 a.inpage-link svg {
 	@apply inline align-sub mr-1;
+}
+
+.primary-button {
+	@apply flex items-center border gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer bg-neutral-800/50 border-neutral-700 hover:bg-neutral-800 active:bg-neutral-700 rounded-full py-1 px-3;
+}
+
+.primary-button.active {
+	@apply bg-sky-600 text-white border-white/20;
 }
