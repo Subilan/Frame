@@ -1,20 +1,10 @@
-import {
-	BuildingIcon,
-	CalendarIcon,
-	type LucideIcon
-} from 'lucide-react';
+import { BuildingIcon, CalendarIcon, type LucideIcon } from 'lucide-react';
 import type { Route } from './+types/categories';
 import { data } from 'react-router';
 import Card from '~/components/Card';
-import type {
-	Category,
-	CategoryMeta,
-	CityCategoryMeta,
-	SimpleCollectionItem
-} from '~/data/types';
+import type { Category, CategoryMeta, CityCategoryMeta, SimpleCollectionItem } from '~/data/types';
 import { useIsVisible } from '~/hooks/useIsVisible';
 import { useMemo, useState, type ReactNode, type Ref } from 'react';
-import './categories.css';
 import { getJson } from '~/utils/getJson';
 import getFrameUrlFromOssUrl from '~/utils/getFrameUrlFromOssUrl';
 import Modal from '~/components/Modal';
@@ -160,7 +150,7 @@ function CategoryNavigation({ sections, visibilities }: CategoryNavigationProps)
 					return (
 						<button
 							key={section.id}
-							className={`category-button ${activeCategory === section.id ? 'active' : ''}`}
+							className={`primary-button ${activeCategory === section.id ? 'active' : ''}`}
 							onClick={() => {
 								window.scrollTo({
 									top: document.getElementById(section.id)?.offsetTop,

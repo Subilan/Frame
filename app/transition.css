@@ -37,3 +37,25 @@
 	transform: translateY(-20px);
 	transition: all 0.2s ease;
 }
+
+.scale-enter {
+	opacity: 0;
+	transform: scale(90%);
+}
+
+.scale-enter-active {
+	opacity: 1;
+	transform: scale(100%);
+	transition: all 0.15s ease;
+}
+
+.scale-exit {
+	opacity: 1;
+	transform: scale(100%);
+}
+
+.scale-exit-active {
+	opacity: 0;
+	transform: scale(90%);
+	transition: all 0.15s ease;
+}
