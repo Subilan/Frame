@@ -11,6 +11,7 @@ import getFrameUrlFromSimpleRepr from '~/utils/getFrameUrlFromSimpleRepr';
 import { ArrowLeftIcon, ArrowRight, ArrowRightIcon, ArrowUpRightIcon } from 'lucide-react';
 import { EffectFade } from 'swiper/modules';
 import './highlights.css';
+import formatDate from '~/utils/formatDate';
 
 type HighlightItemWithImagePath = Required<Pick<HighlightItem, 'imagePath'>> & HighlightItem;
 
@@ -102,7 +103,7 @@ export default function Highlights({ loaderData }: Route.ComponentProps) {
 			<div className="flex flex-col items-center gap-3 my-5">
 				<h2 className="text-2xl">{currentHl.title}</h2>
 				{currentHl.imageInfo && (
-					<h3 className="text-xl text-neutral-500">{new Date(currentHl.imageInfo.date ?? 0).toLocaleString()}</h3>
+					<h3 className="text-xl text-neutral-500">{formatDate(new Date(currentHl.imageInfo.date ?? 0), 'ymd')}</h3>
 				)}
 				<div
 					className="[&_h1]:hidden [&_p]:my-2 text-center max-w-[700px] text-lg"
