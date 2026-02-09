@@ -13,10 +13,8 @@ import type { Exif } from '~/data/exifs';
 import type { Route } from './+types/collection';
 import type { CollectionItem, CollectionMeta } from '~/data/types';
 import { DataPath, SlashSubstitute } from '~/consts';
-import { ArrowLeftIcon } from 'lucide-react';
+import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon, CalendarIcon } from 'lucide-react';
 import parseExifTime from '~/data/utils/parseExifTime';
-import { CSSTransition } from 'react-transition-group';
-import useOutsideAlerter from '~/hooks/useOutsideAlerter';
 import Dropdown from '~/components/Dropdown';
 
 const exifDisplay: {
@@ -284,15 +282,15 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 							title="排序"
 							value={sortBy}
 							setValue={setSortBy}
-							items={[{ label: '拍摄时间', value: 'date' }]}
+							items={[{ label: '拍摄时间', value: 'date', icon: CalendarIcon }]}
 						/>
 						<Dropdown
 							title="顺序"
 							value={orderBy}
 							setValue={setOrderBy}
 							items={[
-								{ label: '升序', value: 'asc' },
-								{ label: '降序', value: 'desc' }
+								{ label: '升序', value: 'asc', icon: ArrowUpIcon },
+								{ label: '降序', value: 'desc', icon: ArrowDownIcon }
 							]}
 						/>
 					</div>
