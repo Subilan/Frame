@@ -16,6 +16,7 @@ import { DataPath, SlashSubstitute } from '~/consts';
 import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon, CalendarIcon } from 'lucide-react';
 import parseExifTime from '~/data/utils/parseExifTime';
 import Dropdown from '~/components/Dropdown';
+import formatDate from '~/utils/formatDate';
 
 const exifDisplay: {
 	cond?: (exif: Exif, ...extra: any[]) => boolean;
@@ -272,11 +273,7 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 			{!meta.parent && filetree && (
 				<div className="flex flex-col">
 					<div className="flex items-center gap-3 py-2.5 px-5 mb-2.5 bg-neutral-900/70 sticky top-[68px] z-40">
-						{date && (
-							<h2 className="text-xl">
-								{date.getFullYear()} 年 {date.getMonth()} 月 {date.getDate()} 日
-							</h2>
-						)}
+						{date && <h2 className="text-xl">{formatDate(date, 'ymd')}</h2>}
 						<div className="flex-1" />
 						<Dropdown
 							title="排序"
