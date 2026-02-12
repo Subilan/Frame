@@ -8,7 +8,7 @@
 }
 
 .card {
-	@apply rounded-3xl relative overflow-hidden flex flex-col justify-end cursor-pointer hover:opacity-90 active:opacity-70 bg-center bg-cover bg-no-repeat;
+	@apply rounded-xl xl:rounded-3xl relative overflow-hidden flex flex-col justify-end cursor-pointer hover:opacity-90 active:opacity-70 bg-center bg-cover bg-no-repeat;
 }
 
 html,
@@ -25,7 +25,7 @@ a.inpage-link svg {
 }
 
 .primary-button {
-	@apply flex items-center border gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer bg-neutral-800/50 border-neutral-700 hover:bg-neutral-800 active:bg-neutral-700 rounded-full py-1 px-3;
+	@apply flex items-center border gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer backdrop-blur-xs bg-neutral-800/50 border-neutral-700 hover:bg-neutral-800 active:bg-neutral-700 rounded-full py-1 px-3;
 }
 
 .primary-button.active {

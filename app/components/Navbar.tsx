@@ -116,7 +116,7 @@ export default function Navbar({ allCollections }: NavbarProps) {
 				<div
 					ref={collapseRef}
 					className={
-						'fixed top-[68px] shadow-lg bg-neutral-900/90 w-full z-30 flex flex-col pb-2 md:hidden text-xl text-neutral-500 [&_.active]:text-white' +
+						'fixed top-[68px] shadow-lg bg-neutral-900/90 w-full z-50 flex flex-col pb-2 md:hidden text-xl text-neutral-500 [&_.active]:text-white' +
 						' ' +
 						(collapseOpen ? 'bg-neutral-900!' : '')
 					}

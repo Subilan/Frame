@@ -62,7 +62,7 @@ function CategorySection(props: CategorySectionProp) {
 					.sort((a, b) => b[1].total - a[1].total)
 					.map(([categoryName, categoryMeta]) => {
 						return (
-							<div className="flex flex-col gap-2" key={categoryName}>
+							<div className="flex flex-col gap-3" key={categoryName}>
 								<h3 className="text-xl inline-flex items-baseline gap-3">
 									<div className="inline-flex md:items-baseline md:gap-2 flex-col md:flex-row ">
 										{props.itemTitle ? (
