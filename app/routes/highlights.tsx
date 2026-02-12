@@ -64,7 +64,7 @@ export default function Highlights({ loaderData }: Route.ComponentProps) {
 
 	return (
 		<div className="max-w-[1200px] mx-auto">
-			<div className="h-[70dvh] relative">
+			<div className="h-[50dvh] xl:h-[70dvh] relative">
 				<Swiper
 					className="h-full"
 					modules={[EffectFade]}
@@ -92,15 +92,24 @@ export default function Highlights({ loaderData }: Route.ComponentProps) {
 							)
 					)}
 				</Swiper>
-				<button onClick={() => swiper?.slidePrev()} className="swiper-nav-button -left-20">
+				<button onClick={() => swiper?.slidePrev()} className="hidden xl:block swiper-nav-button -left-10 2xl:-left-20">
 					<ArrowLeftIcon />
 				</button>
-				<button onClick={() => swiper?.slideNext()} className="swiper-nav-button -right-20">
+				<button onClick={() => swiper?.slideNext()} className="hidden xl:block swiper-nav-button -right-10 2xl:-right-20">
 					<ArrowRightIcon />
 				</button>
 			</div>
 
-			<div className="flex flex-col items-center gap-3 my-5">
+			<div className='flex items-center justify-center fixed bottom-10 w-full gap-3 xl:hidden'>
+				<button onClick={() => swiper?.slidePrev()} className="primary-button -left-20">
+					<ArrowLeftIcon size={20} /> 上一张
+				</button>
+				<button onClick={() => swiper?.slideNext()} className="primary-button -right-20">
+					下一张 <ArrowRightIcon size={20} />
+				</button>
+			</div>
+
+			<div className="flex flex-col items-center gap-3 my-5 mx-5 md:mx-0">
 				<h2 className="text-2xl">{currentHl.title}</h2>
 				{currentHl.imageInfo && (
 					<h3 className="text-xl text-neutral-500">{formatDate(new Date(currentHl.imageInfo.date ?? 0), 'ymd')}</h3>
