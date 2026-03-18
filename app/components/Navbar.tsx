@@ -18,11 +18,11 @@ const navItems = [
 	{
 		to: '/categories',
 		text: '分类'
-	},
-	{
-		to: '/highlights',
-		text: '精选集'
 	}
+	// {
+	// 	to: '/highlights',
+	// 	text: '精选集'
+	// }
 ];
 
 export default function Navbar({ allCollections }: NavbarProps) {
@@ -49,8 +49,9 @@ export default function Navbar({ allCollections }: NavbarProps) {
 
 	const [collapseOpen, setCollapseOpen] = useState(false);
 	const collapseRef = useRef<HTMLDivElement>(null);
-	useOutsideAlerter(collapseRef, () => setCollapseOpen(false));
-
+	const menuIconRef = useRef<SVGSVGElement>(null);
+	useOutsideAlerter(collapseRef, () => setCollapseOpen(false), [menuIconRef]);
+	
 	return (
 		<>
 			<div
@@ -62,6 +63,7 @@ export default function Navbar({ allCollections }: NavbarProps) {
 			>
 				<nav className="flex h-[68px] items-center gap-3 p-4 md:p-5">
 					<MenuIcon
+						ref={menuIconRef}
 						className="md:hidden"
 						size={20}
 						onClick={() => setCollapseOpen(!collapseOpen)}
