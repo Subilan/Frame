@@ -1,7 +1,20 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, type LinksFunction } from 'react-router';
+import {
+	isRouteErrorResponse,
+	Links,
+	Meta,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
+	useLocation,
+	useNavigation,
+	type LinksFunction
+} from 'react-router';
 
 import './app.css';
+import './nprogress.css';
 import FooterEl from './components/FooterEl';
+import { useEffect } from 'react';
+import NProgress from 'nprogress';
 
 export const links: LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -22,6 +35,15 @@ export const links: LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	const location = useLocation();
+	const navigation = useNavigation();
+
+	useEffect(() => {
+		if (navigation.state === 'loading') {
+			NProgress.start();
+		} else {
+			NProgress.done();
+		}
+	}, [navigation.state]);
 
 	return (
 		<html lang="en">
@@ -52,7 +74,10 @@ export function ErrorBoundary({ error }: any) {
 
 	if (isRouteErrorResponse(error)) {
 		message = error.status === 404 ? '404' : 'Error';
-		details = error.status === 404 ? 'The requested page could not be found.' : error.statusText || details;
+		details =
+			error.status === 404
+				? 'The requested page could not be found.'
+				: error.statusText || details;
 	} else if (import.meta.env.DEV && error && error instanceof Error) {
 		details = error.message;
 		stack = error.stack;
