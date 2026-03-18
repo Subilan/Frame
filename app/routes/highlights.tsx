@@ -8,7 +8,7 @@ import type { HighlightItem } from '~/data/build_highlights';
 import getOssUrlFromSimpleRepr from '~/utils/getOssUrlFromSimpleRepr';
 import { useCallback, useEffect, useState } from 'react';
 import getFrameUrlFromSimpleRepr from '~/utils/getFrameUrlFromSimpleRepr';
-import { ArrowLeftIcon, ArrowRight, ArrowRightIcon, ArrowUpRightIcon } from 'lucide-react';
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { EffectFade } from 'swiper/modules';
 import './highlights.css';
 import formatDate from '~/utils/formatDate';

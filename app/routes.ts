@@ -4,5 +4,5 @@ export default [layout('./layouts/NavLayout.tsx', [
     index('./routes/index.tsx'),
     route('/collection/*', './routes/collection.tsx'),
     route('/categories', './routes/categories.tsx'),
-    route('/highlights', './routes/highlights.tsx')
+    // route('/highlights', './routes/highlights.tsx')
 ])] satisfies RouteConfig;
