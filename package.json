@@ -38,7 +38,7 @@
     "remark-rehype": "^11.1.2",
     "swiper": "^12.1.0",
     "unified": "^11.0.5",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "@ltd/j-toml": "^1.38.0",
