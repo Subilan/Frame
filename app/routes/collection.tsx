@@ -431,7 +431,7 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 
 			{/* 子相册卡片 */}
 			{meta.parent && meta.children && (
-				<div className="max-w-[1200px] mx-5 xl:mx-auto grid grid-cols-1 xl:grid-cols-3 gap-8">
+				<div className="max-w-[1200px] mx-5 xl:mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 					{meta.children.map(c => {
 						if (meta.childSizes[c.name] > 0) {
 							const childPath = meta.name + '/' + c.name;
