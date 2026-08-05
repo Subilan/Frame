@@ -13,7 +13,7 @@ import type { Exif } from '~/data/exifs';
 import type { Route } from './+types/collection';
 import type { CollectionItem, CollectionMeta } from '~/data/types';
 import { DataPath, SlashSubstitute } from '~/consts';
-import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon, CalendarIcon } from 'lucide-react';
+import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon, CalendarIcon, MapPinIcon, MountainIcon } from 'lucide-react';
 import parseExifTime from '~/data/utils/parseExifTime';
 import Dropdown from '~/components/Dropdown';
 import formatDate from '~/utils/formatDate';
@@ -206,38 +206,109 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 	const [currentExif, setCurrentExif] = useState<Exif>();
 	const [currentExifGPSAddr, setCurrentExifGPSAddr] = useState<string>();
 
+	const [sortBy, setSortBy] = useState('date');
+	const [orderBy, setOrderBy] = useState('asc');
+
 	const navigate = useNavigate();
 
-	const [date, setDate] = useState<Date>();
+	// 缓存排序后的数据，避免每次 render 都重新排序
+	const sortedFiletree = useMemo(() => {
+		if (!filetree) return [];
+
+		return [...filetree].sort((a, b) => {
+			const orderMul = orderBy === 'asc' ? 1 : -1;
+
+			if (sortBy === 'date') {
+				const aTime = a.exif?.DateTime.value;
+				const bTime = b.exif?.DateTime.value;
+				if (!aTime || !bTime) return 0;
+
+				const aDate = parseExifTime(aTime);
+				const bDate = parseExifTime(bTime);
+				if (!aDate || !bDate) return 0;
+
+				return (aDate.getTime() - bDate.getTime()) * orderMul;
+			}
+
+			if (sortBy === 'altitude') {
+				const aAlt = a.exif?.GPSAltitude?.value;
+				const bAlt = b.exif?.GPSAltitude?.value;
+
+				// 没有海拔数据的排到最后
+				if (!aAlt && !bAlt) return 0;
+				if (!aAlt) return 1;
+				if (!bAlt) return -1;
+
+				const signA = a.exif!.GPSAltitudeRef?.value === '1' ? -1 : 1;
+				const signB = b.exif!.GPSAltitudeRef?.value === '1' ? -1 : 1;
+				const aVal = signA * eval(aAlt);
+				const bVal = signB * eval(bAlt);
+
+				return (aVal - bVal) * orderMul;
+			}
+
+			if (sortBy === 'location') {
+				const aAddr = a.addr;
+				const bAddr = b.addr;
+
+				if (!aAddr && !bAddr) return 0;
+				if (!aAddr) return 1;
+				if (!bAddr) return -1;
+
+				return aAddr.localeCompare(bAddr, 'zh') * orderMul;
+			}
+
+			return 0;
+		});
+	}, [filetree, sortBy, orderBy]);
+
+	// 从排序结果中取第一张有日期的照片，作为初始展示日期
+	const baseDate = useMemo(() => {
+		for (const f of sortedFiletree) {
+			if (f.exif?.DateTime.value) {
+				const d = parseExifTime(f.exif.DateTime.value);
+				if (d) return d;
+			}
+		}
+		return undefined;
+	}, [sortedFiletree]);
+
+	const [observerDate, setObserverDate] = useState<Date>();
+	const displayDate = observerDate ?? baseDate;
 
 	const photoRefs = useRef<Record<string, HTMLImageElement>>({});
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			entries => {
-				const entry = entries
-					.map(entry => ({
-						intersecting: entry.isIntersecting,
-						exif: (entry.target as HTMLImageElement).dataset.exif as string | undefined
-					}))
-					.filter(e => e.intersecting && e.exif)[0];
-				if (!entry) return;
-				const exifData = JSON.parse(entry.exif!) as Exif;
-				setDate(parseExifTime(exifData.DateTime.value));
+				// 取所有相交照片中 boundingClientRect.top 最小的（视觉上最靠上）
+				let bestTop = Infinity;
+				let bestExif: string | undefined;
+
+				for (const entry of entries) {
+					if (!entry.isIntersecting) continue;
+					const exif = (entry.target as HTMLImageElement).dataset.exif;
+					if (!exif) continue;
+					if (entry.boundingClientRect.top < bestTop) {
+						bestTop = entry.boundingClientRect.top;
+						bestExif = exif;
+					}
+				}
+
+				if (bestExif) {
+					const exifData = JSON.parse(bestExif) as Exif;
+					setObserverDate(parseExifTime(exifData.DateTime.value));
+				}
 			},
 			{ threshold: 0.1 }
 		);
 
 		Object.values(photoRefs.current).forEach(ref => {
-			ref.dataset.key = ref.getAttribute('data-oss-name') ?? undefined;
 			observer.observe(ref);
 		});
 
 		return () => observer.disconnect();
 	}, [meta]);
-
-	const [sortBy, setSortBy] = useState('date');
-	const [orderBy, setOrderBy] = useState('asc');
 
 	return (
 		<>
@@ -273,13 +344,17 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 			{!meta.parent && filetree && (
 				<div className="flex flex-col">
 					<div className="flex items-center gap-3 py-2.5 px-5 mb-2.5 bg-neutral-900/70 sticky top-[68px] z-40">
-						{date && <h2 className="text-xl">{formatDate(date, 'ymd')}</h2>}
+						{displayDate && <h2 className="text-xl">{formatDate(displayDate, 'ymd')}</h2>}
 						<div className="flex-1" />
 						<Dropdown
 							title="排序"
 							value={sortBy}
 							setValue={setSortBy}
-							items={[{ label: '拍摄时间', value: 'date', icon: CalendarIcon }]}
+							items={[
+								{ label: '拍摄时间', value: 'date', icon: CalendarIcon },
+								{ label: '海拔高度', value: 'altitude', icon: MountainIcon },
+								{ label: '地区', value: 'location', icon: MapPinIcon }
+							]}
 						/>
 						<Dropdown
 							title="顺序"
@@ -295,34 +370,22 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 						className="w-full grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 pswp-gallery"
 						id="gallery"
 					>
-						{filetree
-							.sort((a, b) => {
-								if (sortBy === 'date') {
-									const [aTime, bTime] = [
-										a.exif?.DateTime.value,
-										b.exif?.DateTime.value
-									];
+						{sortedFiletree.map(f => {
+								const orientation = f.exif?.Orientation?.value;
+								const swap = orientation === '6' || orientation === '8';
+								const pswpWidth = swap
+									? f.exif?.ImageHeight?.value
+									: f.exif?.ImageWidth?.value;
+								const pswpHeight = swap
+									? f.exif?.ImageWidth?.value
+									: f.exif?.ImageHeight?.value;
 
-									if (!aTime || !bTime) return 0;
-
-									const [aDate, bDate] = [
-										parseExifTime(aTime),
-										parseExifTime(bTime)
-									];
-
-									if (!aDate || !bDate) return 0;
-
-									return orderBy === 'asc' ? +aDate - +bDate : +bDate - +aDate;
-								}
-
-								return 0;
-							})
-							.map(f => (
+								return (
 								<a
 									data-cropped={true}
 									data-oss-name={f.name}
-									data-pswp-height={f.exif?.ImageHeight.value}
-									data-pswp-width={f.exif?.ImageWidth.value}
+									data-pswp-height={pswpHeight}
+									data-pswp-width={pswpWidth}
 									href={`${f.url}`}
 									key={f.name}
 									target="_blank"
@@ -360,7 +423,8 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 										</>
 									)}
 								</a>
-							))}
+								);
+							})}
 					</div>
 				</div>
 			)}

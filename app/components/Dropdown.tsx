@@ -24,18 +24,17 @@ export default function Dropdown<T>({
 	useOutsideAlerter(dropdownRef, () => setDropdown(false));
 	const ValueIcon = useMemo(() => items.find(item => item.value === value)?.icon, [value]);
 
-	if (!valueDisplay) {
-		valueDisplay = useCallback(
-			(value: T) => items.find(x => x.value === value)?.label,
-			[items]
-		);
-	}
+	const defaultDisplay = useCallback(
+		(value: T) => items.find(x => x.value === value)?.label,
+		[items]
+	);
+	const display = valueDisplay ?? defaultDisplay;
 
 	return (
 		<div className="relative">
 			<button onClick={() => setDropdown(true)} className="primary-button">
 				<span className="text-neutral-400 hidden md:inline">{title}</span>{' '}
-				<span className="hidden md:inline">{valueDisplay(value)}</span>
+				<span className="hidden md:inline">{display(value)}</span>
 				<span className="md:hidden">{ValueIcon && <ValueIcon size={20} />}</span>
 			</button>
 			<CSSTransition

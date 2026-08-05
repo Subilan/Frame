@@ -151,8 +151,8 @@ console.log(`✅ 读取到 ${parseTomlCaptionTasks.length} 个注解文件，共
 
 const categoryCity: Category = {};
 const categoryCityMetas: CategoryMeta<CityCategoryMeta> = {};
-const categoryYear: Category = {};
-const categoryYearMetas: CategoryMeta = {};
+const categoryTime: Category = {};
+const categoryTimeMetas: CategoryMeta = {};
 
 const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 	// 获取exif字段
@@ -163,17 +163,17 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 			if (item.exif) {
 				const time = parseExifTime(item.exif.DateTime.value);
 				if (time) {
-					const year = time.getFullYear();
-					if (categoryYear[year] === undefined) {
-						categoryYear[year] = [{ name: item.name, url: item.url }];
-						categoryYearMetas[year] = { total: 1 };
+					const timeKey = `${time.getFullYear()} 年 ${time.getMonth() + 1} 月`;
+					if (categoryTime[timeKey] === undefined) {
+						categoryTime[timeKey] = [{ name: item.name, url: item.url }];
+						categoryTimeMetas[timeKey] = { total: 1 };
 					} else {
-						// if (categoryYear[year].length < 3)
-						categoryYear[year].push({
+						// if (categoryTime[timeKey].length < 3)
+						categoryTime[timeKey].push({
 							name: item.name,
 							url: item.url
 						});
-						categoryYearMetas[year].total++;
+						categoryTimeMetas[timeKey].total++;
 					}
 				}
 			}
@@ -276,8 +276,8 @@ await Promise.all(writeFiletreeTasks);
 await mkdir(DIST_PATH + '/categories');
 await fs.writeFile(DIST_PATH + '/categories/city-meta.json', JSON.stringify(categoryCityMetas));
 await fs.writeFile(DIST_PATH + '/categories/city.json', JSON.stringify(categoryCity));
-await fs.writeFile(DIST_PATH + '/categories/year.json', JSON.stringify(categoryYear));
-await fs.writeFile(DIST_PATH + '/categories/year-meta.json', JSON.stringify(categoryYearMetas));
+await fs.writeFile(DIST_PATH + '/categories/time.json', JSON.stringify(categoryTime));
+await fs.writeFile(DIST_PATH + '/categories/time-meta.json', JSON.stringify(categoryTimeMetas));
 
 console.log(`☂️ 构建集合元信息...`);
 

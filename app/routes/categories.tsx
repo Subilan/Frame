@@ -11,28 +11,28 @@ import Modal from '~/components/Modal';
 
 export async function clientLoader() {
 	let categoryCityMeta: CategoryMeta<CityCategoryMeta>,
-		categoryYearMeta: CategoryMeta,
+		categoryTimeMeta: CategoryMeta,
 		categoryCity: Category,
-		categoryYear: Category;
+		categoryTime: Category;
 
 	const res = await getJson([
 		'/categories/city-meta.json',
-		'/categories/year-meta.json',
+		'/categories/time-meta.json',
 		'/categories/city.json',
-		'/categories/year.json'
+		'/categories/time.json'
 	]);
 
 	if (!res) {
 		throw data(null, { status: 404 });
 	}
 
-	[categoryCityMeta, categoryYearMeta, categoryCity, categoryYear] = res;
+	[categoryCityMeta, categoryTimeMeta, categoryCity, categoryTime] = res;
 
 	return {
 		categoryCityMeta,
-		categoryYearMeta,
+		categoryTimeMeta,
 		categoryCity,
-		categoryYear
+		categoryTime
 	};
 }
 
@@ -41,6 +41,7 @@ type CategorySectionProp = {
 	meta: CategoryMeta;
 	title: string;
 	identifier: string;
+	sort?: (a: [string, { total: number }], b: [string, { total: number }]) => number;
 	itemTitle?: (name: string, meta: Record<string, any>) => ReactNode;
 	itemSubtitle?: (name: string, meta: Record<string, any>) => ReactNode;
 	category: Category;
@@ -59,7 +60,7 @@ function CategorySection(props: CategorySectionProp) {
 			</h2>
 			<div className="flex flex-col gap-5">
 				{Object.entries(props.meta)
-					.sort((a, b) => b[1].total - a[1].total)
+					.sort(props.sort ?? ((a, b) => b[1].total - a[1].total))
 					.map(([categoryName, categoryMeta]) => {
 						return (
 							<div className="flex flex-col gap-3" key={categoryName}>
@@ -111,6 +112,11 @@ function CategorySection(props: CategorySectionProp) {
 	);
 }
 
+function timeKeyValue(name: string) {
+	const match = /^(\d+) 年 (\d+) 月$/.exec(name);
+	return match ? +match[1] * 12 + +match[2] : 0;
+}
+
 function useCategoryModal() {
 	const [modal, setModal] = useState(false);
 	const [name, setName] = useState('');
@@ -131,8 +137,8 @@ const categorySections: CategoryNavigationProps['sections'] = [
 		icon: BuildingIcon
 	},
 	{
-		id: 'year',
-		name: '年份',
+		id: 'time',
+		name: '时间',
 		icon: CalendarIcon
 	}
 ];
@@ -168,10 +174,10 @@ function CategoryNavigation({ sections, visibilities }: CategoryNavigationProps)
 }
 
 export default function Categories({ loaderData }: Route.ComponentProps) {
-	const { categoryCityMeta, categoryYearMeta, categoryYear, categoryCity } = loaderData;
+	const { categoryCityMeta, categoryTimeMeta, categoryTime, categoryCity } = loaderData;
 
 	const [citySectionRef, citySectionVisible] = useIsVisible<HTMLElement>();
-	const [yearSectionRef, yearSectionVisible] = useIsVisible<HTMLElement>();
+	const [timeSectionRef, timeSectionVisible] = useIsVisible<HTMLElement>();
 
 	const categoryModal = useCategoryModal();
 
@@ -183,7 +189,7 @@ export default function Categories({ loaderData }: Route.ComponentProps) {
 			</section>
 			<CategoryNavigation
 				sections={categorySections}
-				visibilities={[citySectionVisible, yearSectionVisible]}
+				visibilities={[citySectionVisible, timeSectionVisible]}
 			/>
 			<div className="flex flex-col gap-5">
 				<CategorySection
@@ -197,11 +203,12 @@ export default function Categories({ loaderData }: Route.ComponentProps) {
 				/>
 				<hr className="my-10 text-neutral-700" />
 				<CategorySection
-					sectionRef={yearSectionRef}
-					identifier="year"
-					title="年份"
-					meta={categoryYearMeta}
-					category={categoryYear}
+					sectionRef={timeSectionRef}
+					identifier="time"
+					title="时间"
+					meta={categoryTimeMeta}
+					category={categoryTime}
+					sort={(a, b) => timeKeyValue(b[0]) - timeKeyValue(a[0])}
 					categoryModal={categoryModal}
 				/>
 			</div>
