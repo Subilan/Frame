@@ -21,6 +21,31 @@ export type CollectionItem = OSS.ObjectMeta & {
 	addr?: string;
 };
 
+export type ChronicleImage = {
+	path: string;
+	alt?: string;
+	caption?: string;
+};
+
+export type ChronicleBlock =
+	| { type: 'paragraph'; html: string }
+	| { type: 'heading'; level: 2 | 3 | 4; html: string }
+	| { type: 'image'; image: ChronicleImage }
+	| { type: 'split'; align: 'left' | 'right'; image: ChronicleImage; text: string };
+
+export type ChronicleItem = {
+	slug: string;
+	filename: string;
+	title: string;
+	content: ChronicleBlock[];
+	collection?: string;
+	imagePath?: string;
+	excerpt?: string;
+	imageInfo?: {
+		date?: string;
+	};
+};
+
 export type SimpleCollectionItem = Pick<CollectionItem, 'name' | 'url'>;
 
 // 单个注解的结构

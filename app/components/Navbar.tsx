@@ -1,14 +1,9 @@
-import { BookOpenTextIcon, InfoIcon, MenuIcon } from 'lucide-react';
+import { InfoIcon, MenuIcon } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
-import { NavLink, useLocation, useNavigate, type Location } from 'react-router';
+import { NavLink, useLocation, useNavigate } from 'react-router';
 import Modal from './Modal';
-import type { CollectionMeta } from '~/data/types';
 import { CSSTransition } from 'react-transition-group';
 import useOutsideAlerter from '~/hooks/useOutsideAlerter';
-
-export type NavbarProps = {
-	allCollections: Record<string, CollectionMeta>;
-};
 
 const navItems = [
 	{
@@ -18,19 +13,18 @@ const navItems = [
 	{
 		to: '/categories',
 		text: '分类'
+	},
+	{
+		to: '/chronicles',
+		text: '记录'
 	}
-	// {
-	// 	to: '/highlights',
-	// 	text: '精选集'
-	// }
 ];
 
-export default function Navbar({ allCollections }: NavbarProps) {
+export default function Navbar() {
 	const navigate = useNavigate();
 	const location = useLocation();
 
 	const [aboutModalOpen, setAboutModalOpen] = useState(false);
-	const [collectionStoryModalOpen, setCollectionStoryModalOpen] = useState(false);
 	const isIndexPage = useMemo(() => location.pathname === '/', [location]);
 
 	const collectionName = useMemo(() => {
@@ -39,11 +33,6 @@ export default function Navbar({ allCollections }: NavbarProps) {
 		if (result === null) return null;
 		return result[1];
 	}, [location]);
-
-	const currentCollection = useMemo(() => {
-		if (!collectionName) return undefined;
-		return allCollections[collectionName];
-	}, [collectionName]);
 
 	// const [searchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -95,15 +84,6 @@ export default function Navbar({ allCollections }: NavbarProps) {
 								/>
 							</>
 						)}
-						{currentCollection?.story && (
-							<>
-								<BookOpenTextIcon
-									className="cursor-pointer"
-									size={'20'}
-									onClick={() => setCollectionStoryModalOpen(true)}
-								/>
-							</>
-						)}
 					</div>
 				</nav>
 			</div>
@@ -137,25 +117,6 @@ export default function Navbar({ allCollections }: NavbarProps) {
 				</div>
 			</CSSTransition>
 			{/* <SearchModal open={searchModalOpen} setOpen={setSearchModalOpen}/> */}
-
-			{currentCollection?.story && (
-				<Modal
-					width="500px"
-					open={collectionStoryModalOpen}
-					setOpen={setCollectionStoryModalOpen}
-				>
-					<div className="flex flex-col gap-3">
-						<h3 className="text-3xl font-bold">
-							<span className="text-neutral-400 mr-2">相册故事</span>
-							{currentCollection.title}
-						</h3>
-						<div
-							className="[&_p]:my-2"
-							dangerouslySetInnerHTML={{ __html: currentCollection.story }}
-						></div>
-					</div>
-				</Modal>
-			)}
 
 			<Modal open={aboutModalOpen} setOpen={setAboutModalOpen}>
 				<div className="flex flex-col gap-3">

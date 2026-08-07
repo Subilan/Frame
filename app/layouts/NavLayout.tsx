@@ -26,7 +26,7 @@ export type NavLayoutOutletContext = {
 export default function NavLayout(props: NavLayoutProps & Route.ComponentProps) {
 	return (
 		<>
-			<Navbar allCollections={props.loaderData.allCollections} />
+			<Navbar />
 			<main className="pt-[68px]">
 				<Outlet
 					context={{ navLoaderData: props.loaderData } satisfies NavLayoutOutletContext}
