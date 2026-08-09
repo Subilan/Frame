@@ -11,8 +11,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import * as yaml from 'yaml';
 import path from 'path';
 import { VFile } from 'vfile';
-import type { ChronicleBlock, ChronicleImage, ChronicleItem, CollectionItem } from '~/data/types';
-import parseExifTime from '~/data/utils/parseExifTime';
+import type { ChronicleBlock, ChronicleImage, ChronicleItem, PhotoRecord } from '~/data/types';
 
 const SCRIPT_PATH = import.meta.dirname;
 
@@ -187,12 +186,12 @@ async function getImageInfo(simpleRepr?: string) {
 	const collectionName = result[1].replaceAll('/', '~');
 	const collectionItems = (
 		await import(SCRIPT_PATH + '/dist/filetrees/' + collectionName + '.json')
-	).default as CollectionItem[];
+	).default as PhotoRecord[];
 	const item = collectionItems.find(x => x.name.endsWith(result[2]));
-	if (!item?.exif) return undefined;
+	if (!item?.ts) return undefined;
 
 	return {
-		date: parseExifTime(item.exif.DateTime.value)?.toISOString()
+		date: new Date(item.ts).toISOString()
 	};
 }
 
@@ -224,6 +223,11 @@ const parseTasks = markdownFiles.map(async filename => {
 });
 
 await Promise.all(parseTasks);
+
+const slugs = parsed.map(x => x.slug);
+if (new Set(slugs).size !== slugs.length) {
+	throw new Error('构建失败：存在重复的 chronicle slug');
+}
 
 await fs.writeFile(SCRIPT_PATH + '/dist/chronicles.json', JSON.stringify(parsed));
 await fs.copyFile(

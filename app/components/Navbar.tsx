@@ -34,8 +34,6 @@ export default function Navbar() {
 		return result[1];
 	}, [location]);
 
-	// const [searchModalOpen, setSearchModalOpen] = useState(false);
-
 	const [collapseOpen, setCollapseOpen] = useState(false);
 	const collapseRef = useRef<HTMLDivElement>(null);
 	const menuIconRef = useRef<SVGSVGElement>(null);
@@ -74,7 +72,6 @@ export default function Navbar() {
 					</div>
 					<div className="flex-1" />
 					<div className="flex gap-5">
-						{/* <SearchIcon onClick={() => setSearchModalOpen(true)} className="cursor-pointer" size={'20'} /> */}
 						{isIndexPage && (
 							<>
 								<InfoIcon
@@ -116,7 +113,6 @@ export default function Navbar() {
 					)}
 				</div>
 			</CSSTransition>
-			{/* <SearchModal open={searchModalOpen} setOpen={setSearchModalOpen}/> */}
 
 			<Modal open={aboutModalOpen} setOpen={setAboutModalOpen}>
 				<div className="flex flex-col gap-3">

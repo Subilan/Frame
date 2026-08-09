@@ -1,6 +1,3 @@
-import type OSS from 'ali-oss';
-import type { Exif } from '~/data/exifs';
-
 export type CollectionMeta = {
 	name: string;
 	title: string;
@@ -15,10 +12,32 @@ export type CollectionMeta = {
 	level: number;
 };
 
-export type CollectionItem = OSS.ObjectMeta & {
-	exif?: Exif;
-	caption?: CaptionItem;
+// 单张照片的紧凑记录，由 build 从完整 OSS 元数据和 EXIF 投影而来
+export type PhotoRecord = {
+	/** OSS 上的完整对象路径，如 public/frame/dawanqu/2023/xxx.jpg */
+	name: string;
+	/** EXIF DateTime 原文，如 2017:08:04 18:01:04 */
+	date?: string;
+	/** 拍摄时间时间戳（本地时区） */
+	ts?: number;
+	width?: number;
+	height?: number;
+	/** EXIF Orientation 数值 */
+	orientation?: number;
+	model?: string;
+	/** 文件大小（字节） */
+	size?: number;
+	/** GPS 纬度原文，如 22deg 31' 49.410" */
+	lat?: string;
+	latRef?: 'North' | 'South';
+	/** GPS 经度原文，如 113deg 58' 16.890" */
+	lng?: string;
+	lngRef?: 'East' | 'West';
+	/** 海拔（米），已根据 GPSAltitudeRef 处理正负 */
+	altitude?: number;
+	/** 逆地理编码得到的地址 */
 	addr?: string;
+	caption?: CaptionItem;
 };
 
 export type ChronicleImage = {
@@ -45,8 +64,6 @@ export type ChronicleItem = {
 		date?: string;
 	};
 };
-
-export type SimpleCollectionItem = Pick<CollectionItem, 'name' | 'url'>;
 
 // 单个注解的结构
 export type CaptionItem = { title?: string; content: string };
@@ -88,4 +105,4 @@ export type CityCategoryMeta = {
 
 export type CategoryMeta<T extends Record<string, any> = {}> = Record<string, T & { total: number }>;
 
-export type Category = Record<string, SimpleCollectionItem[]>;
+export type Category = Record<string, string[]>;

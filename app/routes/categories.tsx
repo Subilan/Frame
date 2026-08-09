@@ -2,11 +2,12 @@ import { BuildingIcon, CalendarIcon, type LucideIcon } from 'lucide-react';
 import type { Route } from './+types/categories';
 import { data } from 'react-router';
 import Card from '~/components/Card';
-import type { Category, CategoryMeta, CityCategoryMeta, SimpleCollectionItem } from '~/data/types';
+import type { Category, CategoryMeta, CityCategoryMeta } from '~/data/types';
 import { useIsVisible } from '~/hooks/useIsVisible';
 import { useMemo, useState, type ReactNode, type Ref } from 'react';
 import { getJson } from '~/utils/getJson';
-import getFrameUrlFromOssUrl from '~/utils/getFrameUrlFromOssUrl';
+import getFrameUrlFromName from '~/utils/getFrameUrlFromName';
+import getOssUrlFromName from '~/utils/getOssUrlFromName';
 import Modal from '~/components/Modal';
 
 export async function clientLoader() {
@@ -46,7 +47,7 @@ type CategorySectionProp = {
 	itemSubtitle?: (name: string, meta: Record<string, any>) => ReactNode;
 	category: Category;
 	categoryModal: {
-		setItems: React.Dispatch<React.SetStateAction<SimpleCollectionItem[] | undefined>>;
+		setItems: React.Dispatch<React.SetStateAction<string[] | undefined>>;
 		setName: React.Dispatch<React.SetStateAction<string>>;
 		setModal: React.Dispatch<React.SetStateAction<boolean>>;
 	};
@@ -96,11 +97,11 @@ function CategorySection(props: CategorySectionProp) {
 									)}
 								</h3>
 								<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-									{props.category[categoryName].slice(0, 3).map(images => (
+									{props.category[categoryName].slice(0, 3).map(name => (
 										<Card.Medium
-											key={images.name}
-											bg={images.url + '?x-oss-process=image/resize,h_500'}
-											to={getFrameUrlFromOssUrl(images.url)}
+											key={name}
+											bg={getOssUrlFromName(name) + '?x-oss-process=image/resize,h_500'}
+											to={getFrameUrlFromName(name)}
 										/>
 									))}
 								</div>
@@ -120,7 +121,7 @@ function timeKeyValue(name: string) {
 function useCategoryModal() {
 	const [modal, setModal] = useState(false);
 	const [name, setName] = useState('');
-	const [items, setItems] = useState<SimpleCollectionItem[]>();
+	const [items, setItems] = useState<string[]>();
 
 	return { modal, setModal, name, setName, items, setItems };
 }
@@ -216,11 +217,11 @@ export default function Categories({ loaderData }: Route.ComponentProps) {
 			<Modal width="1200px" open={categoryModal.modal} setOpen={categoryModal.setModal}>
 				<h3 className="text-2xl">{categoryModal.name || '分类'}</h3>
 				<div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-5 max-h-[70vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-					{categoryModal.items?.map(item => (
+					{categoryModal.items?.map(name => (
 						<Card.Medium
-							key={item.name}
-							bg={item.url + '?x-oss-process=image/resize,h_500'}
-							to={getFrameUrlFromOssUrl(item.url)}
+							key={name}
+							bg={getOssUrlFromName(name) + '?x-oss-process=image/resize,h_500'}
+							to={getFrameUrlFromName(name)}
 						/>
 					))}
 				</div>

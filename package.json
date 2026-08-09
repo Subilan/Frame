@@ -6,6 +6,7 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "build:data": "vite-node app/data/build.ts",
+    "build:photos": "vite-node app/data/build_photos.ts",
     "build:chronicles": "vite-node app/data/build_chronicles.ts",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"

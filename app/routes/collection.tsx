@@ -9,85 +9,87 @@ import Card from '~/components/Card';
 import InfoIcon from 'lucide-static/icons/info.svg?raw';
 import Modal from '~/components/Modal';
 import './collection.css';
-import type { Exif } from '~/data/exifs';
 import type { Route } from './+types/collection';
-import type { CollectionItem, CollectionMeta } from '~/data/types';
+import type { CollectionMeta, PhotoRecord } from '~/data/types';
 import { DataPath, SlashSubstitute } from '~/consts';
 import { ArrowDownIcon, ArrowLeftIcon, ArrowUpIcon, CalendarIcon, MapPinIcon, MountainIcon } from 'lucide-react';
-import parseExifTime from '~/data/utils/parseExifTime';
 import Dropdown from '~/components/Dropdown';
 import formatDate from '~/utils/formatDate';
+import getOssUrlFromName from '~/utils/getOssUrlFromName';
 
 const exifDisplay: {
-	cond?: (exif: Exif, ...extra: any[]) => boolean;
+	cond?: (photo: PhotoRecord) => boolean;
 	name: string;
-	value: (exif: Exif, ...extra: any[]) => string;
+	value: (photo: PhotoRecord) => string;
 }[] = [
 	{
 		name: '文件大小',
-		value(exif) {
-			return `${(Number(exif.FileSize.value) / 1024 / 1024).toFixed(1)} MB`;
+		cond(photo) {
+			return photo.size !== undefined;
+		},
+		value(photo) {
+			return `${(photo.size! / 1024 / 1024).toFixed(1)} MB`;
 		}
 	},
 	{
 		name: '尺寸',
-		value(exif) {
-			const w = exif.ImageWidth.value;
-			const h = exif.ImageHeight.value;
+		value(photo) {
+			const w = photo.width;
+			const h = photo.height;
+			if (!w || !h) return 'Unknown';
 
-			return exif.Orientation.value === '6' ? `${h}px×${w}px` : `${w}px×${h}px`;
+			return photo.orientation === 6 || photo.orientation === 8
+				? `${h}px×${w}px`
+				: `${w}px×${h}px`;
 		}
 	},
 	{
 		name: '拍摄设备',
-		value(exif) {
-			return exif.Model.value;
+		value(photo) {
+			return photo.model ?? 'Unknown';
 		}
 	},
 	{
 		name: '拍摄时间',
-		value(exif) {
-			const pattern = /^(\d+):(\d+):(\d+) ([\d:]+)$/;
-			const execResult = pattern.exec(exif.DateTime.value);
+		value(photo) {
+			if (!photo.date) return 'Unknown';
 
-			return execResult === null
-				? 'Unknown'
-				: `${execResult[1]}-${execResult[2]}-${execResult[3]} ${execResult[4]} UTC+8`;
+			return photo.date.replace(
+				/^(\d+):(\d+):(\d+) ([\d:]+)$/,
+				'$1-$2-$3 $4 UTC+8'
+			);
 		}
 	},
 	{
 		name: 'GPS',
-		cond(exif) {
-			return exif.GPSLongitude !== undefined && exif.GPSLatitude !== undefined;
+		cond(photo) {
+			return photo.lng !== undefined && photo.lat !== undefined;
 		},
-		value(exif) {
-			return `${exif.GPSLongitude!.value.replace('deg', '°')} E<br/>${exif.GPSLatitude!.value.replace('deg', '°')} N`;
+		value(photo) {
+			return `${photo.lng!.replace('deg', '°')} ${photo.lngRef?.[0] ?? 'E'}<br/>${photo.lat!.replace('deg', '°')} ${photo.latRef?.[0] ?? 'N'}`;
 		}
 	},
 	{
 		name: 'GPS 地址',
-		cond(exif, ...extra) {
+		cond(photo) {
 			return (
-				exif.GPSLongitude !== undefined &&
-				exif.GPSLatitude !== undefined &&
-				extra[0] !== '中华人民共和国'
+				photo.lng !== undefined &&
+				photo.lat !== undefined &&
+				photo.addr !== undefined &&
+				photo.addr !== '中华人民共和国'
 			);
 		},
-		value(_, ...extra) {
-			return extra[0];
+		value(photo) {
+			return photo.addr!;
 		}
 	},
 	{
 		name: '海拔高度',
-		cond(exif) {
-			return exif.GPSAltitude !== undefined && exif.GPSAltitudeRef !== undefined;
+		cond(photo) {
+			return photo.altitude !== undefined;
 		},
-		value(exif) {
-			return (
-				(exif.GPSAltitudeRef!.value === '0' ? '' : '-') +
-				(eval(exif.GPSAltitude!.value) as Number).toFixed(1) +
-				'm'
-			);
+		value(photo) {
+			return `${photo.altitude!.toFixed(1)}m`;
 		}
 	}
 ];
@@ -121,7 +123,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 	return {
 		meta: metaData,
-		filetree: filetree && ((await filetree.json()) as CollectionItem[])
+		filetree: filetree && ((await filetree.json()) as PhotoRecord[])
 	};
 }
 
@@ -135,7 +137,6 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 
 	useEffect(() => {
 		if (lightbox && imageName && filetree) {
-			console.log(imageName);
 			const targetIndex = filetree.findIndex(x => x.name.endsWith(imageName));
 			if (targetIndex >= 0) lightbox.loadAndOpen(targetIndex);
 		}
@@ -153,9 +154,8 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 						const ossName = element.getAttribute('data-oss-name');
 						const current = filetree?.find(x => x.name === ossName);
 
-						if (current?.exif) {
-							setCurrentExif(current.exif);
-							setCurrentExifGPSAddr(current.addr);
+						if (current) {
+							setCurrentPhoto(current);
 							setExifModalOpen(true);
 						}
 					},
@@ -203,8 +203,7 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 	}, [meta]);
 
 	const [exifModalOpen, setExifModalOpen] = useState(false);
-	const [currentExif, setCurrentExif] = useState<Exif>();
-	const [currentExifGPSAddr, setCurrentExifGPSAddr] = useState<string>();
+	const [currentPhoto, setCurrentPhoto] = useState<PhotoRecord>();
 
 	const [sortBy, setSortBy] = useState('date');
 	const [orderBy, setOrderBy] = useState('asc');
@@ -219,32 +218,23 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 			const orderMul = orderBy === 'asc' ? 1 : -1;
 
 			if (sortBy === 'date') {
-				const aTime = a.exif?.DateTime.value;
-				const bTime = b.exif?.DateTime.value;
-				if (!aTime || !bTime) return 0;
+				const aTime = a.ts;
+				const bTime = b.ts;
+				if (aTime === undefined || bTime === undefined) return 0;
 
-				const aDate = parseExifTime(aTime);
-				const bDate = parseExifTime(bTime);
-				if (!aDate || !bDate) return 0;
-
-				return (aDate.getTime() - bDate.getTime()) * orderMul;
+				return (aTime - bTime) * orderMul;
 			}
 
 			if (sortBy === 'altitude') {
-				const aAlt = a.exif?.GPSAltitude?.value;
-				const bAlt = b.exif?.GPSAltitude?.value;
+				const aAlt = a.altitude;
+				const bAlt = b.altitude;
 
 				// 没有海拔数据的排到最后
-				if (!aAlt && !bAlt) return 0;
-				if (!aAlt) return 1;
-				if (!bAlt) return -1;
+				if (aAlt === undefined && bAlt === undefined) return 0;
+				if (aAlt === undefined) return 1;
+				if (bAlt === undefined) return -1;
 
-				const signA = a.exif!.GPSAltitudeRef?.value === '1' ? -1 : 1;
-				const signB = b.exif!.GPSAltitudeRef?.value === '1' ? -1 : 1;
-				const aVal = signA * eval(aAlt);
-				const bVal = signB * eval(bAlt);
-
-				return (aVal - bVal) * orderMul;
+				return (aAlt - bAlt) * orderMul;
 			}
 
 			if (sortBy === 'location') {
@@ -265,9 +255,8 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 	// 从排序结果中取第一张有日期的照片，作为初始展示日期
 	const baseDate = useMemo(() => {
 		for (const f of sortedFiletree) {
-			if (f.exif?.DateTime.value) {
-				const d = parseExifTime(f.exif.DateTime.value);
-				if (d) return d;
+			if (f.ts !== undefined) {
+				return new Date(f.ts);
 			}
 		}
 		return undefined;
@@ -283,21 +272,20 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 			entries => {
 				// 取所有相交照片中 boundingClientRect.top 最小的（视觉上最靠上）
 				let bestTop = Infinity;
-				let bestExif: string | undefined;
+				let bestTs: string | undefined;
 
 				for (const entry of entries) {
 					if (!entry.isIntersecting) continue;
-					const exif = (entry.target as HTMLImageElement).dataset.exif;
-					if (!exif) continue;
+					const ts = (entry.target as HTMLImageElement).dataset.ts;
+					if (!ts) continue;
 					if (entry.boundingClientRect.top < bestTop) {
 						bestTop = entry.boundingClientRect.top;
-						bestExif = exif;
+						bestTs = ts;
 					}
 				}
 
-				if (bestExif) {
-					const exifData = JSON.parse(bestExif) as Exif;
-					setObserverDate(parseExifTime(exifData.DateTime.value));
+				if (bestTs) {
+					setObserverDate(new Date(+bestTs));
 				}
 			},
 			{ threshold: 0.1 }
@@ -371,14 +359,10 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 						id="gallery"
 					>
 						{sortedFiletree.map(f => {
-								const orientation = f.exif?.Orientation?.value;
-								const swap = orientation === '6' || orientation === '8';
-								const pswpWidth = swap
-									? f.exif?.ImageHeight?.value
-									: f.exif?.ImageWidth?.value;
-								const pswpHeight = swap
-									? f.exif?.ImageWidth?.value
-									: f.exif?.ImageHeight?.value;
+								const orientation = f.orientation;
+								const swap = orientation === 6 || orientation === 8;
+								const pswpWidth = swap ? f.height : f.width;
+								const pswpHeight = swap ? f.width : f.height;
 
 								return (
 								<a
@@ -386,7 +370,7 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 									data-oss-name={f.name}
 									data-pswp-height={pswpHeight}
 									data-pswp-width={pswpWidth}
-									href={`${f.url}`}
+									href={getOssUrlFromName(f.name)}
 									key={f.name}
 									target="_blank"
 									className="relative hover:opacity-80 active:opacity-50"
@@ -394,9 +378,8 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 									<img
 										ref={el => {
 											if (el) {
-												el.dataset.exif = f.exif
-													? JSON.stringify(f.exif)
-													: undefined;
+												el.dataset.ts =
+													f.ts !== undefined ? String(f.ts) : undefined;
 												photoRefs.current[f.name] = el;
 											} else {
 												delete photoRefs.current[f.name];
@@ -404,7 +387,7 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 										}}
 										data-oss-name={f.name}
 										loading="lazy"
-										src={`${f.url}?x-oss-process=image/resize,h_500`}
+										src={getOssUrlFromName(f.name) + '?x-oss-process=image/resize,h_500'}
 										className="object-cover object-center h-[250px] xl:h-[350px] w-full"
 									/>
 									{f.caption && (
@@ -453,9 +436,9 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 
 			<Modal open={exifModalOpen} setOpen={setExifModalOpen} width="600px">
 				<div className="flex flex-col gap-3">
-					{currentExif &&
+					{currentPhoto &&
 						exifDisplay.map(display => {
-							if (display.cond && !display.cond(currentExif, currentExifGPSAddr))
+							if (display.cond && !display.cond(currentPhoto))
 								return null;
 
 							return (
@@ -465,7 +448,7 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 									</div>
 									<div
 										dangerouslySetInnerHTML={{
-											__html: display.value(currentExif, currentExifGPSAddr)
+											__html: display.value(currentPhoto)
 										}}
 									></div>
 								</div>
