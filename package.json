@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@react-router/node": "^7.18.2",
-    "@react-router/serve": "^7.18.2",
+    "@react-router/serve": "^8.3.1",
     "@types/ali-oss": "^6.23.2",
     "@types/nprogress": "^0.2.3",
     "@types/react-transition-group": "^4.4.12",
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@ltd/j-toml": "^1.38.0",
-    "@react-router/dev": "^7.18.2",
+    "@react-router/dev": "^8.3.1",
     "@tailwindcss/vite": "^4.1.13",
     "@types/node": "^22",
     "@types/react": "^19.1.13",
