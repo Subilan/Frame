@@ -18,8 +18,7 @@ const SCRIPT_PATH = import.meta.dirname;
 const markdownFiles = await fs.readdir(SCRIPT_PATH + '/records');
 
 type Frontmatter = {
-	path?: string;
-	collection?: string;
+	banner?: string;
 };
 
 const parsed: RecordItem[] = [];
@@ -214,10 +213,10 @@ const parseTasks = markdownFiles.map(async filename => {
 		filename,
 		title: getTitle(tree),
 		content: await extractBlocks(tree),
-		collection: fm.collection ?? (fm.path ? fm.path.replace(/\/[^/]+$/, '') : undefined),
-		imagePath: fm.path,
+		collection: fm.banner ? fm.banner.replace(/\/[^/]+$/, '') : undefined,
+		imagePath: fm.banner,
 		excerpt: excerpt.length === 0 ? undefined : excerpt,
-		imageInfo: await getImageInfo(fm.path)
+		imageInfo: await getImageInfo(fm.banner)
 	};
 	parsed.push(data);
 });
