@@ -11,18 +11,18 @@ import remarkFrontmatter from 'remark-frontmatter';
 import * as yaml from 'yaml';
 import path from 'path';
 import { VFile } from 'vfile';
-import type { ChronicleBlock, ChronicleImage, ChronicleItem, PhotoRecord } from '~/data/types';
+import type { RecordBlock, RecordImage, RecordItem, PhotoRecord } from '~/data/types';
 
 const SCRIPT_PATH = import.meta.dirname;
 
-const markdownFiles = await fs.readdir(SCRIPT_PATH + '/chronicles');
+const markdownFiles = await fs.readdir(SCRIPT_PATH + '/records');
 
 type Frontmatter = {
 	path?: string;
 	collection?: string;
 };
 
-const parsed: ChronicleItem[] = [];
+const parsed: RecordItem[] = [];
 
 const htmlProcessor = unified()
 	.use(remarkRehype, { allowDangerousHtml: true })
@@ -54,7 +54,7 @@ function isImageParagraph(node: any): boolean {
 	);
 }
 
-function toChronicleImage(node: any): ChronicleImage {
+function toRecordImage(node: any): RecordImage {
 	return {
 		path: node.url,
 		alt: node.alt || undefined,
@@ -65,7 +65,7 @@ function toChronicleImage(node: any): ChronicleImage {
 async function extractSplitBlock(
 	value: string,
 	align: 'left' | 'right'
-): Promise<ChronicleBlock> {
+): Promise<RecordBlock> {
 	const innerTree = unified().use(remarkParse).parse(value);
 	let imageNode: any;
 	const textNodes: any[] = [];
@@ -87,19 +87,19 @@ async function extractSplitBlock(
 	return {
 		type: 'split',
 		align,
-		image: toChronicleImage(imageNode.children[0]),
+		image: toRecordImage(imageNode.children[0]),
 		text
 	};
 }
 
-async function extractBlocks(tree: any): Promise<ChronicleBlock[]> {
-	const blocks: ChronicleBlock[] = [];
+async function extractBlocks(tree: any): Promise<RecordBlock[]> {
+	const blocks: RecordBlock[] = [];
 
 	for (const child of tree.children ?? []) {
 		if (child.type === 'heading' && child.depth === 1) continue;
 
 		if (isImageParagraph(child)) {
-			blocks.push({ type: 'image', image: toChronicleImage(child.children[0]) });
+			blocks.push({ type: 'image', image: toRecordImage(child.children[0]) });
 			continue;
 		}
 
@@ -196,7 +196,7 @@ async function getImageInfo(simpleRepr?: string) {
 }
 
 const parseTasks = markdownFiles.map(async filename => {
-	const document = (await fs.readFile(SCRIPT_PATH + '/chronicles/' + filename)).toString();
+	const document = (await fs.readFile(SCRIPT_PATH + '/records/' + filename)).toString();
 	const expanded = expandSplitContainers(document);
 
 	const processor = unified()
@@ -209,7 +209,7 @@ const parseTasks = markdownFiles.map(async filename => {
 	const fm = (file.data.fm ?? {}) as Partial<Frontmatter>;
 	const excerpt = await getExcerpt(expanded);
 
-	const data: ChronicleItem = {
+	const data: RecordItem = {
 		slug: filename.replace(/\.md$/, ''),
 		filename,
 		title: getTitle(tree),
@@ -226,11 +226,11 @@ await Promise.all(parseTasks);
 
 const slugs = parsed.map(x => x.slug);
 if (new Set(slugs).size !== slugs.length) {
-	throw new Error('构建失败：存在重复的 chronicle slug');
+	throw new Error('构建失败：存在重复的 record slug');
 }
 
-await fs.writeFile(SCRIPT_PATH + '/dist/chronicles.json', JSON.stringify(parsed));
+await fs.writeFile(SCRIPT_PATH + '/dist/records.json', JSON.stringify(parsed));
 await fs.copyFile(
-	SCRIPT_PATH + '/dist/chronicles.json',
-	path.join(SCRIPT_PATH, '../../public/__data/chronicles.json')
+	SCRIPT_PATH + '/dist/records.json',
+	path.join(SCRIPT_PATH, '../../public/__data/records.json')
 );

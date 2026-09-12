@@ -40,23 +40,23 @@ export type PhotoRecord = {
 	caption?: CaptionItem;
 };
 
-export type ChronicleImage = {
+export type RecordImage = {
 	path: string;
 	alt?: string;
 	caption?: string;
 };
 
-export type ChronicleBlock =
+export type RecordBlock =
 	| { type: 'paragraph'; html: string }
 	| { type: 'heading'; level: 2 | 3 | 4; html: string }
-	| { type: 'image'; image: ChronicleImage }
-	| { type: 'split'; align: 'left' | 'right'; image: ChronicleImage; text: string };
+	| { type: 'image'; image: RecordImage }
+	| { type: 'split'; align: 'left' | 'right'; image: RecordImage; text: string };
 
-export type ChronicleItem = {
+export type RecordItem = {
 	slug: string;
 	filename: string;
 	title: string;
-	content: ChronicleBlock[];
+	content: RecordBlock[];
 	collection?: string;
 	imagePath?: string;
 	excerpt?: string;

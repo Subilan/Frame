@@ -15,7 +15,7 @@ const navItems = [
 		text: '分类'
 	},
 	{
-		to: '/chronicles',
+		to: '/records',
 		text: '记录'
 	}
 ];
