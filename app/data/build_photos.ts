@@ -78,11 +78,18 @@ console.log(`☁️ 构建照片文件目录...`);
 await mkdir(DIST_PATH + '/filetrees');
 const collectionFiletrees: Record<string, OSS.ObjectMeta[]> = {};
 
-const exifCache = (await import(SCRIPT_PATH + '/exif_cache.json')).default as {
+const EXIF_CACHE_PATH = SCRIPT_PATH + '/exif_cache.json';
+const exifCache: {
 	name: string;
 	exif?: Exif;
-}[];
+}[] = await fs
+	.readFile(EXIF_CACHE_PATH, 'utf8')
+	.then(content => JSON.parse(content))
+	.catch(() => []);
 const exifCacheMap = new Map(exifCache.map(x => [x.name, x.exif]));
+// 本次新获取到的exif，构建结束后回写缓存，避免下次构建重复请求
+const fetchedExifMap = new Map<string, Exif>();
+const pendingExifTasks = new Map<string, Promise<Exif | undefined>>();
 
 /**
  * 根据一个oss对象的name属性，拼接得到url属性的值
@@ -103,15 +110,27 @@ async function retrieveExifForName(name: string) {
 
 	if (cacheMatch) return cacheMatch;
 
-	console.log(`⌛️ 找不到 ${name} 的本地缓存，从远程获取`);
+	const pending = pendingExifTasks.get(name);
+	if (pending) return pending;
 
-	const result = await fetch(`${ossNameToUrl(name)}?x-oss-process=image/info`);
+	const task = (async () => {
+		console.log(`⌛️ 找不到 ${name} 的本地缓存，从远程获取`);
 
-	if (result.status === 200) {
-		return (await result.json()) as Exif;
-	}
+		const result = await fetch(`${ossNameToUrl(name)}?x-oss-process=image/info`);
 
-	return undefined;
+		if (result.status !== 200) {
+			console.warn(`⚠️ ${name} 的 exif 获取失败（${result.status}），跳过缓存`);
+			return undefined;
+		}
+
+		const exif = (await result.json()) as Exif;
+		exifCacheMap.set(name, exif);
+		fetchedExifMap.set(name, exif);
+		return exif;
+	})();
+
+	pendingExifTasks.set(name, task);
+	return task;
 }
 
 result
@@ -298,6 +317,19 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 });
 
 await Promise.all(writeFiletreeTasks);
+
+if (fetchedExifMap.size > 0) {
+	const mergedCache = [
+		...exifCache.filter(x => !fetchedExifMap.has(x.name)),
+		...[...fetchedExifMap.entries()]
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([name, exif]) => ({ name, exif }))
+	];
+
+	await fs.writeFile(EXIF_CACHE_PATH, JSON.stringify(mergedCache, null, 4));
+
+	console.log(`💾 已把 ${fetchedExifMap.size} 条新 exif 写入本地缓存`);
+}
 
 // 校验生成的记录没有重复名称
 const allPhotoNames = Object.values(collectionFiletrees).flatMap(items => items.map(x => x.name));
