@@ -61,7 +61,30 @@ function ImageFigure({
 	);
 }
 
-function renderBlock(block: RecordBlock, recordTitle: string, key: number) {
+type LayoutBlock = Extract<RecordBlock, { type: 'image' | 'split' }>;
+type ContentGroup = { type: 'text'; html: string } | { type: 'block'; block: LayoutBlock };
+
+function groupBlocks(blocks: RecordBlock[]): ContentGroup[] {
+	const groups: ContentGroup[] = [];
+
+	for (const block of blocks) {
+		if (block.type === 'paragraph' || block.type === 'heading') {
+			const last = groups[groups.length - 1];
+			if (last?.type === 'text') {
+				last.html += block.html;
+			} else {
+				groups.push({ type: 'text', html: block.html });
+			}
+			continue;
+		}
+
+		groups.push({ type: 'block', block });
+	}
+
+	return groups;
+}
+
+function renderBlock(block: LayoutBlock, recordTitle: string, key: number) {
 	switch (block.type) {
 		case 'image':
 			return (
@@ -86,32 +109,13 @@ function renderBlock(block: RecordBlock, recordTitle: string, key: number) {
 						/>
 						<div
 							className={
-								'px-5 md:px-0 ' +
-								(block.align === 'right' ? 'md:order-1 md:text-right ' : '') +
-								'[&_p]:my-3 [&_p]:text-lg [&_p]:leading-8 [&_p]:text-neutral-200'
+								'record-text record-text-split px-5 md:px-0' +
+								(block.align === 'right' ? ' md:order-1 md:text-right' : '')
 							}
 							dangerouslySetInnerHTML={{ __html: block.text }}
 						/>
 					</div>
 				</div>
-			);
-
-		case 'heading':
-			return (
-				<div
-					key={key}
-					className="mx-auto max-w-[680px] px-5 [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-bold"
-					dangerouslySetInnerHTML={{ __html: block.html }}
-				/>
-			);
-
-		case 'paragraph':
-			return (
-				<div
-					key={key}
-					className="mx-auto max-w-[680px] px-5 [&_h1]:hidden [&_p]:my-5 [&_p]:text-lg [&_p]:leading-8 [&_p]:text-neutral-200 [&_ul]:my-5 [&_ol]:my-5 [&_blockquote]:my-5 [&_blockquote]:border-l-2 [&_blockquote]:border-neutral-700 [&_blockquote]:pl-4 [&_blockquote]:text-neutral-300 [&_a]:text-sky-500 [&_a]:underline"
-					dangerouslySetInnerHTML={{ __html: block.html }}
-				/>
 			);
 	}
 }
@@ -153,8 +157,16 @@ export default function Record({ loaderData }: Route.ComponentProps) {
 			)}
 
 			<article className="pb-16 md:pb-24">
-				{record.content.map((block, i) =>
-					renderBlock(block, record.title, i)
+				{groupBlocks(record.content).map((group, i) =>
+					group.type === 'text' ? (
+						<div
+							key={i}
+							className="record-text mx-auto max-w-[680px] px-5"
+							dangerouslySetInnerHTML={{ __html: group.html }}
+						/>
+					) : (
+						renderBlock(group.block, record.title, i)
+					)
 				)}
 				{collectionId && (
 					<div className="mx-auto mt-10 max-w-[680px] px-5 text-center">
