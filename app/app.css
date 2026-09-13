@@ -31,3 +31,36 @@ a.inpage-link svg {
 .primary-button.active {
 	@apply bg-sky-600 text-white border-white/20;
 }
+
+.record-text {
+	text-autospace: normal;
+
+	& p {
+		@apply my-5 text-lg leading-8 text-neutral-200;
+	}
+
+	& h2 {
+		@apply mt-10 mb-4 text-2xl font-bold;
+	}
+
+	& h3 {
+		@apply mt-8 mb-3 text-xl font-bold;
+	}
+
+	& ul,
+	& ol {
+		@apply my-5;
+	}
+
+	& blockquote {
+		@apply my-5 border-l-2 border-neutral-700 pl-4 text-neutral-300;
+	}
+
+	& a {
+		@apply text-sky-500 underline;
+	}
+}
+
+.record-text-split p {
+	@apply my-3;
+}
