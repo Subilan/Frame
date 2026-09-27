@@ -24,6 +24,7 @@ const markdownFiles = await fs.readdir(DATA_PATH + '/records');
 
 type Frontmatter = {
 	banner?: string;
+	hidden?: boolean;
 };
 
 const parsed: RecordItem[] = [];
@@ -223,6 +224,7 @@ const parseTasks = markdownFiles.map(async filename => {
 		filename,
 		title: getTitle(tree),
 		content: await extractBlocks(tree),
+		hidden: fm.hidden === true ? true : undefined,
 		collection: fm.banner ? fm.banner.replace(/\/[^/]+$/, '') : undefined,
 		imagePath: fm.banner,
 		excerpt: excerpt.length === 0 ? undefined : excerpt,
@@ -240,4 +242,8 @@ if (new Set(slugs).size !== slugs.length) {
 
 await fs.writeFile(DIST_PATH + '/records.json', JSON.stringify(parsed));
 
-console.log(`📝 已解析 ${parsed.length} 篇记录`);
+const hiddenCount = parsed.filter(x => x.hidden).length;
+console.log(
+	`📝 已解析 ${parsed.length} 篇记录` +
+		(hiddenCount > 0 ? `（其中 ${hiddenCount} 篇标记 hidden，不在列表展示）` : '')
+);

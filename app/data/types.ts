@@ -65,6 +65,8 @@ export type RecordItem = {
 	slug: string;
 	filename: string;
 	title: string;
+	/** frontmatter 中标记 hidden: true，不在记录列表中展示 */
+	hidden?: boolean;
 	content: RecordBlock[];
 	collection?: string;
 	imagePath?: string;
