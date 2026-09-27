@@ -22,16 +22,19 @@ import parseExifTime from '~/data/utils/parseExifTime';
 const METRICS_START_TIME = Date.now();
 const SCRIPT_PATH = import.meta.dirname;
 const DIST_PATH = SCRIPT_PATH + '/dist';
-const PUBLIC_DATA_PATH = path.join(SCRIPT_PATH, '../../public/__data');
 
-// 加载本地 .env（OSS 凭证），便于直接运行 npm run build:data
+// 加载本地 .env（OSS 凭证），便于直接运行 npm run build:all
 try {
 	process.loadEnvFile(path.join(SCRIPT_PATH, '../../.env'));
 } catch {}
 
-// 清理上一次构建产物，避免陈旧文件（如已不再生成的分区）被带入本次输出
-await fs.rm(DIST_PATH, { recursive: true, force: true });
+// 只清理本阶段负责的子目录，保留 dist 下的其他产物（如 records.json）
 await mkdir(DIST_PATH);
+await Promise.all(
+	['filetrees', 'categories', 'collections'].map(sub =>
+		fs.rm(DIST_PATH + '/' + sub, { recursive: true, force: true })
+	)
+);
 
 // 指定在文件名中用于代替"/"的字符
 const SLASH_SUBSTITUTE = SlashSubstitute;
@@ -76,16 +79,20 @@ console.log(`☁️ 已列出 ${result.length} 个文件`);
 console.log(`☁️ 构建照片文件目录...`);
 
 await mkdir(DIST_PATH + '/filetrees');
-const collectionFiletrees: Record<string, OSS.ObjectMeta[]> = {};
+const collectionFiletrees: Record<string, string[]> = {};
 
 const EXIF_CACHE_PATH = SCRIPT_PATH + '/exif_cache.json';
+const rawExifCache = await fs.readFile(EXIF_CACHE_PATH, 'utf8').catch(() => '');
 const exifCache: {
 	name: string;
 	exif?: Exif;
-}[] = await fs
-	.readFile(EXIF_CACHE_PATH, 'utf8')
-	.then(content => JSON.parse(content))
-	.catch(() => []);
+}[] = (() => {
+	try {
+		return JSON.parse(rawExifCache);
+	} catch {
+		return [];
+	}
+})();
 const exifCacheMap = new Map(exifCache.map(x => [x.name, x.exif]));
 // 本次新获取到的exif，构建结束后回写缓存，避免下次构建重复请求
 const fetchedExifMap = new Map<string, Exif>();
@@ -133,19 +140,21 @@ async function retrieveExifForName(name: string) {
 	return task;
 }
 
-result
-	.filter(x => isImageFilePath(x.name))
+const ossImageNames = result.filter(x => isImageFilePath(x.name)).map(x => x.name);
+const ossImageNameSet = new Set(ossImageNames);
+
+ossImageNames
 	.sort((a, b) => {
-		let [dateA, dateB] = [getFileDateFromName(a.name), getFileDateFromName(b.name)];
+		let [dateA, dateB] = [getFileDateFromName(a), getFileDateFromName(b)];
 		if (!dateA || !dateB) return 0;
 		return Number(dateA) - Number(dateB);
 	})
-	.forEach(x => {
-		const collectionIdExec = COLLECTION_ID_REGEX.exec(x.name);
+	.forEach(name => {
+		const collectionIdExec = COLLECTION_ID_REGEX.exec(name);
 		if (collectionIdExec !== null) {
 			const collectionId = collectionIdExec[1];
 			if (!collectionFiletrees[collectionId]) collectionFiletrees[collectionId] = [];
-			collectionFiletrees[collectionId].push(x);
+			collectionFiletrees[collectionId].push(name);
 		}
 	});
 
@@ -253,17 +262,17 @@ function toPhotoRecord(
 
 const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 	const items = collectionFiletrees[k];
-	const exifs = await Promise.all(items.map(item => retrieveExifForName(item.name)));
+	const exifs = await Promise.all(items.map(name => retrieveExifForName(name)));
 	const collectionCaptions = collectionCaptionMap[k];
 
-	const records: PhotoRecord[] = items.map((item, index) => {
+	const records: PhotoRecord[] = items.map((name, index) => {
 		const exif = exifs[index];
 
 		if (exif?.DateTime?.value) {
 			const time = parseExifTime(exif.DateTime.value);
 			if (time) {
 				const timeKey = `${time.getFullYear()} 年 ${time.getMonth() + 1} 月`;
-				addToCategory(categoryTime, timeKey, item.name);
+				addToCategory(categoryTime, timeKey, name);
 				categoryTimeMetas[timeKey] = {
 					total: (categoryTimeMetas[timeKey]?.total ?? 0) + 1
 				};
@@ -271,12 +280,12 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 		}
 
 		// 'xxx/xxx/xxx/abc_efg.jpg' -> 'abc_efg.jpg'
-		const filename = /.*\/((.*?)\.(\w+))$/.exec(item.name);
+		const filename = /.*\/((.*?)\.(\w+))$/.exec(name);
 		const caption =
 			filename !== null ? collectionCaptions?.[filename[1]] : undefined;
 
 		let addr: string | undefined;
-		const regeoItem = regeo[item.name];
+		const regeoItem = regeo[name];
 		if (regeoItem) {
 			addr =
 				regeoItem.addressComponent.province +
@@ -292,7 +301,7 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 					regeoItem.addressComponent.city.length > 0
 						? regeoItem.addressComponent.city
 						: regeoItem.addressComponent.province;
-				addToCategory(categoryCity, city, item.name);
+				addToCategory(categoryCity, city, name);
 				if (!categoryCityMetas[city]) categoryCityMetas[city] = { total: 0 };
 				categoryCityMetas[city].total++;
 				if (categoryCityMetas[city].province === undefined) {
@@ -304,7 +313,7 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 			}
 		}
 
-		return toPhotoRecord(item.name, exif, caption, addr);
+		return toPhotoRecord(name, exif, caption, addr);
 	});
 
 	// 写入单独的文件
@@ -318,21 +327,30 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 
 await Promise.all(writeFiletreeTasks);
 
-if (fetchedExifMap.size > 0) {
-	const mergedCache = [
-		...exifCache.filter(x => !fetchedExifMap.has(x.name)),
-		...[...fetchedExifMap.entries()]
-			.sort(([a], [b]) => a.localeCompare(b))
-			.map(([name, exif]) => ({ name, exif }))
-	];
+const liveExifCache = exifCache.filter(
+	x => ossImageNameSet.has(x.name) && !fetchedExifMap.has(x.name)
+);
 
-	await fs.writeFile(EXIF_CACHE_PATH, JSON.stringify(mergedCache, null, 4));
+const mergedCache = [
+	...liveExifCache,
+	...[...fetchedExifMap.entries()]
+		.sort(([a], [b]) => a.localeCompare(b))
+		.map(([name, exif]) => ({ name, exif }))
+];
 
-	console.log(`💾 已把 ${fetchedExifMap.size} 条新 exif 写入本地缓存`);
+// 紧凑写入，且内容没有变化时不触碰文件
+const serializedExifCache = JSON.stringify(mergedCache);
+
+if (serializedExifCache !== rawExifCache) {
+	await fs.writeFile(EXIF_CACHE_PATH, serializedExifCache);
+
+	console.log(
+		`💾 已更新本地 exif 缓存：新增 ${fetchedExifMap.size} 条，清理失效 ${exifCache.length - liveExifCache.length} 条`
+	);
 }
 
 // 校验生成的记录没有重复名称
-const allPhotoNames = Object.values(collectionFiletrees).flatMap(items => items.map(x => x.name));
+const allPhotoNames = Object.values(collectionFiletrees).flatMap(items => items);
 if (new Set(allPhotoNames).size !== allPhotoNames.length) {
 	throw new Error('构建失败：存在重复的照片名称');
 }
@@ -397,10 +415,6 @@ await Promise.all(splitCollectionTasks);
 await fs.writeFile(DIST_PATH + '/collections/__all.json', JSON.stringify(splittedCollections));
 
 console.log(`☂️ 已写入 ${splitCollectionTasks.length} 个集合的元信息`);
-
-// 整体刷新公开数据目录，保证里面不会残留本次构建未生成的文件
-await fs.rm(PUBLIC_DATA_PATH, { recursive: true, force: true });
-await fs.cp(DIST_PATH, PUBLIC_DATA_PATH, { recursive: true });
 
 const METRICS_END_TIME = Date.now();
 

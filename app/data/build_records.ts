@@ -9,11 +9,16 @@ import remarkExcerpt from 'remark-excerpt';
 import remarkExtractFrontmatter from 'remark-extract-frontmatter';
 import remarkFrontmatter from 'remark-frontmatter';
 import * as yaml from 'yaml';
-import path from 'path';
 import { VFile } from 'vfile';
+import exists from './utils/exists';
 import type { RecordBlock, RecordImage, RecordItem, PhotoRecord } from '~/data/types';
 
 const SCRIPT_PATH = import.meta.dirname;
+const FILETREE_PATH = SCRIPT_PATH + '/dist/filetrees';
+
+if (!(await exists(FILETREE_PATH))) {
+	throw new Error('缺少 dist/filetrees，请先运行 photos 阶段：npm run build:all -- --stage=photos');
+}
 
 const markdownFiles = await fs.readdir(SCRIPT_PATH + '/records');
 
@@ -183,9 +188,14 @@ async function getImageInfo(simpleRepr?: string) {
 	if (!result) return undefined;
 
 	const collectionName = result[1].replaceAll('/', '~');
-	const collectionItems = (
-		await import(SCRIPT_PATH + '/dist/filetrees/' + collectionName + '.json')
-	).default as PhotoRecord[];
+	const filetreePath = FILETREE_PATH + '/' + collectionName + '.json';
+
+	if (!(await exists(filetreePath))) {
+		console.warn(`⚠️ 找不到集合 ${collectionName} 的文件目录，无法解析封面时间`);
+		return undefined;
+	}
+
+	const collectionItems = (await import(filetreePath)).default as PhotoRecord[];
 	const item = collectionItems.find(x => x.name.endsWith(result[2]));
 	if (!item?.ts) return undefined;
 
@@ -229,7 +239,3 @@ if (new Set(slugs).size !== slugs.length) {
 }
 
 await fs.writeFile(SCRIPT_PATH + '/dist/records.json', JSON.stringify(parsed));
-await fs.copyFile(
-	SCRIPT_PATH + '/dist/records.json',
-	path.join(SCRIPT_PATH, '../../public/__data/records.json')
-);

@@ -68,6 +68,12 @@ export type RecordItem = {
 // 单个注解的结构
 export type CaptionItem = { title?: string; content: string };
 
+export type RegeoBusinessArea = {
+	location: string;
+	name: string;
+	id: string;
+};
+
 export type RegeoItem = {
 	addressComponent: {
 		city: string;
@@ -85,7 +91,7 @@ export type RegeoItem = {
 		country: string;
 		township: string;
 		seaArea?: string;
-		businessAreas: Array<string>;
+		businessAreas: Array<RegeoBusinessArea>;
 		building: {
 			name: string;
 			type: string;

@@ -1,16 +1,10 @@
 .DS_Store
 .env
 /node_modules/
-
-.output/
-.nuxt/
-.vercel/
-static/
 .idea/
-.yarn
 
 # React Router
 /.react-router/
 /build/
-dist
+/app/data/dist/
 public/__data
