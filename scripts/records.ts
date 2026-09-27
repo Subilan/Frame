@@ -11,16 +11,16 @@ import remarkFrontmatter from 'remark-frontmatter';
 import * as yaml from 'yaml';
 import { VFile } from 'vfile';
 import exists from './utils/exists';
+import { DATA_PATH, DIST_PATH } from './paths';
 import type { RecordBlock, RecordImage, RecordItem, PhotoRecord } from '~/data/types';
 
-const SCRIPT_PATH = import.meta.dirname;
-const FILETREE_PATH = SCRIPT_PATH + '/dist/filetrees';
+const FILETREE_PATH = DIST_PATH + '/filetrees';
 
 if (!(await exists(FILETREE_PATH))) {
-	throw new Error('缺少 dist/filetrees，请先运行 photos 阶段：npm run build:all -- --stage=photos');
+	throw new Error('缺少 filetrees 产物，照片环节没有产出任何集合，请检查 OSS 上的 public/frame/');
 }
 
-const markdownFiles = await fs.readdir(SCRIPT_PATH + '/records');
+const markdownFiles = await fs.readdir(DATA_PATH + '/records');
 
 type Frontmatter = {
 	banner?: string;
@@ -205,7 +205,7 @@ async function getImageInfo(simpleRepr?: string) {
 }
 
 const parseTasks = markdownFiles.map(async filename => {
-	const document = (await fs.readFile(SCRIPT_PATH + '/records/' + filename)).toString();
+	const document = (await fs.readFile(DATA_PATH + '/records/' + filename)).toString();
 	const expanded = expandSplitContainers(document);
 
 	const processor = unified()
@@ -238,4 +238,6 @@ if (new Set(slugs).size !== slugs.length) {
 	throw new Error('构建失败：存在重复的 record slug');
 }
 
-await fs.writeFile(SCRIPT_PATH + '/dist/records.json', JSON.stringify(parsed));
+await fs.writeFile(DIST_PATH + '/records.json', JSON.stringify(parsed));
+
+console.log(`📝 已解析 ${parsed.length} 篇记录`);

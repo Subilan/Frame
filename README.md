@@ -6,16 +6,37 @@ https://photos.subilan.win - A web album designed to showcase the photos I took 
 
 ## 数据构建
 
-照片来自 OSS 上的 `public/frame/` 前缀，站点展示所需的数据由 `app/data/` 下的脚本构建成静态 JSON，最终落到 `public/__data/`，运行时按路由按需拉取。
+照片来自 OSS 上的 `public/frame/` 前缀，站点展示所需的数据由 `scripts/build.ts` 一次运行为产出静态 JSON，最终落到 `public/__data/`，运行时按路由按需拉取。
 
 ```bash
-npm run build:all                 # 构建 photos 与 records 两个阶段
-npm run build:all -- --stage=photos   # 只构建照片数据（需要 OSS 凭证）
-npm run build:all -- --stage=records  # 只构建记录数据（依赖 photos 阶段产出的 dist/filetrees）
-npm run build:regeo               # 增量补齐逆地理编码（需要 AMAP_KEY）
-npm run build:regeo -- --force    # 全量重新请求逆地理编码
+npm run build:all                    # 一次产出全部数据
+npm run build:all -- --skip-regeo    # 没有 AMAP_KEY 时跳过逆地理编码
+npm run build:all -- --force         # 全量重新请求逆地理编码（默认只补缺失项）
+npm run build:all -- --interval=500  # 调整逆地理编码的请求间隔
 ```
 
-`.env` 需要提供 OSS 的 `AKID`、`AKSECRET`，以及高德 Web 服务 key `AMAP_KEY`。各阶段只写 `app/data/dist/`，`public/__data/` 由 `build.ts` 在全部阶段结束后统一同步。
+一次运行内部按依赖顺序走完：枚举 OSS 照片并补齐缺失的 EXIF（写入 `cache/exif_cache.json`）→ 根据 EXIF 里的 GPS 补齐缺失的逆地理编码（写入 `cache/regeo.json`）→ 生成文件目录与分类索引 → 解析游记 markdown。两个缓存都会被复用，已拉取过的照片不会重复请求；缺少 `AMAP_KEY` 且确实有缺失项时会中止，不会产出没有地址的数据。
 
-人工维护的输入分别是：描述相册树与文案的 `app/data/collections.json`、按集合分文件的照片注解 `app/data/captions/*.toml`、游记正文 `app/data/records/*.md`。`app/data/exif_cache.json` 与 `app/data/regeo.json` 是构建期缓存与外部接口结果，可由脚本重新生成。
+`.env` 需要提供 OSS 的 `AKID`、`AKSECRET`，以及高德 Web 服务 key `AMAP_KEY`。产物先写 `scripts/.data/`，全部环节成功后才整体替换 `public/__data/`，因此构建失败不会影响已发布的数据。
+
+## 目录约定
+
+```
+scripts/          构建脚本
+  build.ts        入口，按依赖顺序跑完全部环节
+  photos.ts       枚举 OSS 照片，生成 filetrees、分类索引与集合元信息
+  records.ts      把游记 markdown 解析成结构化内容
+  regeo.ts        逆地理编码的补取与缓存（由 photos 环节调用）
+  options.ts      命令行参数
+  paths.ts        统一的路径常量
+  .data/          构建产物，全部成功后同步到 public/__data（gitignore）
+  utils/
+app/data/         数据
+  types.ts        前后端共用的数据契约
+  collections.json    相册树与文案（人工维护）
+  captions/*.toml     照片注解（人工维护）
+  records/*.md        游记正文（人工维护）
+  cache/
+    exif_cache.json   已拉取过的 EXIF，避免重复请求 OSS
+    regeo.json        逆地理编码结果，重建需要消耗接口配额
+```

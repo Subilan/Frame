@@ -6,5 +6,5 @@
 # React Router
 /.react-router/
 /build/
-/app/data/dist/
+/scripts/.data/
 public/__data

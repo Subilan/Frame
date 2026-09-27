@@ -12,23 +12,22 @@ import type {
 	CategoryMeta,
 	CityCategoryMeta,
 	CollectionMeta,
-	PhotoRecord,
-	RegeoItem
+	PhotoRecord
 } from '~/data/types';
-import path from 'path';
-import { SlashSubstitute } from '../consts';
-import parseExifTime from '~/data/utils/parseExifTime';
+import { SlashSubstitute } from '~/consts';
+import parseExifTime from './utils/parseExifTime';
+import parseExifGPSCoords from './utils/parseExifGPSCoords';
+import buildRegeo from './regeo';
+import { CACHE_PATH, DATA_PATH, DIST_PATH, ENV_PATH } from './paths';
 
 const METRICS_START_TIME = Date.now();
-const SCRIPT_PATH = import.meta.dirname;
-const DIST_PATH = SCRIPT_PATH + '/dist';
 
 // 加载本地 .env（OSS 凭证），便于直接运行 npm run build:all
 try {
-	process.loadEnvFile(path.join(SCRIPT_PATH, '../../.env'));
+	process.loadEnvFile(ENV_PATH);
 } catch {}
 
-// 只清理本阶段负责的子目录，保留 dist 下的其他产物（如 records.json）
+// 只清理本阶段负责的子目录，保留中间产物目录下的其他文件（如 records.json）
 await mkdir(DIST_PATH);
 await Promise.all(
 	['filetrees', 'categories', 'collections'].map(sub =>
@@ -81,7 +80,7 @@ console.log(`☁️ 构建照片文件目录...`);
 await mkdir(DIST_PATH + '/filetrees');
 const collectionFiletrees: Record<string, string[]> = {};
 
-const EXIF_CACHE_PATH = SCRIPT_PATH + '/exif_cache.json';
+const EXIF_CACHE_PATH = CACHE_PATH + '/exif_cache.json';
 const rawExifCache = await fs.readFile(EXIF_CACHE_PATH, 'utf8').catch(() => '');
 const exifCache: {
 	name: string;
@@ -161,9 +160,7 @@ ossImageNames
 console.log(`📖 读取注解中...`);
 
 // 读取captions文件夹下所有的文件名
-const allCaptionFiles = await fs.readdir(SCRIPT_PATH + '/captions');
-// 读取逆地理位置编码信息
-const regeo: Record<string, RegeoItem> = (await import(SCRIPT_PATH + '/regeo.json')).default;
+const allCaptionFiles = await fs.readdir(DATA_PATH + '/captions');
 
 // 分集合记录每张照片上的注解信息，第一层键为集合名，如dawanqu/2023；第二层键为图片文件名，如1970.01.01_00:00:00.jpg
 const collectionCaptionMap: Record<string, Record<string, CaptionItem>> = {};
@@ -171,7 +168,7 @@ let totalCaptions = 0;
 const parseTomlCaptionTasks = allCaptionFiles
 	.filter(filename => filename.endsWith('.toml'))
 	.map(async fileName => {
-		const tomlContent = await fs.readFile(SCRIPT_PATH + '/captions/' + fileName);
+		const tomlContent = await fs.readFile(DATA_PATH + '/captions/' + fileName);
 		const parsed = Toml.parse(tomlContent.toString(), '\n');
 		collectionCaptionMap[
 			// 'dawanqu_2019.toml' -> 'dawanqu/2019'
@@ -184,6 +181,53 @@ const parseTomlCaptionTasks = allCaptionFiles
 await Promise.all(parseTomlCaptionTasks);
 
 console.log(`✅ 读取到 ${parseTomlCaptionTasks.length} 个注解文件，共 ${totalCaptions} 个注解`);
+
+const photoNames = Object.values(collectionFiletrees).flat();
+
+// 先把所有照片的 EXIF 补齐，逆地理编码与文件目录都依赖它
+await Promise.all(photoNames.map(name => retrieveExifForName(name)));
+
+const liveExifCache = exifCache.filter(
+	x => ossImageNameSet.has(x.name) && !fetchedExifMap.has(x.name)
+);
+
+const serializedExifCache = JSON.stringify([
+	...liveExifCache,
+	...[...fetchedExifMap.entries()]
+		.sort(([a], [b]) => a.localeCompare(b))
+		.map(([name, exif]) => ({ name, exif }))
+]);
+
+// 紧凑写入，且内容没有变化时不触碰文件
+if (serializedExifCache !== rawExifCache) {
+	await fs.writeFile(EXIF_CACHE_PATH, serializedExifCache);
+
+	console.log(
+		`💾 已更新本地 exif 缓存：新增 ${fetchedExifMap.size} 条，清理失效 ${exifCache.length - liveExifCache.length} 条`
+	);
+}
+
+const regeo = await buildRegeo(
+	photoNames.flatMap(name => {
+		const exif = exifCacheMap.get(name);
+		const lng = exif?.GPSLongitude?.value
+			? parseExifGPSCoords(exif.GPSLongitude.value)
+			: undefined;
+		const lat = exif?.GPSLatitude?.value
+			? parseExifGPSCoords(exif.GPSLatitude.value)
+			: undefined;
+
+		if (lng === undefined || lat === undefined) return [];
+
+		return [
+			{
+				name,
+				lng: exif?.GPSLongitudeRef?.value === 'West' ? -lng : lng,
+				lat: exif?.GPSLatitudeRef?.value === 'South' ? -lat : lat
+			}
+		];
+	})
+);
 
 const categoryCity: Category = {};
 const categoryCityMetas: CategoryMeta<CityCategoryMeta> = {};
@@ -327,30 +371,8 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 
 await Promise.all(writeFiletreeTasks);
 
-const liveExifCache = exifCache.filter(
-	x => ossImageNameSet.has(x.name) && !fetchedExifMap.has(x.name)
-);
-
-const mergedCache = [
-	...liveExifCache,
-	...[...fetchedExifMap.entries()]
-		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([name, exif]) => ({ name, exif }))
-];
-
-// 紧凑写入，且内容没有变化时不触碰文件
-const serializedExifCache = JSON.stringify(mergedCache);
-
-if (serializedExifCache !== rawExifCache) {
-	await fs.writeFile(EXIF_CACHE_PATH, serializedExifCache);
-
-	console.log(
-		`💾 已更新本地 exif 缓存：新增 ${fetchedExifMap.size} 条，清理失效 ${exifCache.length - liveExifCache.length} 条`
-	);
-}
-
 // 校验生成的记录没有重复名称
-const allPhotoNames = Object.values(collectionFiletrees).flatMap(items => items);
+const allPhotoNames = photoNames;
 if (new Set(allPhotoNames).size !== allPhotoNames.length) {
 	throw new Error('构建失败：存在重复的照片名称');
 }
@@ -363,7 +385,7 @@ await fs.writeFile(DIST_PATH + '/categories/time-meta.json', JSON.stringify(cate
 
 console.log(`☂️ 构建集合元信息...`);
 
-const collections: CollectionMeta[] = (await import(SCRIPT_PATH + '/collections.json')).default;
+const collections: CollectionMeta[] = (await import(DATA_PATH + '/collections.json')).default;
 const splittedCollections: Record<string, CollectionMeta> = {};
 
 function traverseSplit(root: CollectionMeta, prefix: string = '', level: number = 0) {
