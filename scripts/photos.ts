@@ -12,7 +12,8 @@ import type {
 	CategoryMeta,
 	CityCategoryMeta,
 	CollectionMeta,
-	PhotoRecord
+	PhotoRecord,
+	SiteStats
 } from '~/data/types';
 import { SlashSubstitute } from '~/consts';
 import parseExifTime from './utils/parseExifTime';
@@ -207,7 +208,7 @@ if (serializedExifCache !== rawExifCache) {
 	);
 }
 
-const regeo = await buildRegeo(
+const { items: regeo, updatedAt: regeoUpdatedAt } = await buildRegeo(
 	photoNames.flatMap(name => {
 		const exif = exifCacheMap.get(name);
 		const lng = exif?.GPSLongitude?.value
@@ -382,6 +383,16 @@ await fs.writeFile(DIST_PATH + '/categories/city-meta.json', JSON.stringify(cate
 await fs.writeFile(DIST_PATH + '/categories/city.json', JSON.stringify(categoryCity));
 await fs.writeFile(DIST_PATH + '/categories/time.json', JSON.stringify(categoryTime));
 await fs.writeFile(DIST_PATH + '/categories/time-meta.json', JSON.stringify(categoryTimeMetas));
+
+const stats: SiteStats = {
+	photoTotal: photoNames.length,
+	collectionTotal: Object.keys(collectionFiletrees).length,
+	regeoUpdatedAt
+};
+
+await fs.writeFile(DIST_PATH + '/stats.json', JSON.stringify(stats));
+
+console.log(`📊 共 ${stats.photoTotal} 张照片，${stats.collectionTotal} 个合集`);
 
 console.log(`☂️ 构建集合元信息...`);
 

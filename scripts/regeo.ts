@@ -16,6 +16,12 @@ export type RegeoTarget = {
 	lat: number;
 };
 
+/** regeo 缓存文件的结构，updatedAt 记录最近一次从高德获取数据的日期 */
+type RegeoCacheFile = {
+	updatedAt?: string;
+	items: Record<string, RegeoItem>;
+};
+
 type AmapResponse = {
 	status: string;
 	info: string;
@@ -25,6 +31,26 @@ type AmapResponse = {
 
 function sleep(ms: number) {
 	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function toDateString(date: Date) {
+	const pad = (value: number) => String(value).padStart(2, '0');
+
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function parseCache(raw: string): RegeoCacheFile {
+	try {
+		const parsed = JSON.parse(raw);
+		if (parsed === null || typeof parsed !== 'object') return { items: {} };
+
+		// 兼容早期只有名称映射、没有 updatedAt 的格式
+		if ('items' in parsed) return { updatedAt: parsed.updatedAt, items: parsed.items };
+
+		return { items: parsed };
+	} catch {
+		return { items: {} };
+	}
 }
 
 function readApiKey() {
@@ -110,20 +136,13 @@ async function fetchAll(apiKey: string, pending: RegeoTarget[]) {
  */
 export default async function buildRegeo(
 	targets: RegeoTarget[]
-): Promise<Record<string, RegeoItem>> {
+): Promise<RegeoCacheFile> {
 	const rawCache = await fs.readFile(REGEO_PATH, 'utf8').catch(() => '');
-
-	const cache: Record<string, RegeoItem> = (() => {
-		try {
-			return JSON.parse(rawCache);
-		} catch {
-			return {};
-		}
-	})();
+	const cache = parseCache(rawCache);
 
 	const targetNames = new Set(targets.map(x => x.name));
 	const pending = targets.filter(
-		x => options.forceRegeo || cache[x.name] === undefined
+		x => options.forceRegeo || cache.items[x.name] === undefined
 	);
 
 	let fetched = new Map<string, RegeoItem>();
@@ -154,7 +173,7 @@ export default async function buildRegeo(
 	// 保留顺序：已有条目维持原位，新条目按名称排序追加
 	const merged: Record<string, RegeoItem> = {};
 
-	for (const [name, item] of Object.entries(cache)) {
+	for (const [name, item] of Object.entries(cache.items)) {
 		if (targetNames.has(name) && !fetched.has(name)) merged[name] = item;
 	}
 
@@ -166,17 +185,21 @@ export default async function buildRegeo(
 		Object.entries(merged).map(([name, item]) => [name, normalizeRegeo(item)])
 	);
 
-	const serialized = JSON.stringify(normalized, null, 4);
+	// 没有新抓取到的数据时，沿用缓存里记录的时间
+	const updatedAt =
+		fetched.size > 0 ? toDateString(new Date()) : cache.updatedAt;
+
+	const serialized = JSON.stringify({ updatedAt, items: normalized }, null, 4);
 
 	if (serialized !== rawCache) {
 		await fs.writeFile(REGEO_PATH, serialized);
 
-		const stale = Object.keys(cache).filter(name => !targetNames.has(name)).length;
+		const stale = Object.keys(cache.items).filter(name => !targetNames.has(name)).length;
 
 		console.log(
 			`💾 已写入 ${Object.keys(normalized).length} 条逆地理编码，本次获取 ${fetched.size} 条，清理已失效条目 ${stale} 条`
 		);
 	}
 
-	return normalized;
+	return { updatedAt, items: normalized };
 }

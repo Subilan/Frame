@@ -1,9 +1,11 @@
 import { InfoIcon, MenuIcon } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router';
 import Modal from './Modal';
 import { CSSTransition } from 'react-transition-group';
 import useOutsideAlerter from '~/hooks/useOutsideAlerter';
+import { getJson } from '~/utils/getJson';
+import type { SiteStats } from '~/data/types';
 
 const navItems = [
 	{
@@ -38,6 +40,22 @@ export default function Navbar() {
 	const collapseRef = useRef<HTMLDivElement>(null);
 	const menuIconRef = useRef<SVGSVGElement>(null);
 	useOutsideAlerter(collapseRef, () => setCollapseOpen(false), [menuIconRef]);
+
+	const [stats, setStats] = useState<SiteStats>();
+
+	// 只在需要看的时候拉取，纯静态数据，失败就不展示
+	useEffect(() => {
+		if (!aboutModalOpen || stats) return;
+
+		getJson(['/stats.json']).then(result => {
+			if (result?.[0]) setStats(result[0] as SiteStats);
+		});
+	}, [aboutModalOpen, stats]);
+
+	const statsItems = [
+		{ label: '张照片', value: stats?.photoTotal },
+		{ label: '个合集', value: stats?.collectionTotal }
+	];
 	
 	return (
 		<>
@@ -118,14 +136,22 @@ export default function Navbar() {
 				<div className="flex flex-col gap-3">
 					<div className="flex flex-col gap-2 pb-5">
 						<h3 className="text-4xl">the frame</h3>
-						<span className="text-neutral-400">version 202512</span>
+						<span className="text-neutral-400">version 202609</span>
+					</div>
+					<div className="grid grid-cols-2 gap-3 pb-2">
+						{statsItems.map(item => (
+							<div key={item.label} className="flex flex-col">
+								<span className="text-2xl">
+									{item.value ?? '—'}
+								</span>
+								<span className="text-neutral-400">
+									{item.label}
+								</span>
+							</div>
+						))}
 					</div>
 					<div className="flex flex-col gap-1">
-						<span className="text-neutral-400">最近更新时间</span>
-						<span>2025-12-04</span>
-					</div>
-					<div className="flex flex-col gap-1">
-						<span className="text-neutral-400">GitHub 地址</span>
+						<span className="text-neutral-400">GitHub</span>
 						<span>
 							<a href="https://github.com/Subilan/Frame" className="underline">
 								https://github.com/Subilan/Frame
@@ -134,7 +160,11 @@ export default function Navbar() {
 					</div>
 					<div className="flex flex-col gap-1">
 						<span className="text-neutral-400">逆地理位置编码数据</span>
-						<span>高德地图，最近同步于 2025-12-04</span>
+						<span>
+							{stats?.regeoUpdatedAt
+								? `高德地图 ${stats.regeoUpdatedAt}`
+								: '高德地图'}
+						</span>
 					</div>
 				</div>
 			</Modal>

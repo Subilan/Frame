@@ -40,6 +40,15 @@ export type PhotoRecord = {
 	caption?: CaptionItem;
 };
 
+export type SiteStats = {
+	/** 全部照片张数 */
+	photoTotal: number;
+	/** 有照片的合集数，不含只承载子合集的分组 */
+	collectionTotal: number;
+	/** 逆地理编码数据的更新日期 */
+	regeoUpdatedAt?: string;
+};
+
 export type RecordImage = {
 	path: string;
 	alt?: string;
