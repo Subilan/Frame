@@ -85,6 +85,21 @@ export type RegeoBusinessArea = {
 	id: string;
 };
 
+/** 高德逆地理编码返回的 AOI（面状兴趣区），照片落在其中时 distance 为 0 */
+export type RegeoAoi = {
+	id: string;
+	name: string;
+	/** 高德 POI 类型码，可能是 `080501|110000` 这样的多值 */
+	type: string;
+	adcode: string;
+	/** 中心点坐标，形如 `120.101101,30.239119` */
+	location: string;
+	/** 面积，平方米 */
+	area: string;
+	/** 拍照点到 AOI 边界的距离，米 */
+	distance: string;
+};
+
 export type RegeoItem = {
 	addressComponent: {
 		city: string;
@@ -114,10 +129,26 @@ export type RegeoItem = {
 		citycode: string;
 	};
 	formatted_address: string;
+	/** 仅在 regeo 使用 extensions=all 时存在；旧缓存没有该字段 */
+	aois?: RegeoAoi[];
 };
 
 export type CityCategoryMeta = {
 	province?: string;
+};
+
+export type SpotCategoryMeta = {
+	/** 景点名称（取自高德 AOI 名称），分类索引的键是 AOI id */
+	name: string;
+	province?: string;
+	/** 城市；直辖市、特别行政区等 city 为空时取省级名称 */
+	city?: string;
+	/** 高德 adcode，便于进一步定位或聚合 */
+	adcode?: string;
+	/** AOI 类型码 */
+	type?: string;
+	/** AOI 面积，平方米 */
+	area?: number;
 };
 
 export type CategoryMeta<T extends Record<string, any> = {}> = Record<string, T & { total: number }>;

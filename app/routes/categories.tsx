@@ -1,10 +1,15 @@
-import { BuildingIcon, CalendarIcon, type LucideIcon } from 'lucide-react';
+import { BuildingIcon, CalendarIcon, MountainIcon, type LucideIcon } from 'lucide-react';
 import type { Route } from './+types/categories';
 import { data } from 'react-router';
 import Card from '~/components/Card';
-import type { Category, CategoryMeta, CityCategoryMeta } from '~/data/types';
-import { useIsVisible } from '~/hooks/useIsVisible';
-import { useMemo, useState, type ReactNode, type Ref } from 'react';
+import type {
+	Category,
+	CategoryMeta,
+	CityCategoryMeta,
+	SpotCategoryMeta
+} from '~/data/types';
+import { useRef, useState, type ReactNode } from 'react';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import { getJson } from '~/utils/getJson';
 import getFrameUrlFromName from '~/utils/getFrameUrlFromName';
 import getOssUrlFromName from '~/utils/getOssUrlFromName';
@@ -14,37 +19,49 @@ import Button from '~/components/Button';
 export async function clientLoader() {
 	let categoryCityMeta: CategoryMeta<CityCategoryMeta>,
 		categoryTimeMeta: CategoryMeta,
+		categorySpotMeta: CategoryMeta<SpotCategoryMeta>,
 		categoryCity: Category,
-		categoryTime: Category;
+		categoryTime: Category,
+		categorySpot: Category;
 
 	const res = await getJson([
 		'/categories/city-meta.json',
 		'/categories/time-meta.json',
+		'/categories/spot-meta.json',
 		'/categories/city.json',
-		'/categories/time.json'
+		'/categories/time.json',
+		'/categories/spot.json'
 	]);
 
 	if (!res) {
 		throw data(null, { status: 404 });
 	}
 
-	[categoryCityMeta, categoryTimeMeta, categoryCity, categoryTime] = res;
+	[
+		categoryCityMeta,
+		categoryTimeMeta,
+		categorySpotMeta,
+		categoryCity,
+		categoryTime,
+		categorySpot
+	] = res;
 
 	return {
 		categoryCityMeta,
 		categoryTimeMeta,
+		categorySpotMeta,
 		categoryCity,
-		categoryTime
+		categoryTime,
+		categorySpot
 	};
 }
 
 type CategorySectionProp = {
-	sectionRef: Ref<HTMLElement | null>;
 	meta: CategoryMeta;
 	title: string;
-	identifier: string;
 	sort?: (a: [string, { total: number }], b: [string, { total: number }]) => number;
 	itemTitle?: (name: string, meta: Record<string, any>) => ReactNode;
+	itemName?: (name: string, meta: Record<string, any>) => string;
 	itemSubtitle?: (name: string, meta: Record<string, any>) => ReactNode;
 	category: Category;
 	categoryModal: {
@@ -55,11 +72,12 @@ type CategorySectionProp = {
 };
 
 function CategorySection(props: CategorySectionProp) {
+	const displayName = (name: string, meta: Record<string, any>) =>
+		props.itemName ? props.itemName(name, meta) : name;
+
 	return (
-		<section className="flex flex-col gap-5" ref={props.sectionRef}>
-			<h2 className="text-3xl" id={props.identifier}>
-				{props.title}
-			</h2>
+		<section className="flex flex-col gap-5">
+			<h2 className="text-3xl">{props.title}</h2>
 			<div className="flex flex-col gap-5">
 				{Object.entries(props.meta)
 					.sort(props.sort ?? ((a, b) => b[1].total - a[1].total))
@@ -72,7 +90,8 @@ function CategorySection(props: CategorySectionProp) {
 											props.itemTitle(categoryName, categoryMeta)
 										) : (
 											<>
-												{categoryMeta.total} 张 · {categoryName}{' '}
+												{categoryMeta.total} 张 ·{' '}
+												{displayName(categoryName, categoryMeta)}{' '}
 											</>
 										)}
 										{props.itemSubtitle && (
@@ -86,7 +105,9 @@ function CategorySection(props: CategorySectionProp) {
 										<a
 											className="inpage-link leading-tight text-base"
 											onClick={() => {
-												props.categoryModal.setName(categoryName);
+												props.categoryModal.setName(
+													displayName(categoryName, categoryMeta)
+												);
 												props.categoryModal.setItems(
 													props.category[categoryName]
 												);
@@ -127,12 +148,13 @@ function useCategoryModal() {
 	return { modal, setModal, name, setName, items, setItems };
 }
 
-type CategoryNavigationProps = {
+type CategoryTabsProps = {
 	sections: { id: string; name: string; icon: LucideIcon }[];
-	visibilities: boolean[];
+	active: string;
+	onChange: (id: string) => void;
 };
 
-const categorySections: CategoryNavigationProps['sections'] = [
+const categorySections: CategoryTabsProps['sections'] = [
 	{
 		id: 'city',
 		name: '城市',
@@ -142,14 +164,15 @@ const categorySections: CategoryNavigationProps['sections'] = [
 		id: 'time',
 		name: '时间',
 		icon: CalendarIcon
+	},
+	{
+		id: 'spot',
+		name: '景点',
+		icon: MountainIcon
 	}
 ];
 
-function CategoryNavigation({ sections, visibilities }: CategoryNavigationProps) {
-	const activeCategory = useMemo(() => {
-		return sections[visibilities.lastIndexOf(true)]?.id;
-	}, [visibilities]);
-
+function CategoryTabs({ sections, active, onChange }: CategoryTabsProps) {
 	return (
 		<div className="sticky top-[75px] z-20 flex justify-center my-5">
 			<div className="flex items-center gap-3 py-2 px-3 rounded-full transition-all shadow-md bg-neutral-900/50 backdrop-blur-sm">
@@ -158,13 +181,8 @@ function CategoryNavigation({ sections, visibilities }: CategoryNavigationProps)
 					return (
 						<Button
 							key={section.id}
-							className={activeCategory === section.id ? 'active' : ''}
-							onClick={() => {
-								window.scrollTo({
-									top: document.getElementById(section.id)?.offsetTop,
-									behavior: 'smooth'
-								});
-							}}
+							className={active === section.id ? 'active' : ''}
+							onClick={() => onChange(section.id)}
 						>
 							<Icon size={20} /> {section.name}
 						</Button>
@@ -176,12 +194,71 @@ function CategoryNavigation({ sections, visibilities }: CategoryNavigationProps)
 }
 
 export default function Categories({ loaderData }: Route.ComponentProps) {
-	const { categoryCityMeta, categoryTimeMeta, categoryTime, categoryCity } = loaderData;
+	const {
+		categoryCityMeta,
+		categorySpotMeta,
+		categoryTimeMeta,
+		categoryTime,
+		categoryCity,
+		categorySpot
+	} = loaderData;
 
-	const [citySectionRef, citySectionVisible] = useIsVisible<HTMLElement>();
-	const [timeSectionRef, timeSectionVisible] = useIsVisible<HTMLElement>();
+	const [activeCategory, setActiveCategory] = useState(categorySections[0].id);
+	const sectionRef = useRef<HTMLDivElement>(null);
 
 	const categoryModal = useCategoryModal();
+
+	function changeCategory(id: string) {
+		if (id === activeCategory) return;
+
+		setActiveCategory(id);
+		sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
+
+	function renderActiveCategory() {
+		switch (activeCategory) {
+			case 'spot':
+				return (
+					<CategorySection
+						title="景点"
+						meta={categorySpotMeta}
+						category={categorySpot}
+						itemName={(id, meta) => meta.name ?? id}
+						itemSubtitle={(id, meta) => {
+							if (
+								!meta.city ||
+								!meta.province ||
+								meta.city === meta.province
+							) {
+								return meta.city ?? meta.province;
+							}
+							return `${meta.province}${meta.city}`;
+						}}
+						categoryModal={categoryModal}
+					/>
+				);
+			case 'time':
+				return (
+					<CategorySection
+						title="时间"
+						meta={categoryTimeMeta}
+						category={categoryTime}
+						sort={(a, b) => timeKeyValue(b[0]) - timeKeyValue(a[0])}
+						categoryModal={categoryModal}
+					/>
+				);
+			default:
+				return (
+					<CategorySection
+						title="城市"
+						meta={categoryCityMeta}
+						category={categoryCity}
+						itemSubtitle={(id, meta) => meta.province !== id && meta.province}
+						categoryModal={categoryModal}
+					/>
+				);
+		}
+	}
 
 	return (
 		<div className="max-w-[1200px] mx-5 xl:mx-auto my-16">
@@ -189,31 +266,24 @@ export default function Categories({ loaderData }: Route.ComponentProps) {
 				<h1 className="font-bold text-5xl">Categories</h1>
 				<p className="text-neutral-500">按分类浏览照片</p>
 			</section>
-			<CategoryNavigation
+			<CategoryTabs
 				sections={categorySections}
-				visibilities={[citySectionVisible, timeSectionVisible]}
+				active={activeCategory}
+				onChange={changeCategory}
 			/>
-			<div className="flex flex-col gap-5">
-				<CategorySection
-					sectionRef={citySectionRef}
-					identifier="city"
-					title="城市"
-					meta={categoryCityMeta}
-					category={categoryCity}
-					itemSubtitle={(id, meta) => meta.province !== id && meta.province}
-					categoryModal={categoryModal}
-				/>
-				<hr className="my-10 text-neutral-700" />
-				<CategorySection
-					sectionRef={timeSectionRef}
-					identifier="time"
-					title="时间"
-					meta={categoryTimeMeta}
-					category={categoryTime}
-					sort={(a, b) => timeKeyValue(b[0]) - timeKeyValue(a[0])}
-					categoryModal={categoryModal}
-				/>
-			</div>
+			<SwitchTransition mode="out-in">
+				<CSSTransition
+					key={activeCategory}
+					nodeRef={sectionRef}
+					timeout={200}
+					classNames="fade"
+					unmountOnExit
+				>
+					<div ref={sectionRef} className="scroll-mt-[140px]">
+						{renderActiveCategory()}
+					</div>
+				</CSSTransition>
+			</SwitchTransition>
 
 			<Modal width="1200px" open={categoryModal.modal} setOpen={categoryModal.setModal}>
 				<h3 className="text-2xl">{categoryModal.name || '分类'}</h3>

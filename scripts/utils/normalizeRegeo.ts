@@ -1,4 +1,4 @@
-import type { RegeoBusinessArea, RegeoItem } from '~/data/types';
+import type { RegeoAoi, RegeoBusinessArea, RegeoItem } from '~/data/types';
 
 function asRecord(value: unknown): Record<string, unknown> {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) return {};
@@ -15,6 +15,27 @@ function toText(value: unknown): string {
 		return typeof first === 'string' ? first : '';
 	}
 	return '';
+}
+
+function normalizeAois(value: unknown): RegeoAoi[] | undefined {
+	// extensions=base 的旧缓存没有 aois 字段；保持 undefined 以便 build 识别并补取
+	if (!Array.isArray(value)) return undefined;
+
+	return value
+		.filter(
+			(x): x is Record<string, unknown> =>
+				x !== null && typeof x === 'object' && !Array.isArray(x)
+		)
+		.map(x => ({
+			id: toText(x.id),
+			name: toText(x.name),
+			type: toText(x.type),
+			adcode: toText(x.adcode),
+			location: toText(x.location),
+			area: toText(x.area),
+			distance: toText(x.distance)
+		}))
+		.filter(x => x.name.length > 0);
 }
 
 /**
@@ -68,6 +89,7 @@ export default function normalizeRegeo(input: unknown): RegeoItem {
 			},
 			citycode: toText(source.citycode)
 		},
-		formatted_address: toText(raw.formatted_address)
+		formatted_address: toText(raw.formatted_address),
+		aois: normalizeAois(raw.aois)
 	};
 }

@@ -1,11 +1,18 @@
 import fs from 'fs/promises';
 import normalizeRegeo from './utils/normalizeRegeo';
-import { options } from './options';
 import { CACHE_PATH, ENV_PATH } from './paths';
 import type { RegeoItem } from '~/data/types';
 
 const REGEO_PATH = CACHE_PATH + '/regeo.json';
 const AMAP_ENDPOINT = 'https://restapi.amap.com/v3/geocode/regeo';
+/** extensions=all 会额外返回 AOI，照片落在其中时 distance=0，用于识别所在景点 */
+const REGEO_EXTENSIONS = 'all';
+/** AOI 检索半径（米）；只关心包含拍照点的 AOI（distance≈0），200m 足够覆盖边界误差 */
+const REGEO_RADIUS = 200;
+/** 请求间隔，避免超过高德的 QPS 限制 */
+const REGEO_INTERVAL_MS = 350;
+/** 并发数；间隔仍限制整体 QPS，并发只用来抵消单次请求的延迟 */
+const REGEO_CONCURRENCY = 8;
 
 // 这些错误重试没有意义，直接中止，避免浪费配额
 const FATAL_INFOCODES = new Set(['10001', '10003', '10009', '10012', '10013', '10019']);
@@ -62,8 +69,7 @@ function readApiKey() {
 
 	if (!apiKey) {
 		throw new Error(
-			'缺少 AMAP_KEY，请在高德开放平台申请 Web 服务 key 并写入 .env；' +
-				'或加上 --skip-regeo 跳过逆地理编码'
+			'缺少 AMAP_KEY，请在高德开放平台申请 Web 服务 key 并写入 .env'
 		);
 	}
 
@@ -72,7 +78,9 @@ function readApiKey() {
 
 async function queryRegeo(apiKey: string, target: RegeoTarget) {
 	const location = `${target.lng.toFixed(6)},${target.lat.toFixed(6)}`;
-	const url = `${AMAP_ENDPOINT}?key=${apiKey}&location=${location}&extensions=base&coordsys=gps`;
+	const url =
+		`${AMAP_ENDPOINT}?key=${apiKey}&location=${location}` +
+		`&extensions=${REGEO_EXTENSIONS}&radius=${REGEO_RADIUS}&coordsys=gps`;
 
 	const response = await fetch(url);
 
@@ -94,38 +102,65 @@ async function fetchAll(apiKey: string, pending: RegeoTarget[]) {
 	const failures: string[] = [];
 	let fatal: string | undefined;
 
-	for (const [index, target] of pending.entries()) {
-		if (fatal !== undefined) break;
+	let nextIndex = 0;
+	let nextStartAt = 0;
+	let done = 0;
 
-		for (let attempt = 1; ; attempt++) {
-			try {
-				fetched.set(target.name, await queryRegeo(apiKey, target));
-				break;
-			} catch (e) {
-				const message = e instanceof Error ? e.message : String(e);
-				const infocode = (e as { infocode?: string }).infocode;
+	/**
+	 * 只控制请求的发起时间，不等待响应。所有 worker 共享 nextStartAt，
+	 * 因此无论并发数多大，整体 QPS 仍然受 interval 限制；并发只是用来抵消
+	 * extensions=all 单次请求较长的响应时间。
+	 */
+	async function waitForRequestSlot() {
+		const now = Date.now();
+		const startAt = Math.max(now, nextStartAt);
+		nextStartAt = startAt + REGEO_INTERVAL_MS;
 
-				if (infocode !== undefined && FATAL_INFOCODES.has(infocode)) {
-					fatal = `${target.name}：${message}`;
+		if (startAt > now) await sleep(startAt - now);
+	}
+
+	async function worker() {
+		while (fatal === undefined) {
+			const index = nextIndex++;
+			if (index >= pending.length) return;
+
+			const target = pending[index];
+
+			for (let attempt = 1; ; attempt++) {
+				await waitForRequestSlot();
+
+				try {
+					fetched.set(target.name, await queryRegeo(apiKey, target));
 					break;
-				}
+				} catch (e) {
+					const message = e instanceof Error ? e.message : String(e);
+					const infocode = (e as { infocode?: string }).infocode;
 
-				if (attempt >= 3) {
-					failures.push(`${target.name}：${message}`);
-					break;
-				}
+					if (infocode !== undefined && FATAL_INFOCODES.has(infocode)) {
+						fatal = `${target.name}：${message}`;
+						return;
+					}
 
-				await sleep(1000 * attempt);
+					if (attempt >= 3) {
+						failures.push(`${target.name}：${message}`);
+						break;
+					}
+
+					await sleep(1000 * attempt);
+				}
+			}
+
+			done++;
+			if (done % 20 === 0 || done === pending.length) {
+				console.log(`⌛️ 已请求 ${done}/${pending.length}`);
 			}
 		}
-
-		const done = index + 1;
-		if (done % 20 === 0 || done === pending.length) {
-			console.log(`⌛️ 已请求 ${done}/${pending.length}`);
-		}
-
-		if (done < pending.length) await sleep(options.regeoIntervalMs);
 	}
+
+	const concurrency = Math.max(1, Math.floor(REGEO_CONCURRENCY) || 1);
+	await Promise.all(
+		Array.from({ length: Math.min(concurrency, pending.length) }, worker)
+	);
 
 	return { fetched, failures, fatal };
 }
@@ -141,16 +176,16 @@ export default async function buildRegeo(
 	const cache = parseCache(rawCache);
 
 	const targetNames = new Set(targets.map(x => x.name));
-	const pending = targets.filter(
-		x => options.forceRegeo || cache.items[x.name] === undefined
-	);
+	const pending = targets.filter(x => {
+		const cached = cache.items[x.name];
+		// 旧缓存由 extensions=base 生成，没有 aois，需要补取一次才能识别所在景点
+		return cached === undefined || cached.aois === undefined;
+	});
 
 	let fetched = new Map<string, RegeoItem>();
 
 	if (pending.length === 0) {
 		console.log(`🌏 逆地理编码缓存已覆盖全部 ${targets.length} 张带 GPS 的照片`);
-	} else if (options.skipRegeo) {
-		console.warn(`⚠️ 已跳过逆地理编码，${pending.length} 张照片本次不会有地址`);
 	} else {
 		console.log(`🌏 需要请求 ${pending.length} 条逆地理编码`);
 

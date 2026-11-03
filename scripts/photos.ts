@@ -13,11 +13,13 @@ import type {
 	CityCategoryMeta,
 	CollectionMeta,
 	PhotoRecord,
-	SiteStats
+	SiteStats,
+	SpotCategoryMeta
 } from '~/data/types';
 import { SlashSubstitute } from '~/consts';
 import parseExifTime from './utils/parseExifTime';
 import parseExifGPSCoords from './utils/parseExifGPSCoords';
+import selectSpot, { MIN_SPOT_PHOTOS } from './utils/selectSpot';
 import buildRegeo from './regeo';
 import { CACHE_PATH, DATA_PATH, DIST_PATH, ENV_PATH } from './paths';
 
@@ -234,10 +236,28 @@ const categoryCity: Category = {};
 const categoryCityMetas: CategoryMeta<CityCategoryMeta> = {};
 const categoryTime: Category = {};
 const categoryTimeMetas: CategoryMeta = {};
+// 以高德 AOI id 为键，展示名放在 meta 里，避免不同城市的同名景点被合并
+const categorySpot: Category = {};
+const categorySpotMetas: CategoryMeta<SpotCategoryMeta> = {};
 
 function addToCategory(category: Category, key: string, name: string) {
 	if (category[key] === undefined) category[key] = [];
 	category[key].push(name);
+}
+
+/**
+ * 离岛、海域等位置的逆地理编码可能只返回“中华人民共和国”，
+ * 用 AOI 的 adcode 前缀补出特别行政区名称，避免景点副标题失去意义。
+ */
+const SPECIAL_REGION_BY_ADCODE: Record<string, string> = {
+	'81': '香港特别行政区',
+	'82': '澳门特别行政区',
+	'71': '台湾省'
+};
+
+function resolveProvince(province: string, adcode: string) {
+	if (province.length > 0 && province !== '中华人民共和国') return province;
+	return SPECIAL_REGION_BY_ADCODE[adcode.slice(0, 2)] ?? province;
 }
 
 function toNumber(value?: { value?: string }): number | undefined {
@@ -356,6 +376,31 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 							: city;
 				}
 			}
+
+			// 只有拍照点确实落在景点 AOI 内（或边界附近）时才归入景点分类
+			const spot = selectSpot(regeoItem);
+			if (spot) {
+				addToCategory(categorySpot, spot.key, name);
+
+				const spotMeta = (categorySpotMetas[spot.key] ??= {
+					total: 0,
+					name: spot.name,
+					type: spot.type,
+					adcode: spot.adcode,
+					area: spot.area
+				});
+				spotMeta.total++;
+
+				const { province: rawProvince, city } = regeoItem.addressComponent;
+				const province = resolveProvince(rawProvince, spot.adcode);
+
+				if (spotMeta.province === undefined && province.length > 0) {
+					spotMeta.province = province;
+				}
+				if (spotMeta.city === undefined) {
+					spotMeta.city = city.length > 0 ? city : province || undefined;
+				}
+			}
 		}
 
 		return toPhotoRecord(name, exif, caption, addr);
@@ -372,6 +417,45 @@ const writeFiletreeTasks = Object.keys(collectionFiletrees).map(async k => {
 
 await Promise.all(writeFiletreeTasks);
 
+// 景点分类只保留照片数量足够的，单张/两张的多半是路过时的快门，
+// 不足以成为一个可浏览的分组；这些照片仍保留在文件目录和城市分类里。
+const meaningfulSpotKeys = Object.keys(categorySpot)
+	.filter(key => categorySpot[key].length >= MIN_SPOT_PHOTOS)
+	// 让产物顺序稳定：按照片数降序，数量相同时按 AOI id 排序
+	.sort(
+		(a, b) =>
+			categorySpot[b].length - categorySpot[a].length || a.localeCompare(b)
+	);
+
+const filteredSpotCategory: Category = {};
+const filteredSpotMetas: CategoryMeta<SpotCategoryMeta> = {};
+let spotPhotoTotal = 0;
+
+for (const key of meaningfulSpotKeys) {
+	// 按拍摄时间排序，保证卡片展示的照片顺序稳定
+	filteredSpotCategory[key] = [...categorySpot[key]].sort((a, b) => {
+		const timeA = getFileDateFromName(a).getTime();
+		const timeB = getFileDateFromName(b).getTime();
+		return timeA - timeB || a.localeCompare(b);
+	});
+	filteredSpotMetas[key] = categorySpotMetas[key];
+	spotPhotoTotal += filteredSpotCategory[key].length;
+}
+
+console.log(
+	`📍 带 GPS 的 ${Object.keys(regeo).length} 张照片中，有 ${spotPhotoTotal} 张落在 ` +
+		`${meaningfulSpotKeys.length} 个有意义的景点内`
+);
+
+if (meaningfulSpotKeys.length > 0) {
+	const topSpots = Object.values(filteredSpotMetas)
+		.sort((a, b) => b.total - a.total)
+		.slice(0, 10)
+		.map(meta => `${meta.name}（${meta.total}）`);
+
+	console.log(`🏞️ 照片最多的景点：${topSpots.join('、')}`);
+}
+
 // 校验生成的记录没有重复名称
 const allPhotoNames = photoNames;
 if (new Set(allPhotoNames).size !== allPhotoNames.length) {
@@ -383,6 +467,8 @@ await fs.writeFile(DIST_PATH + '/categories/city-meta.json', JSON.stringify(cate
 await fs.writeFile(DIST_PATH + '/categories/city.json', JSON.stringify(categoryCity));
 await fs.writeFile(DIST_PATH + '/categories/time.json', JSON.stringify(categoryTime));
 await fs.writeFile(DIST_PATH + '/categories/time-meta.json', JSON.stringify(categoryTimeMetas));
+await fs.writeFile(DIST_PATH + '/categories/spot.json', JSON.stringify(filteredSpotCategory));
+await fs.writeFile(DIST_PATH + '/categories/spot-meta.json', JSON.stringify(filteredSpotMetas));
 
 const stats: SiteStats = {
 	photoTotal: photoNames.length,
