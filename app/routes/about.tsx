@@ -31,7 +31,6 @@ export default function About({}: Route.ComponentProps) {
 					</a>
 					协议开放，你无需与我联系即可免费使用这些照片，前提是按照协议要求操作，这包括但不仅限于正确署名——即包含本站的地址（<a href='https://album.hskl.me'>https://album.hskl.me</a>）。
 				</p>
-				<p>我不是专业的摄影师，但对以纯粹的视角记录事物抱有兴趣。</p>
 			</section>
 		</div>
 	);
