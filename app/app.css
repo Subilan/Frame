@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 @import './transition.css';
 
 @theme {
@@ -36,6 +37,7 @@
 html,
 body {
 	@apply bg-neutral-900 text-white;
+	text-autospace: normal;
 }
 
 a.inpage-link {
@@ -52,6 +54,26 @@ a.inpage-link svg {
 
 .primary-button.active {
 	@apply bg-sky-600 text-white border-white/20;
+}
+
+/* prose 统一使用灰色调 */
+.prose {
+	--tw-prose-body: theme(--color-neutral-400);
+	--tw-prose-headings: theme(--color-neutral-200);
+	--tw-prose-lead: theme(--color-neutral-400);
+	--tw-prose-links: theme(--color-neutral-200);
+	--tw-prose-bold: theme(--color-neutral-200);
+	--tw-prose-counters: theme(--color-neutral-500);
+	--tw-prose-bullets: theme(--color-neutral-600);
+	--tw-prose-hr: theme(--color-neutral-800);
+	--tw-prose-quotes: theme(--color-neutral-300);
+	--tw-prose-quote-borders: theme(--color-neutral-700);
+	--tw-prose-captions: theme(--color-neutral-500);
+	--tw-prose-code: theme(--color-neutral-200);
+	--tw-prose-pre-code: theme(--color-neutral-200);
+	--tw-prose-pre-bg: theme(--color-neutral-800);
+	--tw-prose-th-borders: theme(--color-neutral-800);
+	--tw-prose-td-borders: theme(--color-neutral-800);
 }
 
 .record-text {

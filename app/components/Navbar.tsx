@@ -15,6 +15,10 @@ const navItems = [
 	{
 		to: '/categories',
 		text: '分类'
+	},
+	{
+		to: '/about',
+		text: '关于'
 	}
 ];
 
