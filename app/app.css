@@ -11,6 +11,28 @@
 	@apply rounded-xl xl:rounded-3xl relative overflow-hidden flex flex-col justify-end cursor-pointer hover:opacity-90 active:opacity-70 bg-center bg-cover bg-no-repeat;
 }
 
+@keyframes skeleton-breathe {
+	0%,
+	100% {
+		opacity: 0.3;
+	}
+
+	50% {
+		opacity: 1;
+	}
+}
+
+.photo-skeleton {
+	animation: skeleton-breathe 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.photo-skeleton {
+		animation: none;
+		opacity: 0.6;
+	}
+}
+
 html,
 body {
 	@apply bg-neutral-900 text-white;

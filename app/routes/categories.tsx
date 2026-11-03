@@ -9,6 +9,7 @@ import { getJson } from '~/utils/getJson';
 import getFrameUrlFromName from '~/utils/getFrameUrlFromName';
 import getOssUrlFromName from '~/utils/getOssUrlFromName';
 import Modal from '~/components/Modal';
+import Button from '~/components/Button';
 
 export async function clientLoader() {
 	let categoryCityMeta: CategoryMeta<CityCategoryMeta>,
@@ -155,9 +156,9 @@ function CategoryNavigation({ sections, visibilities }: CategoryNavigationProps)
 				{sections.map(section => {
 					const Icon = section.icon;
 					return (
-						<button
+						<Button
 							key={section.id}
-							className={`primary-button ${activeCategory === section.id ? 'active' : ''}`}
+							className={activeCategory === section.id ? 'active' : ''}
 							onClick={() => {
 								window.scrollTo({
 									top: document.getElementById(section.id)?.offsetTop,
@@ -166,7 +167,7 @@ function CategoryNavigation({ sections, visibilities }: CategoryNavigationProps)
 							}}
 						>
 							<Icon size={20} /> {section.name}
-						</button>
+						</Button>
 					);
 				})}
 			</div>

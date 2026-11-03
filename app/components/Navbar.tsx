@@ -15,10 +15,6 @@ const navItems = [
 	{
 		to: '/categories',
 		text: '分类'
-	},
-	{
-		to: '/records',
-		text: '记录'
 	}
 ];
 
@@ -74,7 +70,7 @@ export default function Navbar() {
 						onClick={() => setCollapseOpen(!collapseOpen)}
 					/>
 					<div
-						className="text-xl md:text-lg font-bold select-none cursor-pointer"
+						className="text-xl md:text-lg select-none cursor-pointer"
 						onClick={() => navigate('/')}
 					>
 						the frame

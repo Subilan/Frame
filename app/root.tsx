@@ -13,6 +13,8 @@ import {
 import './app.css';
 import './nprogress.css';
 import FooterEl from './components/FooterEl';
+import Navbar from './components/Navbar';
+import { ButtonLink } from './components/Button';
 import { useEffect } from 'react';
 import NProgress from 'nprogress';
 
@@ -68,30 +70,17 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: any) {
-	let message = 'Oops!';
-	let details = 'An unexpected error occurred.';
-	let stack: string | undefined;
-
-	if (isRouteErrorResponse(error)) {
-		message = error.status === 404 ? '404' : 'Error';
-		details =
-			error.status === 404
-				? 'The requested page could not be found.'
-				: error.statusText || details;
-	} else if (import.meta.env.DEV && error && error instanceof Error) {
-		details = error.message;
-		stack = error.stack;
-	}
+	const status = isRouteErrorResponse(error) ? error.status : 500;
 
 	return (
-		<main className="pt-16 p-4 container mx-auto">
-			<h1>{message}</h1>
-			<p>{details}</p>
-			{stack && (
-				<pre className="w-full p-4 overflow-x-auto">
-					<code>{stack}</code>
-				</pre>
-			)}
-		</main>
+		<>
+			<Navbar />
+			<main className="flex min-h-[90vh] flex-col items-center justify-center gap-8 px-5 pt-[68px]">
+				<h1 className="text-[110px] leading-none font-bold tracking-tighter select-none md:text-[170px]">
+					{status}
+				</h1>
+				<ButtonLink to="/">返回首页</ButtonLink>
+			</main>
+		</>
 	);
 }

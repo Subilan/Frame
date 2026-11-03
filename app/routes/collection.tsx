@@ -267,6 +267,11 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 
 	const photoRefs = useRef<Record<string, HTMLImageElement>>({});
 
+	const [loadedPhotos, setLoadedPhotos] = useState<Record<string, true>>({});
+
+	const markPhotoLoaded = (name: string) =>
+		setLoadedPhotos(prev => (prev[name] ? prev : { ...prev, [name]: true }));
+
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			entries => {
@@ -375,20 +380,25 @@ export default function Collection({ loaderData }: Route.ComponentProps) {
 									target="_blank"
 									className="relative hover:opacity-80 active:opacity-50"
 								>
+									{!loadedPhotos[f.name] && (
+										<div className="photo-skeleton absolute inset-0 bg-neutral-700" />
+									)}
 									<img
 										ref={el => {
 											if (el) {
 												el.dataset.ts =
 													f.ts !== undefined ? String(f.ts) : undefined;
 												photoRefs.current[f.name] = el;
+												if (el.complete) markPhotoLoaded(f.name);
 											} else {
 												delete photoRefs.current[f.name];
 											}
 										}}
+										onLoad={() => markPhotoLoaded(f.name)}
 										data-oss-name={f.name}
 										loading="lazy"
 										src={getOssUrlFromName(f.name) + '?x-oss-process=image/resize,h_500'}
-										className="object-cover object-center h-[250px] xl:h-[350px] w-full"
+										className={`object-cover object-center h-[250px] xl:h-[350px] w-full transition-opacity duration-300 ${loadedPhotos[f.name] ? 'opacity-100' : 'opacity-0'}`}
 									/>
 									{f.caption && (
 										<>

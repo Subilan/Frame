@@ -3,6 +3,7 @@ import useOutsideAlerter from '~/hooks/useOutsideAlerter';
 import { CSSTransition } from 'react-transition-group';
 import type { LucideIcon } from 'lucide-react';
 import { RemoveScroll } from 'react-remove-scroll';
+import Button from './Button';
 
 export type DropdownProps<T> = {
 	title?: string;
@@ -32,11 +33,11 @@ export default function Dropdown<T>({
 
 	return (
 		<div className="relative">
-			<button onClick={() => setDropdown(true)} className="primary-button">
+			<Button onClick={() => setDropdown(true)}>
 				<span className="text-neutral-400 hidden md:inline">{title}</span>{' '}
 				<span className="hidden md:inline">{display(value)}</span>
 				<span className="md:hidden">{ValueIcon && <ValueIcon size={20} />}</span>
-			</button>
+			</Button>
 			<CSSTransition
 				in={dropdown}
 				unmountOnExit
